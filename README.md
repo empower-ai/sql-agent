@@ -93,6 +93,15 @@ settings:
   - You can find your OpenAI API key on this [page](https://platform.openai.com/account/api-keys).
 - Setup the DB Access. **Currently only BigQuery, MySQL and pgSQL are supported, and the system only allows for one single type of DB connection.**
   - For BigQuery, a gcp access key is needed. Please follow this [gcp doc](https://cloud.google.com/iam/docs/keys-create-delete) to generate an service account key, and set the BQ_KEY field to the path to your key file.
+    - If you use the default roles, please grant the following two roles to the acocunt:
+      - `BigQuery Data Viewer`
+      - `BigQuery Job User`
+    - Or if you prefer to use a custom role, please make user the following permissions are granted to the role:
+      - `bigquery.datasets.get`
+      - `bigquery.jobs.create`
+      - `bigquery.tables.get`
+      - `bigquery.tables.getData`
+      - `bigquery.tables.list`
   - For MySQL and PgSQL, a standard db connection string should be used (see the example in the `.env.example`).
 - [Optional] Whitelist databases and tables.
   - You might want to limit the databases / tables this tool can access, you can do so by list the databases in a comma separated string in the `DATABASES` field, and / or comma separated `dbname.tablename` list in the `TABLES` field.
