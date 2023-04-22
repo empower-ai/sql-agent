@@ -98,7 +98,7 @@ settings:
 
 ### Start the App
 
-Run `npm start prod`
+Run `npm run prod`
 
 #### In addition to the environment variables mentioned above, here are some additional variables:
 * `ENABLE_EMBEDDING_INDEX` (boolean): Toggle the embedding index for tables. By default it is disabled, enable this if you have more than 10 tables.
