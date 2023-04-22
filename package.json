@@ -3,6 +3,9 @@
     "start": "NODE_ENV=development tsc-watch --onSuccess \"nodemon     dist/index.js\"",
     "prod": "NODE_ENV=production tsc && node dist/index.js"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "devDependencies": {
     "@types/node": "^18.15.11",
     "@types/node-fetch": "^2.6.3",

@@ -13,6 +13,12 @@ import handleRunEditedQuery from './slack/event-handlers/run-edited-query.js';
 import DataQuestionAgent from './agent/data-question-agent.js';
 import loadDataSource from './datasource/index.js';
 import { buildDataSourceContextIndex } from './indexes/index.js';
+
+const NODE_MAJOR_VERSION = parseInt(process.versions.node.split('.')[0]);
+if (NODE_MAJOR_VERSION < 18) {
+  throw new Error('DSensei requires Node version 18 or higher, please upgrade your node version.');
+}
+
 dotenv.config();
 
 const logger = getLogger('SlackApp');

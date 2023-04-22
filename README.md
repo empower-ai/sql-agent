@@ -25,6 +25,7 @@ Complex query, get number of movies, most popular movie and most popular actor.
 
 Before installing DSensei, ensure that you have the following:
 
+- Node version >= 18
 - A Slack workspace
 - Admin access to the Slack workspace
 - OpenAI API key for GPT-3 authentication
