@@ -6,7 +6,7 @@ import getLogger from '../utils/logger.js';
 import sharp from 'sharp';
 
 export default class DataVizAgent {
-  private readonly PROMPT = 'Write me a vega spec for this data: \n';
+  private readonly PROMPT = 'Write me a bar chart vega spec for this data: \n';
   private readonly logger = getLogger('DataVizAgent');
 
   public async viz(data: string): Promise<Viz> {
@@ -26,17 +26,6 @@ export default class DataVizAgent {
       }
 
       const specObject = JSON.parse(spec);
-      if (specObject.width == null && specObject.height == null) {
-        specObject.width = 1500;
-        specObject.height = 1500;
-      } else {
-        const larger = Math.max(specObject.width, specObject.height);
-        if (larger < 1500) {
-          const ratio = 1500 / larger;
-          specObject.width = Math.round(specObject.width * ratio);
-          specObject.height = Math.round(specObject.height * ratio);
-        }
-      }
 
       this.logger.debug(`Vega spec: ${spec}`);
 
@@ -46,7 +35,7 @@ export default class DataVizAgent {
 
         await view.runAsync();
         const svg = await view.toSVG();
-        const buffer = await sharp(Buffer.from(svg)).toFormat('png').toBuffer();
+        const buffer = await sharp(Buffer.from(svg), { density: 300 }).toFormat('png').toBuffer();
 
         return {
           hasResult: true,

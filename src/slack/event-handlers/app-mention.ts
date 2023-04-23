@@ -70,7 +70,7 @@ export default async function handleAppMention(app: App, agent: DataQuestionAgen
           channels: event.channel,
           thread_ts: event.thread_ts ?? event.ts,
           file: viz.image,
-          filename: 'viz.svg',
+          filename: 'viz.png',
           title: 'Visualization',
           initial_comment: 'Here is the visualization of the result.'
         });
