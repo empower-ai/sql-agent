@@ -52,7 +52,7 @@ export default class BigQuerySource extends DataSource {
     const fieldDefinitions: FieldDefinition[] = schema.fields.map((field) => {
       const baseFieldDefinition = {
         name: field.name!,
-        description: field.description ?? '',
+        description: field.description ?? ''
       };
 
       switch (field.mode) {
@@ -86,35 +86,57 @@ export default class BigQuerySource extends DataSource {
           return `${table.getUniqueID()}|${field.name}`
         })
     );
+
     const prompt =
       'I will give you a list of comma separated table and columns the format of "table_name|column_name".\n' +
-      'List: ' + candidateTablesAndColumns.join(',') + '\n' +
-      'Give me all the possible columns that contain values that are limited to a specific set of options.\n' +
-      'You should return PLAIN TEXT comma separated list ONLY with format of table_name|column_name, NO explanation, NO markdown.';
+      'List: "' + candidateTablesAndColumns.join(',') + '"\n' +
+      'Give me all the elements IN THE LIST that contain values that are limited to a LIMITED set of options.\n' +
+      'EXCLUDE all the elements that might be an ID column.\n' +
+      'You should return PLAIN TEXT comma separated list ONLY with format of table_name|column_name, NO explanation, NO markdown.\n' +
+      'If you think there is no such column, just say "No such column".';
+
     let result = (await openAI.sendMessage(prompt)).text;
     if (result[result.length - 1] === '.') {
       // remove trailing period, just in case
       result = result.slice(0, -1);
     }
 
-    this.logger.info(`Converting string columns: ${result} into enums.`);
+    if (result.toLocaleLowerCase().includes('no such column')) {
+      this.logger.info('Skip enrichment, no possible enum column.');
+      return;
+    }
+
+    const sanitizedResult = result.split(',')
+      .map(tableAndColumn => tableAndColumn.trim())
+      .filter(tableAndColumn => candidateTablesAndColumns.includes(tableAndColumn))
+      .filter(tableAndColumn => !tableAndColumn.endsWith('_id') && !tableAndColumn.endsWith('ID'));
+    if (sanitizedResult.length === 0) {
+      this.logger.info('Skip enrichment, no possible enum column.');
+      return;
+    }
+
+    this.logger.info(`Converting string columns: ${sanitizedResult} into enums.`);
     await Promise.all(
-      result.split(',').map(async tableAndColumn => {
-        const [uniqueId, column] = tableAndColumn.trim().split('|');
+      sanitizedResult.map(async tableAndColumn => {
+        const [uniqueId, column] = tableAndColumn.split('|');
         const query = `SELECT DISTINCT(${column}) as result FROM ${uniqueId} where ${column} IS NOT NULL LIMIT 200;`;
-        await this.runQuery(query)
-          .then(({ rows }) => {
-            const table = this.getTables().find(table => table.getUniqueID() === uniqueId);
-            const columnField = table?.fields.find(field => field.name === column);
+        try {
+          await this.runQuery(query)
+            .then(({ rows }) => {
+              const table = this.getTables().find(table => table.getUniqueID() === uniqueId);
+              const columnField = table?.fields.find(field => field.name === column);
 
-            if (columnField === undefined) {
-              this.logger.warn(`Could not find associated table ${uniqueId} and column ${column} when enriching the table schema.`);
-            }
+              if (columnField === undefined) {
+                this.logger.warn(`Could not find associated table ${uniqueId} and column ${column} when enriching the table schema.`);
+              }
 
-            columnField!.type = `ENUM[${rows!.map(row => row.result).join(',')}]`
-          });
-      })
-    );
+              columnField!.type = `ENUM[${rows!.map(row => row.result).join(',')}]`
+            });
+        } catch (error) {
+          this.logger.warn(`Error happened when trying to enrich ${uniqueId} and column ${column}, skip this column. Error: ${error}.`);
+        }
+      }));
+
     this.logger.info('Enrichment finished.');
   }
 
