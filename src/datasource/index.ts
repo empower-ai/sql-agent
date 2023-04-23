@@ -5,13 +5,18 @@ import BigQuerySource from './datasources/bigquery.js';
 import MysqlSource from './datasources/mysql.js';
 import { PgsqlSource } from './datasources/pgsql.js';
 
-const databases = process.env.DATABASES != null ? process.env.DATABASES.split(',') : [];
-const tables = process.env.TABLES != null ? process.env.TABLES.split(',') : [];
-
 const logger = getLogger('DataSourceLoader');
 export default function loadDataSource(): DataSource {
   if (configLoader.getBqKey() == null && process.env.DB_CONNECTION == null) {
     throw new Error('Both BQ_KEY and DB_CONNECTION are set. Please set only one of them.');
+  }
+
+  const databases = process.env.DATABASES != null ? process.env.DATABASES.split(',') : [];
+  const tables = process.env.TABLES != null ? process.env.TABLES.split(',') : [];
+
+  const invalidTables = tables.filter(table => !table.includes('.'));
+  if (invalidTables.length > 0) {
+    throw new Error(`Invalid whitelist table: ${invalidTables.join(', ')}. Please make sure the whitelisted table names include the database name with format {database_name|dataset_name}.{table_name}.`);
   }
 
   let dataSource: DataSource;

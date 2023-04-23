@@ -73,6 +73,10 @@ export abstract class DataSource {
     this.databases = await Promise.all(
       databases.map(async database => await this.loadDatabase(database))
     );
+
+    if (this.databases.flatMap(database => database.schemas).length === 0) {
+      throw new Error('No table loaded, please double check your data source and whitelist tables.');
+    }
     this.logger.info(`All ${databases.length} databases are loaded.`);
   }
 
