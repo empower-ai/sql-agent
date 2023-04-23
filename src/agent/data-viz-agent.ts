@@ -15,7 +15,7 @@ export default class DataVizAgent {
     this.logger.debug(`Prompt: ${prompt}`);
     let response = await openAI.sendMessage(prompt);
 
-    while (count++ < 3) {
+    while (count++ < 5) {
       const spec = this.getSpecBlock(response.text);
 
       if (spec == null) {
@@ -54,7 +54,7 @@ export default class DataVizAgent {
         }
       } catch (err) {
         this.logger.debug(`Error running query: ${err}`);
-        const errorPrompt = `There was an error visualizing this spec \n${spec}, The error message is:${err}\nPlease correct it and send again.`;
+        const errorPrompt = `There was an error visualizing this spec \n${spec}, The error message is:${err}\nPlease fix the error and send the correct spec`;
         this.logger.debug(`Error prompt: ${errorPrompt}`);
         response = await openAI.sendMessage(errorPrompt);
       }

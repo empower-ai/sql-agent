@@ -74,6 +74,11 @@ export default async function handleAppMention(app: App, agent: DataQuestionAgen
           title: 'Visualization',
           initial_comment: 'Here is the visualization of the result.'
         });
+      } else {
+        await say({
+          text: 'Unfortunately I am unable to visualize the result.',
+          thread_ts: event.thread_ts ?? event.ts
+        });
       }
     } catch (error) {
       await say({
