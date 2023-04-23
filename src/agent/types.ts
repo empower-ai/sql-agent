@@ -6,3 +6,8 @@ export interface Answer {
   err?: string
   rows?: Row[]
 }
+
+export interface Viz {
+  image?: Buffer
+  hasResult: boolean
+}

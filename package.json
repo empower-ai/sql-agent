@@ -1,7 +1,8 @@
 {
   "scripts": {
     "start": "NODE_ENV=development tsc-watch --onSuccess \"nodemon     dist/index.js\"",
-    "prod": "NODE_ENV=production tsc && node dist/index.js"
+    "prod": "NODE_ENV=production tsc && node dist/index.js",
+    "test": "ts-node ./src/test.ts"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -24,6 +25,8 @@
     "@slack/bolt": "^3.13.0",
     "@slack/web-api": "^6.8.1",
     "body-parser": "^1.20.2",
+    "cairo": "^0.1.0-alpha.3",
+    "canvas": "^2.11.2",
     "chatgpt": "^5.2.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
@@ -32,11 +35,15 @@
     "langchain": "^0.0.54",
     "mysql": "^2.18.1",
     "mysql2": "^3.2.0",
+    "nan": "^2.17.0",
     "node-fetch": "^3.3.1",
     "openai": "^3.2.1",
     "pg": "^8.10.0",
     "rxjs": "^7.8.0",
+    "sharp": "^0.32.0",
     "sqlite3": "^5.1.6",
+    "vega": "^5.24.0",
+    "vega-lite": "^5.7.1",
     "winston": "^3.8.2"
   },
   "type": "module"

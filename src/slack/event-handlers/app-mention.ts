@@ -3,11 +3,16 @@ import SlackTable from '../../utils/slacktable.js';
 import type DataQuestionAgent from '../../agent/data-question-agent.js';
 import getLogger from '../../utils/logger.js';
 import { getEditQueryBlocks, getErrorBlock, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks.js';
+import DataVizAgent from '../../agent/data-viz-agent.js';
+import { WebClient } from '@slack/web-api';
 
 const logger = getLogger('Event Handler');
 
 export default async function handleAppMention(app: App, agent: DataQuestionAgent): Promise<void> {
   const func = async ({ event, say }: { event: any, say: any }): Promise<void> => {
+    const vizAgent = new DataVizAgent();
+    const webClient = new WebClient(process.env.SLACK_BOT_TOKEN);
+
     logger.debug(`Received app_mention event: ${JSON.stringify(event)}`);
     try {
       const answer = await agent.answer(event.text, event.thread_ts ?? event.ts);
@@ -58,9 +63,22 @@ export default async function handleAppMention(app: App, agent: DataQuestionAgen
         },
         thread_ts: event.thread_ts ?? event.ts
       });
+
+      const viz = await vizAgent.viz(result.content);
+      if (viz.image != null) {
+        await webClient.files.upload({
+          channels: event.channel,
+          thread_ts: event.thread_ts ?? event.ts,
+          file: viz.image,
+          filename: 'viz.svg',
+          title: 'Visualization',
+          initial_comment: 'Here is the visualization of the result.'
+        });
+      }
     } catch (error) {
       await say({
-        text: 'An error occurred while processing your request, please try again later.'
+        text: 'An error occurred while processing your request, please try again later.',
+        thread_ts: event.thread_ts ?? event.ts
       });
       console.error(error);
     }

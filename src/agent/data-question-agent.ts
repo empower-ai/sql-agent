@@ -52,7 +52,7 @@ export default class DataQuestionAgent {
       } catch (err) {
         logger.debug(`Error running query: ${err}`);
         lastErr = err;
-        const errorPrompt = `There was an error running your query \n${query}, The error message is:${err}\nPlease correct it and send again.`;
+        const errorPrompt = `There was an error running using the \n${query}, The error message is:${err}\nPlease correct it and send again.`;
         logger.debug(`Error prompt: ${errorPrompt}`);
         response = await openAI.sendMessage(errorPrompt, this.lastMessageIds.get(conversationId));
         logger.debug(`Response: ${response.text}`);
