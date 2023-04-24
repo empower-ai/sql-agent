@@ -1,6 +1,6 @@
 import { BigQuery, type FormattedMetadata } from '@google-cloud/bigquery';
 import { DataSource } from '../datasource.js';
-import { DataSourceType, type FieldDefinition, TableSchema } from '../types.js';
+import { DataSourceType, type FieldDefinition, TableSchema, type TableInfo } from '../types.js';
 import { type Row } from '../../utils/slacktable.js';
 import openAI from '../../openai/openai.js';
 import { type Answer } from '../../agent/types.js';
@@ -41,12 +41,12 @@ export default class BigQuerySource extends DataSource {
     return tables.map((table) => table.id!);
   }
 
-  protected async loadTableSchema(database: string, table: string): Promise<TableSchema> {
+  protected async loadTableSchema(database: string, table: TableInfo): Promise<TableSchema> {
     const [{ schema, description }] =
-      (await this.bigquery.dataset(database).table(table).getMetadata()) as FormattedMetadata[];
+      (await this.bigquery.dataset(database).table(table.name).getMetadata()) as FormattedMetadata[];
 
     if ((schema?.fields) == null) {
-      throw new Error(`${database}, ${table} has no fields.`);
+      throw new Error(`${database}, ${table.name} has no fields.`);
     }
 
     const fieldDefinitions: FieldDefinition[] = schema.fields.map((field) => {
@@ -71,11 +71,13 @@ export default class BigQuerySource extends DataSource {
       }
     });
     return new TableSchema(
-      table,
+      table.name,
       database,
       description ?? '',
       fieldDefinitions,
-      DataSourceType.BigQuery
+      DataSourceType.BigQuery,
+      table.isSuffixPartitionTable,
+      table.suffixes
     );
   }
 
@@ -119,7 +121,13 @@ export default class BigQuerySource extends DataSource {
     await Promise.all(
       sanitizedResult.map(async tableAndColumn => {
         const [uniqueId, column] = tableAndColumn.split('|');
-        const query = `SELECT DISTINCT(${column}) as result FROM ${uniqueId} where ${column} IS NOT NULL LIMIT 200;`;
+        const tableSchema = this.getTable(uniqueId)!;
+
+        // Only use latest two partitions for efficiency concern
+        const additionalWhereClause = tableSchema.isSuffixPartitionTable
+          ? `AND _TABLE_SUFFIX IN (${tableSchema.getTopSuffixes().map(suffix => `'${suffix}'`).join(',')})`
+          : '';
+        const query = `SELECT DISTINCT(${column}) as result FROM \`${uniqueId}\` where ${column} IS NOT NULL ${additionalWhereClause} LIMIT 200;`;
         try {
           await this.runQuery(query)
             .then(({ rows }) => {
@@ -138,6 +146,18 @@ export default class BigQuerySource extends DataSource {
       }));
 
     this.logger.info('Enrichment finished.');
+  }
+
+  protected tryExtractPartitionTable(tableName: string): string | [string, string] {
+    const suffixTableRegex = /(.*)_(\d{8})$/;
+
+    const extracted = suffixTableRegex.exec(tableName);
+
+    if (extracted == null) {
+      return tableName;
+    }
+
+    return [`${extracted[1]}_*`, extracted[2]];
   }
 
   public async runQuery(query: string): Promise<Answer> {

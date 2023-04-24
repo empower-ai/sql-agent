@@ -1,7 +1,7 @@
 import { type Logger } from 'winston';
 import getLogger from '../utils/logger.js';
 import { type Row } from '../utils/slacktable.js';
-import { type DataSourceType, type DatabaseSchema, type TableSchema } from './types.js';
+import { type TableInfo, type DataSourceType, type DatabaseSchema, type TableSchema } from './types.js';
 import { type Answer } from '../agent/types.js';
 
 export abstract class DataSource {
@@ -25,6 +25,12 @@ export abstract class DataSource {
   public getTables(): TableSchema[] {
     return this.databases.flatMap(
       databaseSchema => databaseSchema.schemas
+    );
+  }
+
+  public getTable(uniqueId: string): TableSchema | undefined {
+    return this.getTables().find(
+      tableSchema => tableSchema.getUniqueID() === uniqueId
     );
   }
 
@@ -57,7 +63,8 @@ export abstract class DataSource {
       basePrompt +
       '\n' +
       JSON.stringify(this.getTables()
-        .filter((table) => tableIds.includes(table.getUniqueID()))
+        .filter(table => tableIds.includes(table.getUniqueID()))
+        .map(table => table.convertForContextPrompt())
       ) +
       '\n' +
       'Respond I understand to start the conversation.'
@@ -80,17 +87,61 @@ export abstract class DataSource {
     this.logger.info(`All ${databases.length} databases are loaded.`);
   }
 
+  protected tryExtractPartitionTable(table: string): string | [string, string] {
+    return table;
+  }
+
+  protected isTableAllowed(table: string, database: string): boolean {
+    if (this.allowedTables.length === 0) {
+      return true;
+    }
+
+    const fullTableName = `${database}.${table}`;
+    const matchRegex = this.allowedTables.find(allowedTable => {
+      const regexStr = '^' + allowedTable.split('*')
+        .map((str: string) => str.replace(/([.*+?^=!:${}()|\\[\\]\/\\])/g, '\\$1'))
+        .join('.*') + '$';
+      return new RegExp(regexStr).test(fullTableName);
+    }) != null;
+    return matchRegex ||
+      this.allowedTables.includes(fullTableName);
+  }
+
   protected async loadDatabase(database: string): Promise<DatabaseSchema> {
-    const tables = (await this.loadTableNames(database)).filter(
-      (table: string) => this.allowedTables.length === 0 || this.allowedTables.includes(`${database}.${table}`)
-    );
+    const tables = (await this.loadTableNames(database))
+      .filter(table => this.isTableAllowed(table, database));
+
+    const extractTables = new Map<string, TableInfo>();
+    for (const table of tables) {
+      const extracted = this.tryExtractPartitionTable(table);
+
+      if (typeof extracted === 'string') {
+        extractTables.set(table, {
+          name: table,
+          isSuffixPartitionTable: false
+        });
+        continue;
+      }
+
+      const [tableName, partitionSuffix] = extracted;
+      if (extractTables.has(tableName)) {
+        extractTables.get(tableName)?.suffixes!.push(partitionSuffix);
+        continue;
+      }
+      extractTables.set(tableName, {
+        name: tableName,
+        isSuffixPartitionTable: true,
+        suffixes: [partitionSuffix]
+      });
+    }
 
     return await Promise.all(
-      tables.map(async table => await this.loadTableSchema(database, table)
-        .then(schema => {
-          this.logger.info(`Loaded table: ${schema.getUniqueID()}`);
-          return schema;
-        }))
+      Array.from(extractTables.values())
+        .map(async table => await this.loadTableSchema(database, table)
+          .then(schema => {
+            this.logger.info(`Loaded table: ${schema.getUniqueID()}`);
+            return schema;
+          }))
     ).then(schemas => ({
       name: database,
       schemas
@@ -105,7 +156,7 @@ export abstract class DataSource {
   public abstract readonly dataSourceType: DataSourceType;
   protected abstract loadDatabaseNames(): Promise<string[]>;
   protected abstract loadTableNames(database: string): Promise<string[]>;
-  protected abstract loadTableSchema(database: string, table: string): Promise<TableSchema>;
+  protected abstract loadTableSchema(database: string, table: TableInfo): Promise<TableSchema>;
   protected async enrichTableSchema(): Promise<void> { }
 
   public abstract runQuery(query: string): Promise<Answer>;
