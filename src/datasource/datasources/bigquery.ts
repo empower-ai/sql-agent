@@ -149,7 +149,7 @@ export default class BigQuerySource extends DataSource {
   }
 
   protected tryExtractPartitionTable(tableName: string): string | [string, string] {
-    const suffixTableRegex = /(.*)_(\d{8})$/;
+    const suffixTableRegex = /(.*)_(\d{8}|\d{10})$/;
 
     const extracted = suffixTableRegex.exec(tableName);
 
