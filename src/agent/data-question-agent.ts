@@ -1,3 +1,4 @@
+import configLoader from '../config/loader.js';
 import { type DataSource } from '../datasource/datasource.js';
 import type DataSourceContextIndex from '../indexes/types.js';
 import openAI from '../openai/openai.js';
@@ -22,9 +23,11 @@ export default class DataQuestionAgent {
     if (!this.lastMessageIds.has(conversationId)) {
       const contextPrompt = this.dataSource.getContextPrompt(relatedTableIds);
       logger.debug(`Context prompt:\n${contextPrompt}`);
-      const contextResponse = await openAI.sendMessage(contextPrompt);
+      let contextResponse = await openAI.sendMessage(contextPrompt);
+      let lastMessageId = contextResponse.id;
       logger.debug(`Context prompt response:\n${contextResponse.text}`);
-      this.lastMessageIds.set(conversationId, contextResponse.id);
+
+      this.lastMessageIds.set(conversationId, lastMessageId);
     }
 
     const questionPrompt = this.dataSource.getQuestionPrompt(question);

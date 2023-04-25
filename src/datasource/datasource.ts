@@ -3,6 +3,7 @@ import getLogger from '../utils/logger.js';
 import { type Row } from '../utils/slacktable.js';
 import { type TableInfo, type DataSourceType, type DatabaseSchema, type TableSchema } from './types.js';
 import { type Answer } from '../agent/types.js';
+import configLoader from '../config/loader.js';
 
 export abstract class DataSource {
   protected readonly allowedDatabases: string[];
@@ -47,29 +48,36 @@ export abstract class DataSource {
   }
 
   public getContextPrompt(tableIds: string[]): string {
-    const basePrompt = `I will give you a list of ${this.dataSourceType} tables schemas, and ask you questions about these tables like Question: {question}.\n` +
-      'You might need to join tables to answer the questions. \n' +
-      'MAKE SURE the table in the where clause appear in the tables or temp tables you selected from.\n' +
-      'MAKE SURE in the where clause do not compare date with timestamp.\n' +
-      'MAKE SURE to ALWAYS use DATE() function to TIMESTAMP columns to DATE before calling DATE_TRUNC function.\n' +
-      'You can ONLY read, cannot UPDATE or DELETE or MAKE ANY CHANGES to the data.\n' +
-      'It is Okay to make assumptions to answer the question but DO NOT include the assumptions into the response.\n' +
-      "If you are not sure about the answer even with assumptions, just say I don't know, or ask clarify questions.\n" +
-      `You should return PLAIN TEXT ${this.dataSourceType} query for the question ONLY, NO explanation, NO markdown.\n` +
-      'MAKE SURE there is no content after the query.\n' +
-      (this.includeDatabaseNameInQuery() ? 'Table name in the query should be database_name.table_name\n' : '') +
-      'The table schema is a list of JSON objects of {} are below:'
-
-    return (
-      basePrompt +
-      '\n' +
+    let basePrompt =
+      `I will give you a list of ${this.dataSourceType} tables schemas in JSON, context for clarification and instructions to follow.\n` +
+      'Then I will ask you questions about these tables like Question: {question}. You might need to join tables to answer the questions.\n\n' +
+      'Below is the format:\n' +
+      'Table Schema: (JSON array)\n' +
+      'Context: (sentences)\n' +
+      'Instructions: (sentences)\n\n' +
+      'Table Schema:\n' +
       JSON.stringify(this.getTables()
         .filter(table => tableIds.includes(table.getUniqueID()))
         .map(table => table.convertForContextPrompt())
-      ) +
-      '\n' +
-      'Respond I understand to start the conversation.'
-    );
+      ) + '\n\n';
+
+    if (configLoader.getAdditionalContext() != null) {
+      basePrompt = basePrompt + `Context: \n${configLoader.getAdditionalContext()}\n\n`;
+    }
+
+    basePrompt = basePrompt + 'Instructions:\n' +
+    '* The table in the where clause appear in the tables or temp tables you selected from.\n' +
+    '* Use FORMAT_DATE(), DO NOT use DATE_TRUNC(), DO NOT use DATE_TRUNC(), DO NOT use DATE_TRUNC().\n' +
+    '* Convert TIMESTAMP to DATE using DATE().\n' +
+    '* Use full column name including the table name.\n' +
+    '* You can ONLY read, cannot UPDATE or DELETE or MAKE ANY CHANGES to the data.\n' +
+    '* It is Okay to make assumptions to answer the question but DO NOT include the assumptions into the response.\n' +
+    '* If you are not sure about the answer even with assumptions, just say I don\'t know, or ask clarify questions.\n' +
+    `* You should return PLAIN TEXT ${this.dataSourceType} query for the question ONLY, NO explanation, NO markdown.\n` +
+    '* NO content after the query.\n' +
+    (this.includeDatabaseNameInQuery() ? '* Table name in the query should be database_name.table_name.\n\n' : '');
+
+    return basePrompt + '\n\nRespond I understand to start the conversation.';
   }
 
   protected async loadSchemas(): Promise<void> {
