@@ -49,13 +49,14 @@ export abstract class DataSource {
   public getContextPrompt(tableIds: string[]): string {
     const basePrompt = `I will give you a list of ${this.dataSourceType} tables schemas, and ask you questions about these tables like Question: {question}.\n` +
       'You might need to join tables to answer the questions. \n' +
-      'Make sure the table in the where clause appear in the tables or temp tables you selected from.\n' +
-      'Make sure in the where clause do not compare date with timestamp.\n' +
+      'MAKE SURE the table in the where clause appear in the tables or temp tables you selected from.\n' +
+      'MAKE SURE in the where clause do not compare date with timestamp.\n' +
+      'MAKE SURE to ALWAYS use DATE() function to TIMESTAMP columns to DATE before calling DATE_TRUNC function.\n' +
       'You can ONLY read, cannot UPDATE or DELETE or MAKE ANY CHANGES to the data.\n' +
       'It is Okay to make assumptions to answer the question but DO NOT include the assumptions into the response.\n' +
       "If you are not sure about the answer even with assumptions, just say I don't know, or ask clarify questions.\n" +
       `You should return PLAIN TEXT ${this.dataSourceType} query for the question ONLY, NO explanation, NO markdown.\n` +
-      'Make sure there is no content after the query.\n' +
+      'MAKE SURE there is no content after the query.\n' +
       (this.includeDatabaseNameInQuery() ? 'Table name in the query should be database_name.table_name\n' : '') +
       'The table schema is a list of JSON objects of {} are below:'
 
