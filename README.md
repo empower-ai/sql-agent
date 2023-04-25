@@ -16,7 +16,7 @@ We're passionately developing this project and would love for you to be a part o
 
 ## Demo
 
-![](https://github.com/logunify/dsensei/blob/main/docs/images/queries.gif)
+![](https://github.com/logunify/dsensei/blob/main/docs/images/follow-up.gif)
 Complex query, get number of movies, most popular movie and most popular actor.
 
 ## Installation
@@ -142,9 +142,11 @@ With DSensei, you can easily access data insights through natural language proce
 
 ## More Demos
 Show databases, tables and table schema:
-![](https://github.com/logunify/dsensei/blob/main/docs/images/metadata.gif)
+![](https://github.com/logunify/dsensei/blob/main/docs/images/schema.gif)
 Edit queries in place if there are errors in the query:
 ![](https://github.com/logunify/dsensei/blob/main/docs/images/edit.gif)
+Simple query to pull data from db:
+![](https://github.com/logunify/dsensei/blob/main/docs/images/query.gif)
 
 ## Known Issues
 
