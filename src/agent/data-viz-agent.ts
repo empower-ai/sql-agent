@@ -6,7 +6,10 @@ import getLogger from '../utils/logger.js';
 import sharp from 'sharp';
 
 export default class DataVizAgent {
-  private readonly PROMPT = 'Write me a bar chart vega spec for this data: \n';
+  private readonly PROMPT = 'select the right chart type from to visualize following data, ' +
+      'and write a vega spec for me. You should only use one of ' +
+      '"bar chart", "line chart", or "pie chart \n';
+
   private readonly logger = getLogger('DataVizAgent');
 
   public async viz(data: string): Promise<Viz> {
