@@ -80,6 +80,13 @@ export abstract class DataSource {
     return basePrompt + '\n\nRespond I understand to start the conversation.';
   }
 
+  public async tryFixAndRun(query: string): Promise<Answer> {
+    return {
+      query,
+      hasResult: false
+    }
+  };
+
   protected async loadSchemas(): Promise<void> {
     const databases = (await this.loadDatabaseNames()).filter(
       (database: string) => this.allowedDatabases.length === 0 || this.allowedDatabases.includes(database)

@@ -52,6 +52,11 @@ export default class DataQuestionAgent {
         logger.info(`Fetched query to execute for question: ${question}. Query: \n${query}`);
         return await this.dataSource.runQuery(query);
       } catch (err) {
+        const rerunResult = await this.dataSource.tryFixAndRun(query);
+        if (rerunResult.hasResult) {
+          return rerunResult;
+        }
+
         logger.debug(`Error running query: ${err}`);
         lastErr = err;
         const errorPrompt = `There was an error running your query \n${query}, The error message is:${err}\nPlease correct it and send again.`;

@@ -5,6 +5,22 @@ import { type Row } from '../../utils/slacktable.js';
 import openAI from '../../openai/openai.js';
 import { type Answer } from '../../agent/types.js';
 
+const dateParts: string[] = [
+  'DAY',
+  'WEEK',
+  'MONTH',
+  'QUARTER',
+  'YEAR',
+  'ISOYEAR',
+  'WEEK(SUNDAY)',
+  'WEEK(MONDAY)',
+  'WEEK(TUESDAY)',
+  'WEEK(WEDNESDAY)',
+  'WEEK(THURSDAY)',
+  'WEEK(FRIDAY)',
+  'WEEK(SATURDAY)'
+];
+
 // This class currently does a lot of things, but it's a good start.
 // * Loads the BigQuery client, and the tables and schemas.
 // * Holds the prompts for openAI
@@ -188,4 +204,37 @@ export default class BigQuerySource extends DataSource {
       };
     });
   }
+
+  public async tryFixAndRun(query: string): Promise<Answer> {
+    // Try fix common mistake with date like: DATE_TRUNC('week', CURRENT_DATE())
+    const regex = /DATE_TRUNC\((.*),(.*)\)/g;
+
+    let res: RegExpExecArray | null;
+    let fixedQuery = query;
+    while ((res = regex.exec(query)) != null) {
+      const datePart = dateParts.find(datePart => `'${datePart.toLowerCase()}'` === res![1].toLowerCase());
+      if (datePart != null) {
+        const fixedExpression = `DATE_TRUNC(${res[2].trim()}, ${datePart})`;
+
+        fixedQuery = fixedQuery.substring(0, res.index) + fixedExpression + fixedQuery.substring(res.index + res[0].length);
+      }
+    }
+    if (fixedQuery === query) {
+      return {
+        query,
+        hasResult: false
+      };
+    }
+
+    this.logger.debug(`Fixed query: ${fixedQuery}`);
+    try {
+      return await this.runQuery(fixedQuery);
+    } catch (err) {
+      return {
+        query,
+        hasResult: false,
+        err: `${err}`
+      };
+    }
+  };
 }
