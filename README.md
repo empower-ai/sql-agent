@@ -1,5 +1,9 @@
 # <img valign="middle" src="https://github.com/logunify/dsensei/blob/main/docs/images/logo.png" width="65" height="65"/>   DSensei
 
+[![slack](https://img.shields.io/badge/SlackDemo-@DSensei-brightgreen.svg?logo=slack)](https://join.slack.com/t/dsensei-demo/shared_invite/zt-1tt55ia3p-jMlofj8YHGnCMjuu30vJeg)
+[![Discord](https://img.shields.io/badge/discord-@DSensei-blue.svg?logo=discord)](https://discord.gg/fRzNUEugRU)
+
+
 Are you tired of struggling with complex SQL queries just to retrieve data from your databases? Meet DSensei, the open source Slack bot that makes it easy and natural to find the information you need. By harnessing the power of ChatGPT, DSensei understands natural language commands and can query databases such as BigQuery, MySQL, and PostgreSQL on your behalf.
 
 But DSensei is more than just a chatbot — it's your personal data sensei. With its intuitive interface and powerful capabilities, DSensei empowers you to effortlessly explore and analyze your data. Say goodbye to tedious SQL queries and hello to a smarter way of working. Install DSensei in your Slack workspace today and start discovering new insights in seconds.
@@ -15,6 +19,8 @@ We're passionately developing this project and would love for you to be a part o
 - [Known Issues](#Known-Issues)
 
 ## Demo
+
+Try a live demo of DSensei in our [Slack Channel](https://join.slack.com/t/dsensei-demo/shared_invite/zt-1tt55ia3p-jMlofj8YHGnCMjuu30vJeg)
 
 ![](https://github.com/logunify/dsensei/blob/main/docs/images/follow-up.gif)
 Complex query, get number of movies, most popular movie and most popular actor.
