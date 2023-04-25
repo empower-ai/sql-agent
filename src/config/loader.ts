@@ -32,6 +32,10 @@ class ConfigLoader {
   public getAdditionalContext(): string | null {
     return this.additionalContext;
   }
+
+  public getVizEnabled(): boolean {
+    return process.env.ENABLE_VIZ?.toLowerCase() === 'true';
+  }
 }
 
 const configLoader = new ConfigLoader();
