@@ -127,10 +127,14 @@ export default class BigQuerySource extends DataSource {
         const additionalWhereClause = tableSchema.isSuffixPartitionTable
           ? `AND _TABLE_SUFFIX IN (${tableSchema.getTopSuffixes().map(suffix => `'${suffix}'`).join(',')})`
           : '';
-        const query = `SELECT DISTINCT(${column}) as result FROM \`${uniqueId}\` where ${column} IS NOT NULL ${additionalWhereClause} LIMIT 200;`;
+        const query = `SELECT DISTINCT(${column}) as result FROM \`${uniqueId}\` where ${column} IS NOT NULL ${additionalWhereClause} LIMIT 26;`;
         try {
           await this.runQuery(query)
             .then(({ rows }) => {
+              if (rows!.length > 25) {
+                // should not have more than 25 values for an enum
+                return;
+              }
               const table = this.getTables().find(table => table.getUniqueID() === uniqueId);
               const columnField = table?.fields.find(field => field.name === column);
 
