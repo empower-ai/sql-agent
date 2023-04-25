@@ -1,4 +1,3 @@
-import configLoader from '../config/loader.js';
 import { type DataSource } from '../datasource/datasource.js';
 import type DataSourceContextIndex from '../indexes/types.js';
 import openAI from '../openai/openai.js';

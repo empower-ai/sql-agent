@@ -5,6 +5,7 @@ import getLogger from '../../utils/logger.js';
 import { getEditQueryBlocks, getErrorBlock, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks.js';
 import DataVizAgent from '../../agent/data-viz-agent.js';
 import { WebClient } from '@slack/web-api';
+import configLoader from '../../config/loader.js';
 
 const logger = getLogger('Event Handler');
 
@@ -64,21 +65,24 @@ export default async function handleAppMention(app: App, agent: DataQuestionAgen
         thread_ts: event.thread_ts ?? event.ts
       });
 
-      const viz = await vizAgent.viz(result.content);
-      if (viz.image != null) {
-        await webClient.files.upload({
-          channels: event.channel,
-          thread_ts: event.thread_ts ?? event.ts,
-          file: viz.image,
-          filename: 'viz.png',
-          title: 'Visualization',
-          initial_comment: 'Here is the visualization of the result.'
-        });
-      } else {
-        await say({
-          text: 'Unfortunately I am unable to visualize the result.',
-          thread_ts: event.thread_ts ?? event.ts
-        });
+      // Turn on viz in .env file to enable visualization
+      if (configLoader.getVizEnabled()) {
+        const viz = await vizAgent.viz(result.content);
+        if (viz.image != null) {
+          await webClient.files.uploadV2({
+            channel_id: event.channel,
+            thread_ts: event.thread_ts ?? event.ts,
+            file: viz.image,
+            filename: 'viz.png',
+            title: 'Visualization',
+            initial_comment: 'Here is the visualization of the result.'
+          });
+        } else {
+          await say({
+            text: 'Unfortunately I am unable to visualize the result.',
+            thread_ts: event.thread_ts ?? event.ts
+          });
+        }
       }
     } catch (error) {
       await say({

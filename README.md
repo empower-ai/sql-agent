@@ -61,6 +61,8 @@ oauth_config:
       - chat:write
       - commands
       - im:history
+      - files:write
+      - files:read
 settings:
   event_subscriptions:
     bot_events:
@@ -105,6 +107,8 @@ settings:
   - For MySQL and PgSQL, a standard db connection string should be used (see the example in the `.env.example`).
 - [Optional] Whitelist databases and tables.
   - You might want to limit the databases / tables this tool can access, you can do so by list the databases in a comma separated string in the `DATABASES` field, and / or comma separated `dbname.tablename` list in the `TABLES` field.
+- [Optional] You can enable result visualization by setting `ENABLE_VIZ=True`
+  - **Notice: This is still an experimental feature, may subject to chagnes**
 
 ### Start the App
 
