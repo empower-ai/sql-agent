@@ -23,11 +23,10 @@ export default class DataQuestionAgent {
     if (!this.lastMessageIds.has(conversationId)) {
       const contextPrompt = this.dataSource.getContextPrompt(relatedTableIds);
       logger.debug(`Context prompt:\n${contextPrompt}`);
-      let contextResponse = await openAI.sendMessage(contextPrompt);
-      let lastMessageId = contextResponse.id;
+      const contextResponse = await openAI.sendMessage(contextPrompt);
       logger.debug(`Context prompt response:\n${contextResponse.text}`);
 
-      this.lastMessageIds.set(conversationId, lastMessageId);
+      this.lastMessageIds.set(conversationId, contextResponse.id);
     }
 
     const questionPrompt = this.dataSource.getQuestionPrompt(question);
