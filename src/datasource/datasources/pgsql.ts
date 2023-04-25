@@ -1,6 +1,6 @@
 import knex from 'knex';
 import { DataSource } from '../datasource.js';
-import { DataSourceType, TableSchema } from '../types.js';
+import { DataSourceType, type TableInfo, TableSchema } from '../types.js';
 import { type Answer } from '../../agent/types.js';
 import { type Row } from '../../utils/slacktable.js';
 
@@ -42,9 +42,9 @@ export class PgsqlSource extends DataSource {
     return result.rows.map((row: any) => row.table_name);
   }
 
-  protected async loadTableSchema(database: string, table: string): Promise<TableSchema> {
+  protected async loadTableSchema(database: string, table: TableInfo): Promise<TableSchema> {
     const rows = await this.connection.raw(
-      `SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name = '${table}'`
+      `SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name = '${table.name}'`
     );
 
     const fields = rows.rows.map((row: any) => ({
@@ -55,7 +55,7 @@ export class PgsqlSource extends DataSource {
     }));
 
     return new TableSchema(
-      table,
+      table.name,
       database,
       '',
       fields,

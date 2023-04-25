@@ -1,3 +1,4 @@
+import configLoader from '../config/loader.js';
 import { type DataSource } from '../datasource/datasource.js';
 import type DataSourceContextIndex from '../indexes/types.js';
 import openAI from '../openai/openai.js';
@@ -24,6 +25,7 @@ export default class DataQuestionAgent {
       logger.debug(`Context prompt:\n${contextPrompt}`);
       const contextResponse = await openAI.sendMessage(contextPrompt);
       logger.debug(`Context prompt response:\n${contextResponse.text}`);
+
       this.lastMessageIds.set(conversationId, contextResponse.id);
     }
 
@@ -50,6 +52,11 @@ export default class DataQuestionAgent {
         logger.info(`Fetched query to execute for question: ${question}. Query: \n${query}`);
         return await this.dataSource.runQuery(query);
       } catch (err) {
+        const rerunResult = await this.dataSource.tryFixAndRun(query);
+        if (rerunResult.hasResult) {
+          return rerunResult;
+        }
+
         logger.debug(`Error running query: ${err}`);
         lastErr = err;
         const errorPrompt = `There was an error running using the \n${query}, The error message is:${err}\nPlease correct it and send again.`;

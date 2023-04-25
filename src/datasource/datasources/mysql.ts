@@ -1,6 +1,6 @@
 import knex from 'knex';
 import { DataSource } from '../datasource.js';
-import { DataSourceType, TableSchema } from '../types.js';
+import { DataSourceType, type TableInfo, TableSchema } from '../types.js';
 import { type Row } from '../../utils/slacktable.js';
 import { type Answer } from '../../agent/types.js';
 
@@ -49,8 +49,8 @@ export default class MysqlSource extends DataSource {
     return result[0].map((row: any) => row[key]);
   }
 
-  protected async loadTableSchema(database: string, table: string): Promise<TableSchema> {
-    const rows = await this.connection.raw(`DESCRIBE ${database}.${table}`);
+  protected async loadTableSchema(database: string, table: TableInfo): Promise<TableSchema> {
+    const rows = await this.connection.raw(`DESCRIBE ${database}.${table.name}`);
 
     const fields = rows[0].map((row: any) => ({
       name: row.Field,
@@ -60,7 +60,7 @@ export default class MysqlSource extends DataSource {
     }));
 
     return new TableSchema(
-      table,
+      table.name,
       database,
       '',
       fields,

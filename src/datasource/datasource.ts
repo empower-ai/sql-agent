@@ -1,8 +1,9 @@
 import { type Logger } from 'winston';
 import getLogger from '../utils/logger.js';
 import { type Row } from '../utils/slacktable.js';
-import { type DataSourceType, type DatabaseSchema, type TableSchema } from './types.js';
+import { type TableInfo, type DataSourceType, type DatabaseSchema, type TableSchema } from './types.js';
 import { type Answer } from '../agent/types.js';
+import configLoader from '../config/loader.js';
 
 export abstract class DataSource {
   protected readonly allowedDatabases: string[];
@@ -28,6 +29,12 @@ export abstract class DataSource {
     );
   }
 
+  public getTable(uniqueId: string): TableSchema | undefined {
+    return this.getTables().find(
+      tableSchema => tableSchema.getUniqueID() === uniqueId
+    );
+  }
+
   public getDatabases(): DatabaseSchema[] {
     return this.databases;
   }
@@ -41,28 +48,44 @@ export abstract class DataSource {
   }
 
   public getContextPrompt(tableIds: string[]): string {
-    const basePrompt = `I will give you a list of ${this.dataSourceType} tables schemas, and ask you questions about these tables like Question: {question}.\n` +
-      'You might need to join tables to answer the questions. \n' +
-      'Make sure the table in the where clause appear in the tables or temp tables you selected from.\n' +
-      'Make sure in the where clause do not compare date with timestamp.\n' +
-      'You can ONLY read, cannot UPDATE or DELETE or MAKE ANY CHANGES to the data.\n' +
-      'It is Okay to make assumptions to answer the question but DO NOT include the assumptions into the response.\n' +
-      "If you are not sure about the answer even with assumptions, just say I don't know, or ask clarify questions.\n" +
-      `You should return PLAIN TEXT ${this.dataSourceType} query for the question ONLY, NO explanation, NO markdown.\n` +
-      'Make sure there is no content after the query.\n' +
-      (this.includeDatabaseNameInQuery() ? 'Table name in the query should be database_name.table_name\n' : '') +
-      'The table schema is a list of JSON objects of {} are below:'
-
-    return (
-      basePrompt +
-      '\n' +
+    let basePrompt =
+      `I will give you a list of ${this.dataSourceType} tables schemas in JSON, context for clarification and instructions to follow.\n` +
+      'Then I will ask you questions about these tables like Question: {question}. You might need to join tables to answer the questions.\n\n' +
+      'Below is the format:\n' +
+      'Table Schema: (JSON array)\n' +
+      'Context: (sentences)\n' +
+      'Instructions: (sentences)\n\n' +
+      'Table Schema:\n' +
       JSON.stringify(this.getTables()
-        .filter((table) => tableIds.includes(table.getUniqueID()))
-      ) +
-      '\n' +
-      'Respond I understand to start the conversation.'
-    );
+        .filter(table => tableIds.includes(table.getUniqueID()))
+        .map(table => table.convertForContextPrompt())
+      ) + '\n\n';
+
+    if (configLoader.getAdditionalContext() != null) {
+      basePrompt = basePrompt + `Context: \n${configLoader.getAdditionalContext()}\n\n`;
+    }
+
+    basePrompt = basePrompt + 'Instructions:\n' +
+    '* The table in the where clause appear in the tables or temp tables you selected from.\n' +
+    '* Use FORMAT_DATE(), DO NOT use DATE_TRUNC(), DO NOT use DATE_TRUNC(), DO NOT use DATE_TRUNC().\n' +
+    '* Convert TIMESTAMP to DATE using DATE().\n' +
+    '* Use full column name including the table name.\n' +
+    '* You can ONLY read, cannot UPDATE or DELETE or MAKE ANY CHANGES to the data.\n' +
+    '* It is Okay to make assumptions to answer the question but DO NOT include the assumptions into the response.\n' +
+    '* If you are not sure about the answer even with assumptions, just say I don\'t know, or ask clarify questions.\n' +
+    `* You should return PLAIN TEXT ${this.dataSourceType} query for the question ONLY, NO explanation, NO markdown.\n` +
+    '* NO content after the query.\n' +
+    (this.includeDatabaseNameInQuery() ? '* Table name in the query should be database_name.table_name.\n\n' : '');
+
+    return basePrompt + '\n\nRespond I understand to start the conversation.';
   }
+
+  public async tryFixAndRun(query: string): Promise<Answer> {
+    return {
+      query,
+      hasResult: false
+    }
+  };
 
   protected async loadSchemas(): Promise<void> {
     const databases = (await this.loadDatabaseNames()).filter(
@@ -73,20 +96,68 @@ export abstract class DataSource {
     this.databases = await Promise.all(
       databases.map(async database => await this.loadDatabase(database))
     );
+
+    if (this.databases.flatMap(database => database.schemas).length === 0) {
+      throw new Error('No table loaded, please double check your data source and whitelist tables.');
+    }
     this.logger.info(`All ${databases.length} databases are loaded.`);
   }
 
+  protected tryExtractPartitionTable(table: string): string | [string, string] {
+    return table;
+  }
+
+  protected isTableAllowed(table: string, database: string): boolean {
+    if (this.allowedTables.length === 0) {
+      return true;
+    }
+
+    const fullTableName = `${database}.${table}`;
+    const matchRegex = this.allowedTables.find(allowedTable => {
+      const regexStr = '^' + allowedTable.split('*')
+        .map((str: string) => str.replace(/([.*+?^=!:${}()|\\[\\]\/\\])/g, '\\$1'))
+        .join('.*') + '$';
+      return new RegExp(regexStr).test(fullTableName);
+    }) != null;
+    return matchRegex ||
+      this.allowedTables.includes(fullTableName);
+  }
+
   protected async loadDatabase(database: string): Promise<DatabaseSchema> {
-    const tables = (await this.loadTableNames(database)).filter(
-      (table: string) => this.allowedTables.length === 0 || this.allowedTables.includes(`${database}.${table}`)
-    );
+    const tables = (await this.loadTableNames(database))
+      .filter(table => this.isTableAllowed(table, database));
+
+    const extractTables = new Map<string, TableInfo>();
+    for (const table of tables) {
+      const extracted = this.tryExtractPartitionTable(table);
+
+      if (typeof extracted === 'string') {
+        extractTables.set(table, {
+          name: table,
+          isSuffixPartitionTable: false
+        });
+        continue;
+      }
+
+      const [tableName, partitionSuffix] = extracted;
+      if (extractTables.has(tableName)) {
+        extractTables.get(tableName)?.suffixes!.push(partitionSuffix);
+        continue;
+      }
+      extractTables.set(tableName, {
+        name: tableName,
+        isSuffixPartitionTable: true,
+        suffixes: [partitionSuffix]
+      });
+    }
 
     return await Promise.all(
-      tables.map(async table => await this.loadTableSchema(database, table)
-        .then(schema => {
-          this.logger.info(`Loaded table: ${schema.getUniqueID()}`);
-          return schema;
-        }))
+      Array.from(extractTables.values())
+        .map(async table => await this.loadTableSchema(database, table)
+          .then(schema => {
+            this.logger.info(`Loaded table: ${schema.getUniqueID()}`);
+            return schema;
+          }))
     ).then(schemas => ({
       name: database,
       schemas
@@ -101,7 +172,7 @@ export abstract class DataSource {
   public abstract readonly dataSourceType: DataSourceType;
   protected abstract loadDatabaseNames(): Promise<string[]>;
   protected abstract loadTableNames(database: string): Promise<string[]>;
-  protected abstract loadTableSchema(database: string, table: string): Promise<TableSchema>;
+  protected abstract loadTableSchema(database: string, table: TableInfo): Promise<TableSchema>;
   protected async enrichTableSchema(): Promise<void> { }
 
   public abstract runQuery(query: string): Promise<Answer>;
