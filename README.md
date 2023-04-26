@@ -111,6 +111,11 @@ settings:
   - You might want to limit the databases / tables this tool can access, you can do so by list the databases in a comma separated string in the `DATABASES` field, and / or comma separated `dbname.tablename` list in the `TABLES` field.
 - [Optional] You can enable result visualization by setting `ENABLE_VIZ=True`
   - **Notice: This is still an experimental feature, may subject to chagnes**
+- [Optional] Provide addiitonal context by setting `CONTEXT_FILE_PATH`to the path to a file containing content of additioanl context for Dsensei. Content in the file should be plain text senetense. Make a new line for each sentense. Eg:
+  ```
+  Revenue is defined by product sales.
+  Popularity is defined by number of user checkout.
+  ```
 
 ### Start the App
 
@@ -119,12 +124,6 @@ Run `npm run prod`
 #### In addition to the environment variables mentioned above, here are some additional variables:
 * `ENABLE_EMBEDDING_INDEX` (boolean): Toggle the embedding index for tables. By default it is disabled, enable this if you have more than 10 tables.
 * `PORT` (int): Port to listen on for the app.
-* `ENABLE_DEBUG_LOGGING` (boolean): Toggle the debug logging (this needs be set outside the `.env` file).
-* `CONTEXT_FILE_PATH` (string): Path to a file containing content of additioanl context for Dsensei. Content in the file should be plain text senetense. Make a new line for each sentense. Eg:
-  ```
-  Revenue is defined by product sales.
-  Popularity is defined by number of user checkout.
-  ```
 * `ENABLE_DEBUG_LOGGING` (boolean): Toggle the debug logging (this needs be set outside the `.env` file).
 ## Usage
 
