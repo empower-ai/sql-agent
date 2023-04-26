@@ -4,23 +4,19 @@
 [![Discord](https://img.shields.io/badge/discord-@DSensei-blue.svg?logo=discord)](https://discord.gg/fRzNUEugRU)
 
 
-Are you tired of struggling with complex SQL queries just to retrieve data from your databases? Meet DSensei, the open source Slack bot that makes it easy and natural to find the information you need. By harnessing the power of ChatGPT, DSensei understands natural language commands and can query databases such as BigQuery, MySQL, and PostgreSQL on your behalf.
+Revolutionize the way you access data using DSensei, the open source Slack bot that makes querying your databases effortless with natural language. DSensei can easily retrieve data from databases like BigQuery, MySQL, and PostgreSQL with the power of ChatGPT, eliminating the need for complex SQL queries.
 
-But DSensei is more than just a chatbot — it's your personal data sensei. With its intuitive interface and powerful capabilities, DSensei empowers you to effortlessly explore and analyze your data. Say goodbye to tedious SQL queries and hello to a smarter way of working. Install DSensei in your Slack workspace today and start discovering new insights in seconds.
-
-We're passionately developing this project and would love for you to be a part of our community on [Discord](https://discord.gg/fRzNUEugRU) where you can receive the latest news, report bugs, and make feature requests. Please also feel free to submit any feedback on github directly.
+Try a live demo in our [Slack Channel](https://join.slack.com/t/dsensei-demo/shared_invite/zt-1tt55ia3p-jMlofj8YHGnCMjuu30vJeg)
 
 ## Table of Contents
 
-- [Demo](#Demo)
+- [Demo Videos](#Demo-videos)
 - [Installation](#Installation)
 - [Usage](#Usage)
 - [More Demos](#More-Demos)
 - [Known Issues](#Known-Issues)
 
-## Demo
-
-Try a live demo of DSensei in our [Slack Channel](https://join.slack.com/t/dsensei-demo/shared_invite/zt-1tt55ia3p-jMlofj8YHGnCMjuu30vJeg)
+## Demo Videos
 
 ![](https://github.com/logunify/dsensei/blob/main/docs/images/follow-up.gif)
 Complex query, get number of movies, most popular movie and most popular actor.
