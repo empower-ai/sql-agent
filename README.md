@@ -120,7 +120,12 @@ Run `npm run prod`
 * `ENABLE_EMBEDDING_INDEX` (boolean): Toggle the embedding index for tables. By default it is disabled, enable this if you have more than 10 tables.
 * `PORT` (int): Port to listen on for the app.
 * `ENABLE_DEBUG_LOGGING` (boolean): Toggle the debug logging (this needs be set outside the `.env` file).
-
+* `CONTEXT_FILE_PATH` (string): Path to a file containing content of additioanl context for Dsensei. Content in the file should be plain text senetense. Make a new line for each sentense. Eg:
+  ```
+  Revenue is defined by product sales.
+  Popularity is defined by number of user checkout.
+  ```
+* `ENABLE_DEBUG_LOGGING` (boolean): Toggle the debug logging (this needs be set outside the `.env` file).
 ## Usage
 
 ### Accessing Database Metadata
