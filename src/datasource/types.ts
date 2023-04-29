@@ -3,6 +3,7 @@ export interface FieldDefinition {
   description: string
   type: string
   required: boolean
+  nestedFields?: FieldDefinition[],
 }
 
 export interface TableInfo {
@@ -42,8 +43,27 @@ export class TableSchema {
     return `${this.database}.${this.name}`;
   }
 
-  public getColumnNames(): string[] {
-    return this.fields.map(field => field.name);
+  public getColumnNames(includeNested = false): string[] {
+    if (!includeNested) {
+      return this.fields.map(field => field.name);
+    }
+
+    return this.fields.flatMap(field => TableSchema.getNestedColumnNames(field));
+  }
+
+  public findFieldByName(name: string): FieldDefinition | undefined {
+    let fields: FieldDefinition[] | undefined = this.fields;
+    let field: FieldDefinition | undefined;
+    for (const namePart of name.split('.')) {
+      field = fields?.find(field => field.name === namePart);
+      if (field == null) {
+        return field;
+      }
+
+      fields = field.nestedFields;
+    }
+
+    return field;
   }
 
   public getTopSuffixes(n: number = 2): string[] {
@@ -72,6 +92,19 @@ export class TableSchema {
     }
 
     return result;
+  }
+
+  private static getNestedColumnNames(field: FieldDefinition, parentFields: string[] = []): string[] {
+    if (!field.nestedFields) {
+      if (parentFields.length > 0) {
+        return [`${parentFields.join('.')}.${field.name}}`];
+      }
+      return [`${parentFields.join('.')}.${field.name}}`];
+    }
+
+    return field.nestedFields.flatMap(
+      nestedField => this.getNestedColumnNames(nestedField, parentFields.concat([field.name]))
+    );
   }
 }
 
