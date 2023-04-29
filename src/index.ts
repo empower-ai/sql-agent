@@ -13,6 +13,7 @@ import handleRunEditedQuery from './slack/event-handlers/run-edited-query.js';
 import DataQuestionAgent from './agent/data-question-agent.js';
 import loadDataSource from './datasource/index.js';
 import { buildDataSourceContextIndex } from './indexes/index.js';
+import { createSSHTunnelIfNecessary } from './utils/ssh-tunnel.js';
 
 const NODE_MAJOR_VERSION = parseInt(process.versions.node.split('.')[0]);
 if (NODE_MAJOR_VERSION < 18) {
@@ -31,6 +32,7 @@ logger.info(
   '/_____/  /____/  \\___/ /_/ /_/ /____/  \\___/ /_/\n'
 );
 
+await createSSHTunnelIfNecessary();
 const { App } = bolt;
 configLoader.load();
 openAI.init();
