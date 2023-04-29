@@ -97,7 +97,7 @@ settings:
   - You can find your OpenAI API key on this [page](https://platform.openai.com/account/api-keys).
 - Setup the DB Access. **Currently only BigQuery, MySQL and pgSQL are supported, and the system only allows for one single type of DB connection.**
   - For BigQuery, a gcp access key is needed. Please follow this [gcp doc](https://cloud.google.com/iam/docs/keys-create-delete) to generate an service account key, and set the BQ_KEY field to the path to your key file.
-    - If you use the default roles, please grant the following two roles to the acocunt:
+    - If you use the default roles, please grant the following two roles to the account:
       - `BigQuery Data Viewer`
       - `BigQuery Job User`
     - Or if you prefer to use a custom role, please make user the following permissions are granted to the role:
@@ -109,9 +109,7 @@ settings:
   - For MySQL and PgSQL, a standard db connection string should be used (see the example in the `.env.example`).
 - [Optional] Whitelist databases and tables.
   - You might want to limit the databases / tables this tool can access, you can do so by list the databases in a comma separated string in the `DATABASES` field, and / or comma separated `dbname.tablename` list in the `TABLES` field.
-- [Optional] You can enable result visualization by setting `ENABLE_VIZ=True`
-  - **Notice: This is still an experimental feature, may subject to chagnes**
-- [Optional] Provide addiitonal context by setting `CONTEXT_FILE_PATH`to the path to a file containing content of additioanl context for Dsensei. Content in the file should be plain text senetense. Make a new line for each sentense. Eg:
+- [Optional] Provide additional context by setting `CONTEXT_FILE_PATH`to the path to a file containing content of additional context for Dsensei. Content in the file should be plain text sentences. Make a new line for each sentence. Eg:
   ```
   Revenue is defined by product sales.
   Popularity is defined by number of user checkout.
