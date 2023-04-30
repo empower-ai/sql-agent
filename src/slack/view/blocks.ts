@@ -56,6 +56,25 @@ export function getResultBlocks(result: Result, isQueryUpdated: boolean): KnownB
   return resultBlocks;
 }
 
+export function getAssumptionBlocks(assumptions: string): KnownBlock[] {
+  return [
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: '*Below are assumptions I made in order to answer the question:*'
+      }
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: '```' + assumptions + '```'
+      }
+    }
+  ]
+}
+
 export function getQueryBlocks(query: string, isQueryUpdated: boolean): KnownBlock[] {
   return [
     {

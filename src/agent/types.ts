@@ -5,6 +5,7 @@ export interface Answer {
   hasResult: boolean
   err?: string
   rows?: Row[]
+  assumptions?: string
 }
 
 export interface Viz {

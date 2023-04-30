@@ -2,7 +2,7 @@ import { type App } from '@slack/bolt';
 import SlackTable from '../../utils/slacktable.js';
 import type DataQuestionAgent from '../../agent/data-question-agent.js';
 import getLogger from '../../utils/logger.js';
-import { getEditQueryBlocks, getErrorBlock, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks.js';
+import { getAssumptionBlocks, getEditQueryBlocks, getErrorBlock, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks.js';
 
 const logger = getLogger('Event Handler');
 
@@ -45,6 +45,7 @@ export default async function handleAppMention(app: App, agent: DataQuestionAgen
         blocks: [
           getQuestionBlock(event.text),
           ...getResultBlocks(result, false),
+          ...getAssumptionBlocks(answer.assumptions!),
           ...getQueryBlocks(answer.query, false),
           ...getEditQueryBlocks()
         ],

@@ -40,7 +40,7 @@ export default class DataQuestionAgent {
       this.lastMessageIds.set(conversationId, response.id);
 
       const code = this.getCodeBlock(response.text);
-      logger.debug(`Extracted query: ${code ?? ''}`);
+      const assumptions = this.extractAssumptions(response.text);
 
       if (code == null || (!code.trim().startsWith('SELECT') && !code.trim().startsWith('WITH'))) {
         break;
@@ -49,7 +49,11 @@ export default class DataQuestionAgent {
       query = code.trim();
       try {
         logger.info(`Fetched query to execute for question: ${question}. Query: \n${query}`);
-        return await this.dataSource.runQuery(query);
+        const result = await this.dataSource.runQuery(query);
+        return {
+          ...result,
+          assumptions
+        };
       } catch (err) {
         const rerunResult = await this.dataSource.tryFixAndRun(query);
         if (rerunResult.hasResult) {
@@ -58,10 +62,12 @@ export default class DataQuestionAgent {
 
         logger.debug(`Error running query: ${err}`);
         lastErr = err;
-        const errorPrompt = `There was an error running using the \n${query}, The error message is:${err}\nPlease correct it and send again.`;
+        const errorPrompt = `There was an error running using the \n${query} \n` +
+          `The error message is:${err}\n` + 'Please correct it and send again with all the assumption following the format:\n' +
+          'Assumptions: (bullet)\n' +
+          'Query: (query)';
         logger.debug(`Error prompt: ${errorPrompt}`);
         response = await openAI.sendMessage(errorPrompt, this.lastMessageIds.get(conversationId));
-        logger.debug(`Response: ${response.text}`);
       }
     }
 
@@ -90,6 +96,15 @@ export default class DataQuestionAgent {
       return match[2];
     } else {
       return null;
+    }
+  }
+
+  private extractAssumptions(text: string): string | undefined {
+    const match = /Assumptions:(.*)Query:/s.exec(text);
+    if (match != null) {
+      return match[1].trim();
+    } else {
+      return undefined;
     }
   }
 }

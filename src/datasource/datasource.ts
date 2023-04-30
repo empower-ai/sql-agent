@@ -49,11 +49,12 @@ export abstract class DataSource {
 
   public getContextPrompt(tableIds: string[]): string {
     let basePrompt =
-      `I will give you a list of ${this.dataSourceType} tables schemas in JSON, context for clarification and instructions to follow.\n` +
+      `I will give you a list of ${this.dataSourceType} tables schemas in JSON, context for clarification, and a set of example of question and assumptions in JSON, and instructions to follow.\n` +
       'Then I will ask you questions about these tables like Question: {question}. You might need to join tables to answer the questions.\n\n' +
       'Below is the format:\n' +
       'Table Schema: (JSON array)\n' +
       'Context: (sentences)\n' +
+      'Example Question and Assumptions: IN JSON\n' +
       'Instructions: (sentences)\n\n' +
       'Table Schema:\n' +
       JSON.stringify(this.getTables()
@@ -65,17 +66,26 @@ export abstract class DataSource {
       basePrompt = basePrompt + `Context: \n${configLoader.getAdditionalContext()}\n\n`;
     }
 
-    basePrompt = basePrompt + 'Instructions:\n' +
-    '* The table in the where clause appear in the tables or temp tables you selected from.\n' +
-    '* Use FORMAT_DATE(), DO NOT use DATE_TRUNC(), DO NOT use DATE_TRUNC(), DO NOT use DATE_TRUNC().\n' +
-    '* Convert TIMESTAMP to DATE using DATE().\n' +
-    '* Use full column name including the table name.\n' +
-    '* You can ONLY read, cannot UPDATE or DELETE or MAKE ANY CHANGES to the data.\n' +
-    '* It is Okay to make assumptions to answer the question but DO NOT include the assumptions into the response.\n' +
-    '* If you are not sure about the answer even with assumptions, just say I don\'t know, or ask clarify questions.\n' +
-    `* You should return PLAIN TEXT ${this.dataSourceType} query for the question ONLY, NO explanation, NO markdown.\n` +
-    '* NO content after the query.\n' +
-    (this.includeDatabaseNameInQuery() ? '* Table name in the query should be database_name.table_name.\n\n' : '');
+    // TODO
+    basePrompt = basePrompt + 'Questions with Example Assumptions\n' + JSON.stringify([]);
+
+    basePrompt = basePrompt + '\n\nInstructions:\n' +
+      '* The table in the where clause appear in the tables or temp tables you selected from.\n' +
+      '* Use FORMAT_DATE(), DO NOT use DATE_TRUNC(), DO NOT use DATE_TRUNC(), DO NOT use DATE_TRUNC().\n' +
+      '* Convert TIMESTAMP to DATE using DATE().\n' +
+      '* Use full column name including the table name.\n' +
+      '* You can ONLY read, cannot UPDATE or DELETE or MAKE ANY CHANGES to the data.\n' +
+      '* It is Okay to make assumptions to answer the question.\n' +
+      '* DO NOT use any field not included in schemas.\n' +
+      '* If you are not sure about the answer even with assumptions, just say I don\'t know, or ask clarify questions.\n' +
+      `* You should return assumptions and PLAIN TEXT ${this.dataSourceType} query for the question ONLY, NO explanation, NO markdown.\n` +
+      '* Use UNNEST() for ARRAY field.\n' +
+      '* Wrap table name with `` \n' +
+      '* NO content after the query.\n' +
+      (this.includeDatabaseNameInQuery() ? '* Table name in the query should be database_name.table_name.\n\n' : '\n\n') +
+      'Use the following format for response: \n' +
+      ' Assumptions: (bullets) \n' +
+      ' Query: (query) ';
 
     return basePrompt + '\n\nRespond I understand to start the conversation.';
   }
