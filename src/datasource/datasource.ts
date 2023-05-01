@@ -47,7 +47,7 @@ export abstract class DataSource {
     return `Question: ${question}`;
   }
 
-  public getContextPrompt(tableIds: string[], providedAssumptions: string | null): string {
+  public getContextPrompt(tableIds: string[], providedAssumptions: string | null, questionAnswerExamples: string[]): string {
     const shouldUseProvidedAssumptions = providedAssumptions != null && providedAssumptions.length > 0;
     let basePrompt =
       (shouldUseProvidedAssumptions
@@ -72,7 +72,13 @@ export abstract class DataSource {
       if (configLoader.getAdditionalContext() != null) {
         basePrompt = basePrompt + `Context: \n${configLoader.getAdditionalContext()}\n\n`;
       }
-      basePrompt = basePrompt + 'Example Questions with Assumptions\n' + JSON.stringify([]);
+      // basePrompt = basePrompt + `Example Questions with Assumptions [${questionAnswerExamples.join(',')}]\n`;
+
+      basePrompt = basePrompt + 'Example Questions with Assumptions [{"question":"<@U04UQRAD7KN> most popular product last year","assumptions":"- "last year" refers to the previous calendar year from the current date. \\n - The popularity of a product is determined by the number of shipped orders."},{"question":"<@U04UQRAD7KN> use products.brand fo' +
+        'r brand name","assumptions":"- The question is asking for the top 10 selling products by brand name.\\n- We only consider orders that have been shipped.\\n- We only consider products that have been sold.\\n- use products.brand for brand name"},{"question":"<@U04UQRAD7KN> use products.brand for brand name","assumptions' +
+        '":"- The question is asking for the top 10 selling products by brand name.\\n- We only consider orders that have been shipped.\\n- We only consider products that have been sold.\\n- use products.brand for brand name"},{"question":"<@U04UQRAD7KN> which state have most of customers?","assumptions":"- Use the state field' +
+        'in users table.\\n- The database name for the tables is "ecommerce".\\n- Consider customers with completed orders only."},{"question":"<@U04UQRAD7KN> which state have most of customers?","assumptions":"- Use the state file in users table\\n- We only consider unique customers based on their user_id.\\n- We only consi' +
+        'der events from the previous calendar year from the current date."}]'
     }
 
     basePrompt = basePrompt + '\n\nInstructions:\n' +

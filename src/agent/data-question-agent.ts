@@ -1,4 +1,5 @@
 import { type DataSource } from '../datasource/datasource.js';
+import questionAssumptionIndex from '../indexes/question-assumption-index.js';
 import type DataSourceContextIndex from '../indexes/types.js';
 import openAI from '../openai/openai.js';
 import getLogger from '../utils/logger.js';
@@ -18,9 +19,10 @@ export default class DataQuestionAgent {
     await this.dataSource.getInitializationPromise();
 
     const relatedTableIds = await this.dataSourceContextIndex.search(question);
+    const relatedQuestions = await questionAssumptionIndex.search(question);
 
     if (!this.lastMessageIds.has(conversationId)) {
-      const contextPrompt = this.dataSource.getContextPrompt(relatedTableIds, providedAssumptions);
+      const contextPrompt = this.dataSource.getContextPrompt(relatedTableIds, providedAssumptions, relatedQuestions);
       logger.debug(`Context prompt:\n${contextPrompt}`);
       const contextResponse = await openAI.sendMessage(contextPrompt);
       logger.debug(`Context prompt response:\n${contextResponse.text}`);
