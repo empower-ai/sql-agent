@@ -4,11 +4,11 @@ import type DataQuestionAgent from '../../agent/data-question-agent.js';
 import { getAssumptionBlocks, getErrorBlock, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks.js';
 import SlackTable from '../../utils/slacktable.js';
 import getLogger from '../../utils/logger.js';
-import type QuestionAssumptionIndex from '../../indexes/question-assumption-index.js';
+import questionAssumptionIndex from '../../indexes/question-assumption-index.js';
 
 const logger = getLogger('Event Handler');
 
-export default async function handleUpdateAssumptions(app: App, agent: DataQuestionAgent, questionAssumptionIndex: QuestionAssumptionIndex): Promise<void> {
+export default async function handleUpdateAssumptions(app: App, agent: DataQuestionAgent): Promise<void> {
   app.action(Action.UpdateAssumptions, async ({ ack, client, say, respond, body }) => {
     const actionBody = body as BlockAction;
 

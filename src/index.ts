@@ -17,7 +17,6 @@ import { createSSHTunnelIfNecessary } from './utils/ssh-tunnel.js';
 import handleEditAssumptions from './slack/event-handlers/edit-assumptions.js';
 import handleCancelAssumptionsEditing from './slack/event-handlers/cancel-assumptions-editing.js';
 import handleUpdateAssumptions from './slack/event-handlers/update-assumptions.js';
-import QuestionAssumptionIndex from './indexes/question-assumption-index.js';
 
 const NODE_MAJOR_VERSION = parseInt(process.versions.node.split('.')[0]);
 if (NODE_MAJOR_VERSION < 18) {
@@ -43,8 +42,7 @@ openAI.init();
 
 const dataSource = loadDataSource();
 const dataSourceContextIndex = buildDataSourceContextIndex(Boolean(process.env.ENABLE_EMBEDDING_INDEX), dataSource);
-const questionAssumptionIndex = new QuestionAssumptionIndex();
-const dataQuestionAgent = new DataQuestionAgent(dataSource, dataSourceContextIndex, questionAssumptionIndex);
+const dataQuestionAgent = new DataQuestionAgent(dataSource, dataSourceContextIndex);
 
 const app = new App({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -61,7 +59,7 @@ await Promise.all([
   handleCommand(app, dataSource),
   handleEditAssumptions(app),
   handleCancelAssumptionsEditing(app),
-  handleUpdateAssumptions(app, dataQuestionAgent, questionAssumptionIndex)
+  handleUpdateAssumptions(app, dataQuestionAgent)
 ]);
 
 const port = process.env.PORT ?? 3000;
