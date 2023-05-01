@@ -14,13 +14,13 @@ export default class DataQuestionAgent {
     private readonly dataSourceContextIndex: DataSourceContextIndex
   ) { }
 
-  public async answer(question: string, conversationId: string): Promise<Answer> {
+  public async answer(question: string, conversationId: string, providedAssumptions: string | null = null): Promise<Answer> {
     await this.dataSource.getInitializationPromise();
 
     const relatedTableIds = await this.dataSourceContextIndex.search(question);
 
     if (!this.lastMessageIds.has(conversationId)) {
-      const contextPrompt = this.dataSource.getContextPrompt(relatedTableIds);
+      const contextPrompt = this.dataSource.getContextPrompt(relatedTableIds, providedAssumptions);
       logger.debug(`Context prompt:\n${contextPrompt}`);
       const contextResponse = await openAI.sendMessage(contextPrompt);
       logger.debug(`Context prompt response:\n${contextResponse.text}`);

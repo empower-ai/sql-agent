@@ -14,6 +14,9 @@ import DataQuestionAgent from './agent/data-question-agent.js';
 import loadDataSource from './datasource/index.js';
 import { buildDataSourceContextIndex } from './indexes/index.js';
 import { createSSHTunnelIfNecessary } from './utils/ssh-tunnel.js';
+import handleEditAssumptions from './slack/event-handlers/edit-assumptions.js';
+import handleCancelAssumptionsEditing from './slack/event-handlers/cancel-assumptions-editing.js';
+import handleUpdateAssumptions from './slack/event-handlers/update-assumptions.js';
 
 const NODE_MAJOR_VERSION = parseInt(process.versions.node.split('.')[0]);
 if (NODE_MAJOR_VERSION < 18) {
@@ -53,7 +56,10 @@ await Promise.all([
   handleEditQuery(app),
   handleCancelQueryEditing(app),
   handleRunEditedQuery(app, dataSource),
-  handleCommand(app, dataSource)
+  handleCommand(app, dataSource),
+  handleEditAssumptions(app),
+  handleCancelAssumptionsEditing(app),
+  handleUpdateAssumptions(app, dataQuestionAgent)
 ]);
 
 const port = process.env.PORT ?? 3000;

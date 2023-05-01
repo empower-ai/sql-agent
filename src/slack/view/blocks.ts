@@ -23,13 +23,13 @@ export function getErrorBlock(err: string): KnownBlock[] {
   }];
 }
 
-export function getResultBlocks(result: Result, isQueryUpdated: boolean): KnownBlock[] {
+export function getResultBlocks(result: Result, isQueryEdited: boolean): KnownBlock[] {
   const resultBlocks: KnownBlock[] = [
     {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: isQueryUpdated ? '*Result from the updated query:*' : '*Please see the result below:*'
+        text: isQueryEdited ? '*Result from the updated query:*' : '*Please see the result below:*'
       }
     },
     {
@@ -56,7 +56,47 @@ export function getResultBlocks(result: Result, isQueryUpdated: boolean): KnownB
   return resultBlocks;
 }
 
-export function getAssumptionBlocks(assumptions: string): KnownBlock[] {
+export function getAssumptionBlocks(assumptions: string, isQueryEdited: boolean, isEditing: boolean): KnownBlock[] {
+  if (isQueryEdited) {
+    // Hide assumptions if query's updated
+    return [];
+  }
+  if (isEditing) {
+    return [{
+      type: 'input',
+      block_id: 'assumptions_input',
+      element: {
+        type: 'plain_text_input',
+        multiline: true,
+        initial_value: assumptions,
+        action_id: 'edited_assumptions'
+      },
+      label: {
+        type: 'plain_text',
+        text: 'Edit assumptions and tap update to rerun.'
+      }
+    },
+    {
+      type: 'actions',
+      elements: [{
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: 'Run'
+        },
+        style: 'primary',
+        action_id: Action.UpdateAssumptions
+      },
+      {
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: 'Cancel'
+        },
+        action_id: Action.CancelAssumptionsEditing
+      }]
+    }];
+  }
   return [
     {
       type: 'section',
@@ -71,17 +111,69 @@ export function getAssumptionBlocks(assumptions: string): KnownBlock[] {
         type: 'mrkdwn',
         text: '```' + assumptions + '```'
       }
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: '> Notice any problems with the assumption? Click "Edit" to update and rerun.'
+      },
+      accessory: {
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: 'Edit'
+        },
+        action_id: Action.EditAssumptions
+      }
     }
-  ]
+  ];
 }
 
-export function getQueryBlocks(query: string, isQueryUpdated: boolean): KnownBlock[] {
+export function getQueryBlocks(query: string, isQueryEdited: boolean, isEditing: boolean): KnownBlock[] {
+  if (isEditing) {
+    return [{
+      type: 'input',
+      block_id: 'query_input',
+      element: {
+        type: 'plain_text_input',
+        multiline: true,
+        initial_value: query,
+        action_id: 'update_query'
+      },
+      label: {
+        type: 'plain_text',
+        text: 'Edit query and tap run to update the result.'
+      }
+    },
+    {
+      type: 'actions',
+      elements: [{
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: 'Run'
+        },
+        style: 'primary',
+        action_id: Action.RunEditedQuery
+      },
+      {
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: 'Cancel'
+        },
+        action_id: Action.CancelQueryEditing
+      }]
+    }];
+  }
+
   return [
     {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: isQueryUpdated ? '*Query:*' : '*This is the query used to generate the result:*'
+        text: isQueryEdited ? '*Query:*' : '*This is the query used to generate the result:*'
       }
     },
     {
@@ -90,61 +182,21 @@ export function getQueryBlocks(query: string, isQueryUpdated: boolean): KnownBlo
         type: 'mrkdwn',
         text: '```' + query + '```'
       }
-    }
-  ];
-}
-
-export function getEditQueryBlocks(): KnownBlock[] {
-  return [{
-    type: 'section',
-    text: {
-      type: 'mrkdwn',
-      text: '> See any issue in the query? Click "Edit" to update the query.'
-    },
-    accessory: {
-      type: 'button',
-      text: {
-        type: 'plain_text',
-        text: 'Edit'
-      },
-      action_id: Action.EditQuery
-    }
-  }];
-}
-
-export function getEditQueryInputBlocks(query: string): KnownBlock[] {
-  return [{
-    type: 'input',
-    block_id: 'query_input',
-    element: {
-      type: 'plain_text_input',
-      multiline: true,
-      initial_value: query,
-      action_id: 'update_query'
-    },
-    label: {
-      type: 'plain_text',
-      text: 'Edit query and tap run to update the result.'
-    }
-  },
-  {
-    type: 'actions',
-    elements: [{
-      type: 'button',
-      text: {
-        type: 'plain_text',
-        text: 'Run'
-      },
-      style: 'primary',
-      action_id: Action.RunEditedQuery
     },
     {
-      type: 'button',
+      type: 'section',
       text: {
-        type: 'plain_text',
-        text: 'Cancel'
+        type: 'mrkdwn',
+        text: '> See any issue in the query? Click "Edit" to update the query.'
       },
-      action_id: Action.CancelQueryEditing
-    }]
-  }];
+      accessory: {
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: 'Edit'
+        },
+        action_id: Action.EditQuery
+      }
+    }
+  ];
 }

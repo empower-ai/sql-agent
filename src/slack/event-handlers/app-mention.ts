@@ -2,7 +2,7 @@ import { type App } from '@slack/bolt';
 import SlackTable from '../../utils/slacktable.js';
 import type DataQuestionAgent from '../../agent/data-question-agent.js';
 import getLogger from '../../utils/logger.js';
-import { getAssumptionBlocks, getEditQueryBlocks, getErrorBlock, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks.js';
+import { getAssumptionBlocks, getErrorBlock, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks.js';
 
 const logger = getLogger('Event Handler');
 
@@ -18,14 +18,14 @@ export default async function handleAppMention(app: App, agent: DataQuestionAgen
             blocks: [
               getQuestionBlock(event.text),
               ...getErrorBlock(answer.err),
-              ...getQueryBlocks(answer.query, false),
-              ...getEditQueryBlocks()
+              ...getAssumptionBlocks(answer.assumptions!, false, false),
+              ...getQueryBlocks(answer.query, false, false)
             ],
             metadata: {
               event_type: 'original_response',
               event_payload: {
                 previous_query: answer.query,
-                previous_result: [],
+                previous_assumptions: answer.assumptions,
                 question: event.text
               }
             },
@@ -45,14 +45,14 @@ export default async function handleAppMention(app: App, agent: DataQuestionAgen
         blocks: [
           getQuestionBlock(event.text),
           ...getResultBlocks(result, false),
-          ...getAssumptionBlocks(answer.assumptions!),
-          ...getQueryBlocks(answer.query, false),
-          ...getEditQueryBlocks()
+          ...getAssumptionBlocks(answer.assumptions!, false, false),
+          ...getQueryBlocks(answer.query, false, false)
         ],
         metadata: {
           event_type: 'original_response',
           event_payload: {
             previous_query: answer.query,
+            previous_assumptions: answer.assumptions,
             previous_result: result,
             question: event.text
           }
@@ -64,7 +64,7 @@ export default async function handleAppMention(app: App, agent: DataQuestionAgen
         text: 'An error occurred while processing your request, please try again later.',
         thread_ts: event.thread_ts ?? event.ts
       });
-      console.error(error);
+      logger.error(error);
     }
   };
 

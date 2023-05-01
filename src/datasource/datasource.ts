@@ -47,14 +47,18 @@ export abstract class DataSource {
     return `Question: ${question}`;
   }
 
-  public getContextPrompt(tableIds: string[]): string {
+  public getContextPrompt(tableIds: string[], providedAssumptions: string | null): string {
+    const shouldUseProvidedAssumptions = providedAssumptions != null && providedAssumptions.length > 0;
     let basePrompt =
-      `I will give you a list of ${this.dataSourceType} tables schemas in JSON, context for clarification, and a set of example of question and assumptions in JSON, and instructions to follow.\n` +
+      (shouldUseProvidedAssumptions
+        ? `I will give you a list of ${this.dataSourceType} tables schemas in JSON, context for clarification, a set of example of question and assumptions in JSON, and instructions to follow.\n`
+        : `I will give you a list of ${this.dataSourceType} tables schemas in JSON, a paragraph of assumptions to use, and instructions to follow.\n`) +
       'Then I will ask you questions about these tables like Question: {question}. You might need to join tables to answer the questions.\n\n' +
       'Below is the format:\n' +
       'Table Schema: (JSON array)\n' +
-      'Context: (sentences)\n' +
-      'Example Question and Assumptions: IN JSON\n' +
+      (shouldUseProvidedAssumptions
+        ? 'Assumptions: (sentences)\n'
+        : 'Context: (sentences)\nExample Question with Assumptions: IN JSON\n') +
       'Instructions: (sentences)\n\n' +
       'Table Schema:\n' +
       JSON.stringify(this.getTables()
@@ -62,12 +66,14 @@ export abstract class DataSource {
         .map(table => table.convertForContextPrompt())
       ) + '\n\n';
 
-    if (configLoader.getAdditionalContext() != null) {
-      basePrompt = basePrompt + `Context: \n${configLoader.getAdditionalContext()}\n\n`;
+    if (shouldUseProvidedAssumptions) {
+      basePrompt = basePrompt + `Assumptions: \n${providedAssumptions}`;
+    } else {
+      if (configLoader.getAdditionalContext() != null) {
+        basePrompt = basePrompt + `Context: \n${configLoader.getAdditionalContext()}\n\n`;
+      }
+      basePrompt = basePrompt + 'Example Questions with Assumptions\n' + JSON.stringify([]);
     }
-
-    // TODO
-    basePrompt = basePrompt + 'Questions with Example Assumptions\n' + JSON.stringify([]);
 
     basePrompt = basePrompt + '\n\nInstructions:\n' +
       '* The table in the where clause appear in the tables or temp tables you selected from.\n' +
@@ -75,7 +81,10 @@ export abstract class DataSource {
       '* Convert TIMESTAMP to DATE using DATE().\n' +
       '* Use full column name including the table name.\n' +
       '* You can ONLY read, cannot UPDATE or DELETE or MAKE ANY CHANGES to the data.\n' +
-      '* It is Okay to make assumptions to answer the question.\n' +
+      (shouldUseProvidedAssumptions
+        ? '* Use the assumptions I provided.\n'
+        : '* It is Okay to make assumptions to answer the question.\n'
+      ) +
       '* DO NOT use any field not included in schemas.\n' +
       '* If you are not sure about the answer even with assumptions, just say I don\'t know, or ask clarify questions.\n' +
       `* You should return assumptions and PLAIN TEXT ${this.dataSourceType} query for the question ONLY, NO explanation, NO markdown.\n` +
