@@ -24,8 +24,8 @@
     "eslint-plugin-promise": "^6.1.1",
     "nodemon": "^2.0.22",
     "tsc-watch": "^6.0.0",
-    "typescript": "^5.1.0-dev.20230501"
-  },
+    "typescript": "^5.0.4"
+    },
   "dependencies": {
     "@google-cloud/bigquery": "^6.2.0",
     "@slack/bolt": "^3.13.0",
