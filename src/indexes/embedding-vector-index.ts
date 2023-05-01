@@ -28,9 +28,6 @@ export default class EmbeddingVectorIndex implements DataSourceContextIndex {
   async search(query: string): Promise<string[]> {
     const results = await this.store.similaritySearchWithScore(query, 10);
     logger.debug(`Data source context index search result: ${JSON.stringify(results)}`);
-    return results.map(([result, score]) => {
-      console.log((result as Document));
-      return (result as Document).metadata.id
-    });
+    return results.map(([result, score]) => (result as Document).metadata.id);
   }
 }

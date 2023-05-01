@@ -4,7 +4,6 @@ import type DataQuestionAgent from '../../agent/data-question-agent.js';
 import { getAssumptionBlocks, getErrorBlock, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks.js';
 import SlackTable from '../../utils/slacktable.js';
 import getLogger from '../../utils/logger.js';
-import questionAssumptionIndex from '../../indexes/question-assumption-index.js';
 
 const logger = getLogger('Event Handler');
 
@@ -50,10 +49,6 @@ export default async function handleUpdateAssumptions(app: App, agent: DataQuest
           });
         }
         return;
-      }
-
-      if (assumptions != null && assumptions.length > 0) {
-        await questionAssumptionIndex.add(question, assumptions);
       }
 
       const result = SlackTable.buildFromRows(answer.rows!);
