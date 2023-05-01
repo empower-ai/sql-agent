@@ -1,5 +1,5 @@
 import { type DataSource } from '../datasource/datasource.js';
-import questionAssumptionIndex from '../indexes/question-assumption-index.js';
+import type QuestionAssumptionIndex from '../indexes/question-assumption-index.js';
 import type DataSourceContextIndex from '../indexes/types.js';
 import openAI from '../openai/openai.js';
 import getLogger from '../utils/logger.js';
@@ -12,14 +12,15 @@ export default class DataQuestionAgent {
 
   public constructor(
     private readonly dataSource: DataSource,
-    private readonly dataSourceContextIndex: DataSourceContextIndex
+    private readonly dataSourceContextIndex: DataSourceContextIndex,
+    private readonly questionAssumptionIndex: QuestionAssumptionIndex
   ) { }
 
   public async answer(question: string, conversationId: string, providedAssumptions: string | null = null): Promise<Answer> {
     await this.dataSource.getInitializationPromise();
 
     const relatedTableIds = await this.dataSourceContextIndex.search(question);
-    const relatedQuestions = await questionAssumptionIndex.search(question);
+    const relatedQuestions = await this.questionAssumptionIndex.search(question);
 
     if (!this.lastMessageIds.has(conversationId)) {
       const contextPrompt = this.dataSource.getContextPrompt(relatedTableIds, providedAssumptions, relatedQuestions);

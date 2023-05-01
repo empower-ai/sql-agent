@@ -5,7 +5,7 @@ import { Document } from 'langchain/document';
 
 const logger = getLogger('QuestionAssumptionIndex');
 
-class QuestionAssumptionIndex {
+export default class QuestionAssumptionIndex {
   private readonly store: MemoryVectorStore;
 
   constructor() {
@@ -33,6 +33,3 @@ class QuestionAssumptionIndex {
     return results.map(([result, score]) => (result as Document).pageContent);
   }
 }
-
-const questionAssumptionIndex = new QuestionAssumptionIndex();
-export default questionAssumptionIndex;

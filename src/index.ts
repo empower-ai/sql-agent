@@ -14,6 +14,7 @@ import DataQuestionAgent from './agent/data-question-agent.js';
 import loadDataSource from './datasource/index.js';
 import { buildDataSourceContextIndex } from './indexes/index.js';
 import { createSSHTunnelIfNecessary } from './utils/ssh-tunnel.js';
+import QuestionAssumptionIndex from './indexes/question-assumption-index.js';
 
 const NODE_MAJOR_VERSION = parseInt(process.versions.node.split('.')[0]);
 if (NODE_MAJOR_VERSION < 18) {
@@ -39,7 +40,8 @@ openAI.init();
 
 const dataSource = loadDataSource();
 const dataSourceContextIndex = buildDataSourceContextIndex(Boolean(process.env.ENABLE_EMBEDDING_INDEX), dataSource);
-const dataQuestionAgent = new DataQuestionAgent(dataSource, dataSourceContextIndex);
+const questionAssumptionIndex = new QuestionAssumptionIndex();
+const dataQuestionAgent = new DataQuestionAgent(dataSource, dataSourceContextIndex, questionAssumptionIndex);
 
 logger.info('initialization complete');
 async function slackBot(): Promise<void> {
