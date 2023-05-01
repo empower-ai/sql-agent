@@ -15,6 +15,7 @@ tmp
 
 # Build
 public/css/main.css
+tsconfig.tsbuildinfo
 
 # Coverage reports
 coverage
@@ -40,3 +41,5 @@ dist/**/*
 # ignore yarn.lock
 yarn.lock
 keys/**/*
+
+.next/**/*
