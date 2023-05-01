@@ -1,11 +1,11 @@
-import knex from 'knex';
+import knex, { type Knex } from 'knex';
 import { DataSource } from '../datasource.js';
 import { DataSourceType, type TableInfo, TableSchema } from '../types.js';
 import { type Row } from '../../utils/slacktable.js';
 import { type Answer } from '../../agent/types.js';
 
 export default class MysqlSource extends DataSource {
-  private connection!: knex.Knex;
+  private connection!: Knex;
 
   public readonly dataSourceType = DataSourceType.Mysql;
 
@@ -14,7 +14,7 @@ export default class MysqlSource extends DataSource {
   }
 
   protected init(connectionString: string): void {
-    this.connection = knex.knex({
+    this.connection = knex({
       client: 'mysql',
       connection: connectionString
     });

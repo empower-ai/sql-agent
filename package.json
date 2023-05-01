@@ -3,8 +3,8 @@
     "dev": "next dev",
     "build": "next build",
     "start-next": "next start",
-    "start": "NODE_ENV=development tsc-watch --onSuccess \"nodemon     dist/index.js\"",
-    "prod": "NODE_ENV=production tsc && node dist/index.js",
+    "start": "nodemon",
+    "prod": "next build && NODE_ENV=production tsc && node dist/index.js",
     "test": "ts-node ./src/test.ts"
   },
   "engines": {
