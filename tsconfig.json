@@ -1,7 +1,6 @@
 {
   "include": [
-    "./src/**/*"
-  ],
+    "./src/**/*"  ],
   "exclude": [
     "node_modules"
   ],
@@ -28,6 +27,9 @@
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   }
 }

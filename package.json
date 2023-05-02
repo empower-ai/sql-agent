@@ -49,7 +49,18 @@
     "rxjs": "^7.8.0",
     "sqlite3": "^5.1.6",
     "tunnel-ssh": "^5.0.5",
-    "winston": "^3.8.2"
+    "winston": "^3.8.2",
+    "@dqbd/tiktoken": "^1.0.2",
+    "@tabler/icons-react": "^2.9.0",
+    "eventsource-parser": "^0.1.0",
+    "react-hot-toast": "^2.4.0",
+    "react-markdown": "^8.0.5",
+    "react-query": "^3.39.3",
+    "react-syntax-highlighter": "^15.5.0",
+    "rehype-mathjax": "^4.0.2",
+    "remark-gfm": "^3.0.1",
+    "remark-math": "^5.1.1",
+    "uuid": "^9.0.0"
   },
   "type": "module"
 }
