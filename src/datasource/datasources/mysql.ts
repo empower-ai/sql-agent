@@ -64,7 +64,8 @@ export default class MysqlSource extends DataSource {
       database,
       '',
       fields,
-      DataSourceType.Mysql
+      DataSourceType.Mysql,
+      ''
     );
   }
 

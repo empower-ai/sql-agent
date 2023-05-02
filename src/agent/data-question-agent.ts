@@ -62,8 +62,8 @@ export default class DataQuestionAgent {
 
         logger.debug(`Error running query: ${err}`);
         lastErr = err;
-        const errorPrompt = `There was an error running using the \n${query} \n` +
-          `The error message is:${err}\n` + 'Please correct it and send again with all the assumption following the format:\n' +
+        const errorPrompt = `There was an error running using the query: \n${query} \n` +
+          `The error message is:${err}\n` + 'Please correct it.\nIf the error is related with date/time, try a different way.\nAvoid using any field not listed in the schema.\n\nSend the corrected query with all the assumption following the format:\n' +
           'Assumptions: (bullet)\n' +
           'Query: (query)';
         logger.debug(`Error prompt: ${errorPrompt}`);

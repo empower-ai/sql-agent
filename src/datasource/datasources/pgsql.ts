@@ -59,7 +59,8 @@ export class PgsqlSource extends DataSource {
       database,
       '',
       fields,
-      DataSourceType.PostgresSQL
+      DataSourceType.PostgresSQL,
+      ''
     );
   }
 

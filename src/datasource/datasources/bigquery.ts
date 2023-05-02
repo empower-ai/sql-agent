@@ -89,6 +89,15 @@ export default class BigQuerySource extends DataSource {
     const [{ schema, description }] =
       (await this.bigquery.dataset(database).table(table.name).getMetadata()) as FormattedMetadata[];
 
+    const tableNameToPullRawSchema = table.isSuffixPartitionTable ? `${table.name.substring(0, table.name.length - 1)}${table.suffixes![0]}` : table.name;
+    const query = `SELECT table_name, ddl as result FROM \`${database}\`.INFORMATION_SCHEMA.TABLES WHERE table_name = '${tableNameToPullRawSchema}';`;
+    const result = await this.runQuery(query);
+
+    let rawSchemaDefinition = '';
+    if (result.hasResult && result.rows![0].result != null) {
+      rawSchemaDefinition = `${result.rows![0].result}`.replace(tableNameToPullRawSchema, table.name);
+    }
+
     if (schema?.fields == null) {
       throw new Error(`${database}, ${table.name} has no fields.`);
     }
@@ -102,6 +111,7 @@ export default class BigQuerySource extends DataSource {
       description ?? '',
       fieldDefinitions,
       DataSourceType.BigQuery,
+      rawSchemaDefinition,
       table.isSuffixPartitionTable,
       table.suffixes
     );
@@ -184,14 +194,10 @@ export default class BigQuerySource extends DataSource {
         const additionalWhereClause = tableSchema.isSuffixPartitionTable
           ? `AND _TABLE_SUFFIX IN (${tableSchema.getTopSuffixes().map(suffix => `'${suffix}'`).join(',')})`
           : '';
-        const query = `SELECT DISTINCT(${column}) as result FROM \`${uniqueId}\` ${additionalFromClause} WHERE ${column} IS NOT NULL ${additionalWhereClause} LIMIT 51;`;
+        const query = `SELECT ${column} as result, COUNT(1) as result FROM \`${uniqueId}\` ${additionalFromClause} WHERE ${column} IS NOT NULL ${additionalWhereClause} GROUP BY ${column} ORDER BY COUNT(1) DESC LIMIT 10 ;`;
         try {
           await this.runQuery(query)
             .then(({ rows }) => {
-              if (rows!.length > 50) {
-                // should not have more than 50 values for an enum
-                return;
-              }
               const table = this.getTables().find(table => table.getUniqueID() === uniqueId);
               const columnField = table?.findFieldByName(column);
               if (columnField === undefined) {
@@ -243,6 +249,10 @@ export default class BigQuerySource extends DataSource {
         description: field.description ?? ''
       };
     });
+  }
+
+  protected useFormattedSchema(): boolean {
+    return false;
   }
 
   public async tryFixAndRun(query: string): Promise<Answer> {

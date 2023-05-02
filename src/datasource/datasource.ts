@@ -4,6 +4,7 @@ import { type Row } from '../utils/slacktable.js';
 import { type TableInfo, type DataSourceType, type DatabaseSchema, type TableSchema } from './types.js';
 import { type Answer } from '../agent/types.js';
 import configLoader from '../config/loader.js';
+import { table } from 'console';
 
 export abstract class DataSource {
   protected readonly allowedDatabases: string[];
@@ -51,20 +52,40 @@ export abstract class DataSource {
     const shouldUseProvidedAssumptions = providedAssumptions != null && providedAssumptions.length > 0;
     let basePrompt =
       (shouldUseProvidedAssumptions
-        ? `I will give you a list of ${this.dataSourceType} tables schemas in JSON, context for clarification, a set of example of question and assumptions in JSON, and instructions to follow.\n`
-        : `I will give you a list of ${this.dataSourceType} tables schemas in JSON, a paragraph of assumptions to use, and instructions to follow.\n`) +
+        ? `I will give you a list of ${this.dataSourceType} tables schemas, context for clarification, a set of example of question and assumptions in JSON, and instructions to follow.\n`
+        : `I will give you a list of ${this.dataSourceType} tables schemas, a paragraph of assumptions to use, and instructions to follow.\n`) +
       'Then I will ask you questions about these tables like Question: {question}. You might need to join tables to answer the questions.\n\n' +
       'Below is the format:\n' +
-      'Table Schema: (JSON array)\n' +
+      'Table Schemas:\n' +
       (shouldUseProvidedAssumptions
         ? 'Assumptions: (sentences)\n'
         : 'Context: (sentences)\nExample Question with Assumptions: IN JSON\n') +
       'Instructions: (sentences)\n\n' +
       'Table Schema:\n' +
-      JSON.stringify(this.getTables()
+      '  - Name:\n' +
+      '  Is Suffix Partitioned Table:\n' +
+      '  Top Possible Values:\n' +
+      '  Schema:\n';
+
+    if (this.useFormattedSchema()) {
+      basePrompt = basePrompt + JSON.stringify(this.getTables()
         .filter(table => tableIds.includes(table.getUniqueID()))
         .map(table => table.convertForContextPrompt())
-      ) + '\n\n';
+      ) + '\n\n'
+    } else {
+      basePrompt = basePrompt + this.getTables()
+        .filter(table => tableIds.includes(table.getUniqueID()))
+        .map(table => {
+          const enumColumns = table.getColumnNamesWithTypes(true).filter(columnNameWithType => columnNameWithType.type.startsWith('ENUM'));
+          const filedAndPossibleValues = enumColumns.map(({ name, type }) => {
+            const extractedPossibleValues = type.match(/ENUM\[(.*)\]/)![1];
+            return `${table.getUniqueID()}.${name}: ${extractedPossibleValues}`;
+          });
+
+          return `  -Name: ${table.getUniqueID()}\n  Is Date Suffix Partitioned Table: ${table.isSuffixPartitionTable}\n  Top Possible Values:${filedAndPossibleValues}\n  Schema: ${table.rawSchemaDefinition}`;
+        })
+        .join('\n') + '\n\n';
+    }
 
     if (shouldUseProvidedAssumptions) {
       basePrompt = basePrompt + `Assumptions: \n${providedAssumptions}`;
@@ -89,9 +110,10 @@ export abstract class DataSource {
       '* If you are not sure about the answer even with assumptions, just say I don\'t know, or ask clarify questions.\n' +
       `* You should return assumptions and PLAIN TEXT ${this.dataSourceType} query for the question ONLY, NO explanation, NO markdown.\n` +
       '* Use UNNEST() for ARRAY field.\n' +
-      '* Wrap table name with `` \n' +
+      '* Use _TABLE_SUFFIX for date range for date suffix partitioned table.\n' +
+      (this.includeDatabaseNameInQuery() ? '* Wrap table name with `` \n' : '') +
       '* NO content after the query.\n' +
-      (this.includeDatabaseNameInQuery() ? '* Table name in the query should be database_name.table_name.\n\n' : '\n\n') +
+      (this.includeDatabaseNameInQuery() ? '* Table name in the query should be database_name.table_name.\n\n' : '* Do not include database name in the table name.\n\n') +
       'Use the following format for response: \n' +
       ' Assumptions: (bullets) \n' +
       ' Query: (query) ';
@@ -184,6 +206,10 @@ export abstract class DataSource {
   }
 
   protected includeDatabaseNameInQuery(): boolean {
+    return true;
+  }
+
+  protected useFormattedSchema(): boolean {
     return true;
   }
 
