@@ -4,7 +4,6 @@ import { type Row } from '../utils/slacktable.js';
 import { type TableInfo, type DataSourceType, type DatabaseSchema, type TableSchema } from './types.js';
 import { type Answer } from '../agent/types.js';
 import configLoader from '../config/loader.js';
-import { table } from 'console';
 
 export abstract class DataSource {
   protected readonly allowedDatabases: string[];

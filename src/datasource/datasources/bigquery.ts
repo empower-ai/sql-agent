@@ -135,6 +135,9 @@ export default class BigQuerySource extends DataSource {
   }
 
   protected async enrichTableSchema(): Promise<void> {
+    if (process.env.DISABLE_SCHEMA_ENRICHMENT) {
+      return;
+    }
     const candidateTablesAndColumns = this.getTables().flatMap(table =>
       table.fields.flatMap(field => {
         return this.getStringFields(table, field);
