@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useFetch } from '@/hooks/useFetch';
 
 export interface GetModelsRequestProps {
-  key: string;
+  key: string
 }
 
 const useApiService = () => {
@@ -26,20 +26,20 @@ const useApiService = () => {
   // );
 
   const getModels = useCallback(
-    (params: GetModelsRequestProps, signal?: AbortSignal) => {
-      return fetchService.post<GetModelsRequestProps>(`/api/models`, {
+    async (params: GetModelsRequestProps, signal?: AbortSignal) => {
+      return await fetchService.post<GetModelsRequestProps>('/api/models', {
         body: { key: params.key },
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        signal,
+        signal
       });
     },
-    [fetchService],
+    [fetchService]
   );
 
   return {
-    getModels,
+    getModels
   };
 };
 

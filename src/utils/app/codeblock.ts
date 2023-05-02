@@ -1,6 +1,4 @@
-interface languageMap {
-  [key: string]: string | undefined;
-}
+type languageMap = Record<string, string | undefined>;
 
 export const programmingLanguages: languageMap = {
   javascript: '.js',
@@ -25,7 +23,7 @@ export const programmingLanguages: languageMap = {
   shell: '.sh',
   sql: '.sql',
   html: '.html',
-  css: '.css',
+  css: '.css'
   // add more file extensions here, make sure the key is same as language prop in CodeBlock.tsx component
 };
 

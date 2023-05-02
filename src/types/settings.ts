@@ -1,3 +1,3 @@
 export interface Settings {
-  theme: 'light' | 'dark';
+  theme: 'light' | 'dark'
 }

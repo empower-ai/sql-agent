@@ -1,14 +1,14 @@
-import { Conversation } from '@/types/chat';
+import { type Conversation } from '@/types/chat';
 import {
-  ExportFormatV1,
-  ExportFormatV2,
-  ExportFormatV3,
-  ExportFormatV4,
-  LatestExportFormat,
-  SupportedExportFormats,
+  type ExportFormatV1,
+  type ExportFormatV2,
+  type ExportFormatV3,
+  type ExportFormatV4,
+  type LatestExportFormat,
+  type SupportedExportFormats
 } from '@/types/export';
-import { FolderInterface } from '@/types/folder';
-import { Prompt } from '@/types/prompt';
+import { type FolderInterface } from '@/types/folder';
+import { type Prompt } from '@/types/prompt';
 
 import { cleanConversationHistory } from './clean';
 
@@ -36,7 +36,7 @@ export function cleanData(data: SupportedExportFormats): LatestExportFormat {
       version: 4,
       history: cleanConversationHistory(data),
       folders: [],
-      prompts: [],
+      prompts: []
     };
   }
 
@@ -47,9 +47,9 @@ export function cleanData(data: SupportedExportFormats): LatestExportFormat {
       folders: (data.folders || []).map((chatFolder) => ({
         id: chatFolder.id.toString(),
         name: chatFolder.name,
-        type: 'chat',
+        type: 'chat'
       })),
-      prompts: [],
+      prompts: []
     };
   }
 
@@ -92,11 +92,11 @@ export const exportData = () => {
     version: 4,
     history: history || [],
     folders: folders || [],
-    prompts: prompts || [],
+    prompts: prompts || []
   } as LatestExportFormat;
 
   const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: 'application/json',
+    type: 'application/json'
   });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -110,7 +110,7 @@ export const exportData = () => {
 };
 
 export const importData = (
-  data: SupportedExportFormats,
+  data: SupportedExportFormats
 ): LatestExportFormat => {
   const { history, folders, prompts } = cleanData(data);
 
@@ -121,16 +121,16 @@ export const importData = (
 
   const newHistory: Conversation[] = [
     ...oldConversationsParsed,
-    ...history,
+    ...history
   ].filter(
     (conversation, index, self) =>
-      index === self.findIndex((c) => c.id === conversation.id),
+      index === self.findIndex((c) => c.id === conversation.id)
   );
   localStorage.setItem('conversationHistory', JSON.stringify(newHistory));
   if (newHistory.length > 0) {
     localStorage.setItem(
       'selectedConversation',
-      JSON.stringify(newHistory[newHistory.length - 1]),
+      JSON.stringify(newHistory[newHistory.length - 1])
     );
   } else {
     localStorage.removeItem('selectedConversation');
@@ -140,10 +140,10 @@ export const importData = (
   const oldFoldersParsed = oldFolders ? JSON.parse(oldFolders) : [];
   const newFolders: FolderInterface[] = [
     ...oldFoldersParsed,
-    ...folders,
+    ...folders
   ].filter(
     (folder, index, self) =>
-      index === self.findIndex((f) => f.id === folder.id),
+      index === self.findIndex((f) => f.id === folder.id)
   );
   localStorage.setItem('folders', JSON.stringify(newFolders));
 
@@ -151,7 +151,7 @@ export const importData = (
   const oldPromptsParsed = oldPrompts ? JSON.parse(oldPrompts) : [];
   const newPrompts: Prompt[] = [...oldPromptsParsed, ...prompts].filter(
     (prompt, index, self) =>
-      index === self.findIndex((p) => p.id === prompt.id),
+      index === self.findIndex((p) => p.id === prompt.id)
   );
   localStorage.setItem('prompts', JSON.stringify(newPrompts));
 
@@ -159,6 +159,6 @@ export const importData = (
     version: 4,
     history: newHistory,
     folders: newFolders,
-    prompts: newPrompts,
+    prompts: newPrompts
   };
 };

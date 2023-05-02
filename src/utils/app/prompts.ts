@@ -1,4 +1,4 @@
-import { Prompt } from '@/types/prompt';
+import { type Prompt } from '@/types/prompt';
 
 export const updatePrompt = (updatedPrompt: Prompt, allPrompts: Prompt[]) => {
   const updatedPrompts = allPrompts.map((c) => {
@@ -13,7 +13,7 @@ export const updatePrompt = (updatedPrompt: Prompt, allPrompts: Prompt[]) => {
 
   return {
     single: updatedPrompt,
-    all: updatedPrompts,
+    all: updatedPrompts
   };
 };
 

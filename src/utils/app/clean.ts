@@ -1,4 +1,4 @@
-import { Conversation } from '@/types/chat';
+import { type Conversation } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 
 import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from './const';
@@ -16,7 +16,7 @@ export const cleanSelectedConversation = (conversation: Conversation) => {
   if (!updatedConversation.model) {
     updatedConversation = {
       ...updatedConversation,
-      model: updatedConversation.model || OpenAIModels[OpenAIModelID.GPT_3_5],
+      model: updatedConversation.model || OpenAIModels[OpenAIModelID.GPT_3_5]
     };
   }
 
@@ -24,28 +24,28 @@ export const cleanSelectedConversation = (conversation: Conversation) => {
   if (!updatedConversation.prompt) {
     updatedConversation = {
       ...updatedConversation,
-      prompt: updatedConversation.prompt || DEFAULT_SYSTEM_PROMPT,
+      prompt: updatedConversation.prompt || DEFAULT_SYSTEM_PROMPT
     };
   }
 
   if (!updatedConversation.temperature) {
     updatedConversation = {
       ...updatedConversation,
-      temperature: updatedConversation.temperature || DEFAULT_TEMPERATURE,
+      temperature: updatedConversation.temperature || DEFAULT_TEMPERATURE
     };
   }
 
   if (!updatedConversation.folderId) {
     updatedConversation = {
       ...updatedConversation,
-      folderId: updatedConversation.folderId || null,
+      folderId: updatedConversation.folderId || null
     };
   }
 
   if (!updatedConversation.messages) {
     updatedConversation = {
       ...updatedConversation,
-      messages: updatedConversation.messages || [],
+      messages: updatedConversation.messages || []
     };
   }
 
@@ -90,8 +90,8 @@ export const cleanConversationHistory = (history: any[]): Conversation[] => {
       return acc;
     } catch (error) {
       console.warn(
-        `error while cleaning conversations' history. Removing culprit`,
-        error,
+        'error while cleaning conversations\' history. Removing culprit',
+        error
       );
     }
     return acc;

@@ -1,7 +1,7 @@
-import { Conversation, Message } from './chat';
-import { FolderInterface } from './folder';
+import { type Conversation, type Message } from './chat';
+import { type FolderInterface } from './folder';
 import { OpenAIModel } from './openai';
-import { Prompt } from './prompt';
+import { type Prompt } from './prompt';
 
 export type SupportedExportFormats =
   | ExportFormatV1
@@ -10,36 +10,36 @@ export type SupportedExportFormats =
   | ExportFormatV4;
 export type LatestExportFormat = ExportFormatV4;
 
-////////////////////////////////////////////////////////////////////////////////////////////
+/// /////////////////////////////////////////////////////////////////////////////////////////
 interface ConversationV1 {
-  id: number;
-  name: string;
-  messages: Message[];
+  id: number
+  name: string
+  messages: Message[]
 }
 
 export type ExportFormatV1 = ConversationV1[];
 
-////////////////////////////////////////////////////////////////////////////////////////////
+/// /////////////////////////////////////////////////////////////////////////////////////////
 interface ChatFolder {
-  id: number;
-  name: string;
+  id: number
+  name: string
 }
 
 export interface ExportFormatV2 {
-  history: Conversation[] | null;
-  folders: ChatFolder[] | null;
+  history: Conversation[] | null
+  folders: ChatFolder[] | null
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////
+/// /////////////////////////////////////////////////////////////////////////////////////////
 export interface ExportFormatV3 {
-  version: 3;
-  history: Conversation[];
-  folders: FolderInterface[];
+  version: 3
+  history: Conversation[]
+  folders: FolderInterface[]
 }
 
 export interface ExportFormatV4 {
-  version: 4;
-  history: Conversation[];
-  folders: FolderInterface[];
-  prompts: Prompt[];
+  version: 4
+  history: Conversation[]
+  folders: FolderInterface[]
+  prompts: Prompt[]
 }

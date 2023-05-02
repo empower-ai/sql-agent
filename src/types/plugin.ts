@@ -1,14 +1,14 @@
-import { KeyValuePair } from './data';
+import { type KeyValuePair } from './data';
 
 export interface Plugin {
-  id: PluginID;
-  name: PluginName;
-  requiredKeys: KeyValuePair[];
+  id: PluginID
+  name: PluginName
+  requiredKeys: KeyValuePair[]
 }
 
 export interface PluginKey {
-  pluginId: PluginID;
-  requiredKeys: KeyValuePair[];
+  pluginId: PluginID
+  requiredKeys: KeyValuePair[]
 }
 
 export enum PluginID {
@@ -26,14 +26,14 @@ export const Plugins: Record<PluginID, Plugin> = {
     requiredKeys: [
       {
         key: 'GOOGLE_API_KEY',
-        value: '',
+        value: ''
       },
       {
         key: 'GOOGLE_CSE_ID',
-        value: '',
-      },
-    ],
-  },
+        value: ''
+      }
+    ]
+  }
 };
 
 export const PluginList = Object.values(Plugins);
