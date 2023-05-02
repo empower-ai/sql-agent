@@ -3,7 +3,7 @@ export interface FieldDefinition {
   description: string
   type: string
   required: boolean
-  nestedFields?: FieldDefinition[],
+  nestedFields?: FieldDefinition[]
 }
 
 export interface TableInfo {

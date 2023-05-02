@@ -1,7 +1,10 @@
 {
   "scripts": {
-    "start": "NODE_ENV=development tsc-watch --onSuccess \"nodemon     dist/index.js\"",
-    "prod": "NODE_ENV=production tsc && node dist/index.js",
+    "dev": "next dev",
+    "build": "next build",
+    "start-next": "next start",
+    "start": "nodemon",
+    "prod": "next build && NODE_ENV=production tsc && node dist/index.js",
     "test": "ts-node ./src/test.ts"
   },
   "engines": {
@@ -10,6 +13,7 @@
   "devDependencies": {
     "@types/node": "^18.15.11",
     "@types/node-fetch": "^2.6.3",
+    "@types/react": "18.2.0",
     "@types/ssh2": "^1.11.11",
     "@types/tunnel-ssh": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
@@ -21,7 +25,7 @@
     "nodemon": "^2.0.22",
     "tsc-watch": "^6.0.0",
     "typescript": "^5.0.4"
-  },
+    },
   "dependencies": {
     "@google-cloud/bigquery": "^6.2.0",
     "@slack/bolt": "^3.13.0",
@@ -36,9 +40,12 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.2.0",
     "nan": "^2.17.0",
+    "next": "^13.3.4",
     "node-fetch": "^3.3.1",
     "openai": "^3.2.1",
     "pg": "^8.10.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "rxjs": "^7.8.0",
     "sqlite3": "^5.1.6",
     "tunnel-ssh": "^5.0.5",

@@ -2,6 +2,9 @@ import dotenv from 'dotenv';
 
 import bolt from '@slack/bolt';
 import configLoader from './config/loader.js';
+import { createServer } from 'http'
+// eslint-disable-next-line n/no-deprecated-api
+import { parse } from 'url'
 
 import getLogger from './utils/logger.js';
 import openAI from './openai/openai.js';
@@ -17,6 +20,7 @@ import { createSSHTunnelIfNecessary } from './utils/ssh-tunnel.js';
 import handleEditAssumptions from './slack/event-handlers/edit-assumptions.js';
 import handleCancelAssumptionsEditing from './slack/event-handlers/cancel-assumptions-editing.js';
 import handleUpdateAssumptions from './slack/event-handlers/update-assumptions.js';
+import next from 'next';
 
 const NODE_MAJOR_VERSION = parseInt(process.versions.node.split('.')[0]);
 if (NODE_MAJOR_VERSION < 18) {
@@ -44,25 +48,49 @@ const dataSource = loadDataSource();
 const dataSourceContextIndex = buildDataSourceContextIndex(Boolean(process.env.ENABLE_EMBEDDING_INDEX), dataSource);
 const dataQuestionAgent = new DataQuestionAgent(dataSource, dataSourceContextIndex);
 
-const app = new App({
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
-  token: process.env.SLACK_BOT_TOKEN,
-  appToken: process.env.SLACK_APP_TOKEN,
-  socketMode: true
-});
+async function startSlackApp(): Promise<void> {
+  const slackApp = new App({
+    signingSecret: process.env.SLACK_SIGNING_SECRET,
+    token: process.env.SLACK_BOT_TOKEN,
+    appToken: process.env.SLACK_APP_TOKEN,
+    socketMode: true
+  });
+  await Promise.all([
+    handleAppMention(slackApp, dataQuestionAgent),
+    handleEditQuery(slackApp),
+    handleCancelQueryEditing(slackApp),
+    handleRunEditedQuery(slackApp, dataSource),
+    handleCommand(slackApp, dataSource),
+    handleEditAssumptions(slackApp),
+    handleCancelAssumptionsEditing(slackApp),
+    handleUpdateAssumptions(slackApp, dataQuestionAgent)
+  ]);
 
-await Promise.all([
-  handleAppMention(app, dataQuestionAgent),
-  handleEditQuery(app),
-  handleCancelQueryEditing(app),
-  handleRunEditedQuery(app, dataSource),
-  handleCommand(app, dataSource),
-  handleEditAssumptions(app),
-  handleCancelAssumptionsEditing(app),
-  handleUpdateAssumptions(app, dataQuestionAgent)
-]);
+  await slackApp.start();
+  logger.info('⚡️ Bolt app started');
+}
 
-const port = process.env.PORT ?? 3000;
-await app.start();
+async function startWebApp(): Promise<void> {
+  logger.info('Preparing Next.js app');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const dev = process.env.NODE_ENV !== 'production';
+  const hostname = 'localhost';
+  const port = 3000;
 
-logger.info(`Sensei is up running, listening on port ${port}`);
+  const webApp = next({ dev, hostname, port });
+  const handle = webApp.getRequestHandler();
+
+  await webApp.prepare();
+  createServer((req, res) => {
+    const parsedUrl = parse(req.url!, true);
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    handle(req, res, parsedUrl);
+  }).listen(port);
+
+  logger.info(`⚡️ Next.js app started on http://${hostname}:${port}`);
+}
+
+await startSlackApp();
+if (process.env.ENABLE_WEB_APP === 'true') {
+  await startWebApp();
+}
