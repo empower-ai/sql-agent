@@ -87,6 +87,7 @@ export abstract class DataSource {
       ) +
       '* DO NOT use any field not included in schemas.\n' +
       '* If you are not sure about the answer even with assumptions, just say I don\'t know, or ask clarify questions.\n' +
+      '* Keep the assumptions concise.\n' +
       `* You should return assumptions and PLAIN TEXT ${this.dataSourceType} query for the question ONLY, NO explanation, NO markdown.\n` +
       '* Use UNNEST() for ARRAY field.\n' +
       '* Wrap table name with `` \n' +
