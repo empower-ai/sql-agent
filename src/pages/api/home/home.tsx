@@ -415,14 +415,6 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       serverSideApiKeyIsSet: !!process.env.OPENAI_API_KEY,
       defaultModelId,
       serverSidePluginKeysSet
-      // ...(await serverSideTranslations(locale ?? 'en', [
-      //   'common',
-      //   'chat',
-      //   'sidebar',
-      //   'markdown',
-      //   'promptbar',
-      //   'settings'
-      // ]))
     }
   };
 };
