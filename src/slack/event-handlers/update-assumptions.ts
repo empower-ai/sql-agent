@@ -17,7 +17,7 @@ export default async function handleUpdateAssumptions(app: App, agent: DataQuest
     try {
       const question = actionBody.message?.metadata.event_payload.question!;
       // Create a new id to not mess up the thread for now
-      const id = `${actionBody.container.channel_id}|${actionBody.container.thread_ts}|${actionBody.container.message_ts}`;
+      const id = `${actionBody.container.channel_id}|${actionBody.container.thread_ts}|${actionBody.container.message_ts}|${Date.now()}`;
 
       const answer = await agent.answer(question, id.toString(), assumptions);
       if (!answer.hasResult) {
