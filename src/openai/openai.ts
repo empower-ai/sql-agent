@@ -1,39 +1,21 @@
-import { Configuration, OpenAIApi } from 'openai';
+import * as ChatGPT from '@logunify/chatgpt';
 
 class OpenAI {
-  private openai: OpenAIApi | undefined;
+  private api: ChatGPT.ChatGPTAPI | undefined = undefined;
 
   public init(): void {
-    const configuration = new Configuration({
-      apiKey: process.env.OPENAI_API_KEY
+    this.api = new ChatGPT.ChatGPTAPI({
+      apiKey: process.env.OPENAI_API_KEY!,
+      completionParams: {
+        temperature: 0
+        // model: 'gpt4'
+      }
     });
-    this.openai = new OpenAIApi(configuration);
-    // this.api = new ChatGPTAPI({
-    //   apiKey: process.env.OPENAI_API_KEY!,
-    //   completionParams: {
-    //     temperature: 0
-    //     // model: 'gpt4'
-    //   }
-    // });
   }
 
-  async sendMessage(message: string, parentMessageId: string | undefined = undefined): Promise<{
-    id: string
-    text: string
-  }> {
-    // const response = await this.api!.sendMessage(message, { parentMessageId });
-
-    // const res = await this.openai?.createCompletion({
-    //   model: 'gpt3.5',
-    //   prompt: message
-    // });
-
-    // console.log(res);
-    // return response;
-    return {
-      id: 'foo',
-      text: 'bar'
-    };
+  async sendMessage(message: string, parentMessageId: string | undefined = undefined): Promise<ChatGPT.ChatMessage> {
+    const response = await this.api!.sendMessage(message, { parentMessageId });
+    return response;
   }
 }
 

@@ -51,7 +51,7 @@
     "@slack/web-api": "^6.8.1",
     "@tabler/icons-react": "^2.9.0",
     "body-parser": "^1.20.2",
-    "chatgpt": "^5.2.2",
+    "@logunify/chatgpt": "5.2.9",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "eventsource-parser": "^0.1.0",
