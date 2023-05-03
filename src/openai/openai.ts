@@ -1,7 +1,7 @@
 import * as ChatGPT from '@logunify/chatgpt';
 
 class OpenAI {
-  private api: ChatGPT.ChatGPTAPI | undefined = undefined;
+  private api!: ChatGPTAPI;
 
   public init(): void {
     this.api = new ChatGPT.ChatGPTAPI({
@@ -13,8 +13,8 @@ class OpenAI {
     });
   }
 
-  async sendMessage(message: string, parentMessageId: string | undefined = undefined): Promise<ChatGPT.ChatMessage> {
-    const response = await this.api!.sendMessage(message, { parentMessageId });
+  async sendMessage(message: string, parentMessageId: string | undefined = undefined): Promise<ChatMessage> {
+    const response = await this.api.sendMessage(message, { parentMessageId });
     return response;
   }
 }
