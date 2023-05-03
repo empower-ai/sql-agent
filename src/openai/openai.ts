@@ -23,12 +23,12 @@ class OpenAI {
   }> {
     // const response = await this.api!.sendMessage(message, { parentMessageId });
 
-    const res = await this.openai?.createCompletion({
-      model: 'gpt3.5',
-      prompt: message
-    });
+    // const res = await this.openai?.createCompletion({
+    //   model: 'gpt3.5',
+    //   prompt: message
+    // });
 
-    console.log(res);
+    // console.log(res);
     // return response;
     return {
       id: 'foo',
