@@ -79,6 +79,5 @@
     "tunnel-ssh": "^5.0.5",
     "uuid": "^9.0.0",
     "winston": "^3.8.2"
-  },
-  "type": "module"
+  }
 }

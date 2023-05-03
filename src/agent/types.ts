@@ -1,4 +1,4 @@
-import { type Row } from '../utils/slacktable.js';
+import { type Row } from '../utils/slacktable';
 
 export interface Answer {
   query: string

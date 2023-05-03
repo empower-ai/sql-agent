@@ -1,7 +1,7 @@
 import { type App } from '@slack/bolt';
-import getLogger from '../utils/logger.js';
-import { type DataSource } from '../datasource/datasource.js';
-import SlackTable from '../utils/slacktable.js';
+import getLogger from '../utils/logger';
+import { type DataSource } from '../datasource/datasource';
+import SlackTable from '../utils/slacktable';
 
 const logger = getLogger('Command Handler');
 

@@ -1,8 +1,8 @@
 import knex, { type Knex } from 'knex';
-import { DataSource } from '../datasource.js';
-import { DataSourceType, type TableInfo, TableSchema } from '../types.js';
-import { type Answer } from '../../agent/types.js';
-import { type Row } from '../../utils/slacktable.js';
+import { DataSource } from '../datasource';
+import { DataSourceType, type TableInfo, TableSchema } from '../types';
+import { type Answer } from '../../agent/types';
+import { type Row } from '../../utils/slacktable';
 
 export class PgsqlSource extends DataSource {
   private connection!: Knex;

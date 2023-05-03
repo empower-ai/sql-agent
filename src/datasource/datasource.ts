@@ -1,9 +1,9 @@
 import { type Logger } from 'winston';
-import getLogger from '../utils/logger.js';
-import { type Row } from '../utils/slacktable.js';
-import { type TableInfo, type DataSourceType, type DatabaseSchema, type TableSchema } from './types.js';
-import { type Answer } from '../agent/types.js';
-import configLoader from '../config/loader.js';
+import getLogger from '../utils/logger';
+import { type Row } from '../utils/slacktable';
+import { type TableInfo, type DataSourceType, type DatabaseSchema, type TableSchema } from './types';
+import { type Answer } from '../agent/types';
+import configLoader from '../config/loader';
 
 export abstract class DataSource {
   protected readonly allowedDatabases: string[];

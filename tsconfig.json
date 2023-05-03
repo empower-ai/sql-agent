@@ -1,6 +1,8 @@
 {
   "include": [
-    "./src/**/*", "tailwind.config.js"  ],
+    "./src/**/*",
+    "tailwind.config.js"
+  ],
   "exclude": [
     "node_modules"
   ],
@@ -12,7 +14,8 @@
       "esnext"
     ],
     "allowJs": true,
-    "module": "esnext",
+    "allowSyntheticDefaultImports": true,
+    "module": "commonjs",
     "outDir": "./dist",
     "rootDir": "./src",
     "moduleResolution": "node",
@@ -29,7 +32,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   }
 }

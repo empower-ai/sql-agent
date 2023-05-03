@@ -1,9 +1,9 @@
-import configLoader from '../config/loader.js';
-import getLogger from '../utils/logger.js';
-import { type DataSource } from './datasource.js';
-import BigQuerySource from './datasources/bigquery.js';
-import MysqlSource from './datasources/mysql.js';
-import { PgsqlSource } from './datasources/pgsql.js';
+import configLoader from '../config/loader';
+import getLogger from '../utils/logger';
+import { type DataSource } from './datasource';
+import BigQuerySource from './datasources/bigquery';
+import MysqlSource from './datasources/mysql';
+import { PgsqlSource } from './datasources/pgsql';
 
 const logger = getLogger('DataSourceLoader');
 export default function loadDataSource(): DataSource {

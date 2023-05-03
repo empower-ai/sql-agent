@@ -1,14 +1,14 @@
 import { type App, type BlockAction } from '@slack/bolt';
-import SlackTable from '../../utils/slacktable.js';
-import getLogger from '../../utils/logger.js';
+import SlackTable from '../../utils/slacktable';
+import getLogger from '../../utils/logger';
 import {
   getAssumptionBlocks,
   getQueryBlocks,
   getQuestionBlock,
   getResultBlocks
-} from '../view/blocks.js';
-import { type DataSource } from '../../datasource/datasource.js';
-import { Action } from '../types.js';
+} from '../view/blocks';
+import { type DataSource } from '../../datasource/datasource';
+import { Action } from '../types';
 
 const logger = getLogger('Event Handler');
 

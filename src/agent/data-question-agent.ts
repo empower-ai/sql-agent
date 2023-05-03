@@ -1,8 +1,8 @@
-import { type DataSource } from '../datasource/datasource.js';
-import type DataSourceContextIndex from '../indexes/types.js';
-import openAI from '../openai/openai.js';
-import getLogger from '../utils/logger.js';
-import { type Answer } from './types.js';
+import { type DataSource } from '../datasource/datasource';
+import type DataSourceContextIndex from '../indexes/types';
+import openAI from '../openai/openai';
+import getLogger from '../utils/logger';
+import { type Answer } from './types';
 
 const logger = getLogger('DataQuestionAgent');
 
