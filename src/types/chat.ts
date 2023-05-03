@@ -1,5 +1,14 @@
 import { type OpenAIModel } from './openai';
 
+export interface SenseiResponse {
+  question: string
+  query: string
+  assumption: string
+  answer: string
+  hasResult: string
+  err: string
+}
+
 export interface Message {
   role: Role
   content: string

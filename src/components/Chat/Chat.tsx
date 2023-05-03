@@ -36,14 +36,6 @@ interface Props {
   stopConversationRef: MutableRefObject<boolean>
 }
 
-interface Answer {
-  query: string;
-  assumption: string;
-  answer: string;
-  hasResult: string;
-  err: string;
-}
-
 export const Chat = memo(({ stopConversationRef }: Props) => {
   const t = 'chat';
 
