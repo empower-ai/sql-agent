@@ -104,7 +104,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           messages: updatedConversation.messages,
           key: apiKey,
           prompt: updatedConversation.prompt,
-          temperature: updatedConversation.temperature
+          temperature: updatedConversation.temperature,
+          conversationId: selectedConversation.id,
         };
 
         // TODO: call dsensei endpoint here
