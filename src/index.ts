@@ -1,5 +1,4 @@
-import bolt from '@slack/bolt';
-import configLoader from './config/loader.js';
+import * as bolt from '@slack/bolt';
 import { createServer } from 'http'
 // eslint-disable-next-line n/no-deprecated-api
 import { parse } from 'url'
@@ -11,9 +10,8 @@ import handleEditQuery from './slack/event-handlers/edit-query';
 import handleCancelQueryEditing from './slack/event-handlers/cancel-query-editing';
 import handleCommand from './slack/command';
 import handleRunEditedQuery from './slack/event-handlers/run-edited-query';
-import DataQuestionAgent from './agent/data-question-agent';
-import loadDataSource from './datasource/index';
-import { buildDataSourceContextIndex } from './indexes/index';
+import dataQuestionAgent from './agent/data-question-agent';
+import dataSource from './datasource/index';
 import { createSSHTunnelIfNecessary } from './utils/ssh-tunnel';
 import handleEditAssumptions from './slack/event-handlers/edit-assumptions';
 import handleCancelAssumptionsEditing from './slack/event-handlers/cancel-assumptions-editing';
@@ -37,12 +35,6 @@ logger.info(
 
 void createSSHTunnelIfNecessary().then(async () => {
   const { App } = bolt;
-  configLoader.load();
-  openAI.init();
-
-  const dataSource = loadDataSource();
-  const dataSourceContextIndex = buildDataSourceContextIndex(Boolean(process.env.ENABLE_EMBEDDING_INDEX), dataSource);
-  const dataQuestionAgent = new DataQuestionAgent(dataSource, dataSourceContextIndex);
 
   async function startSlackApp(): Promise<void> {
     const slackApp = new App({

@@ -1,12 +1,14 @@
+import dataSource from '../datasource';
 import { type DataSource } from '../datasource/datasource';
 import type DataSourceContextIndex from '../indexes/types';
 import openAI from '../openai/openai';
 import getLogger from '../utils/logger';
 import { type Answer } from './types';
+import dataSourceContextIndex from '../indexes';
 
 const logger = getLogger('DataQuestionAgent');
 
-export default class DataQuestionAgent {
+export class DataQuestionAgent {
   private readonly lastMessageIds = new Map<string, string>();
 
   public constructor(
@@ -108,3 +110,7 @@ export default class DataQuestionAgent {
     }
   }
 }
+
+const dataQuestionAgent = new DataQuestionAgent(dataSource, dataSourceContextIndex);
+
+export default dataQuestionAgent;

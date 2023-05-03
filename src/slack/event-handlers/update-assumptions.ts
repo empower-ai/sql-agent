@@ -1,6 +1,6 @@
 import { type App, type BlockAction } from '@slack/bolt';
 import { Action } from '../types';
-import type DataQuestionAgent from '../../agent/data-question-agent';
+import { type DataQuestionAgent } from '../../agent/data-question-agent';
 import { getAssumptionBlocks, getErrorBlock, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks';
 import SlackTable from '../../utils/slacktable';
 import getLogger from '../../utils/logger';

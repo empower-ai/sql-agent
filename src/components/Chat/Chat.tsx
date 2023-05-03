@@ -36,6 +36,14 @@ interface Props {
   stopConversationRef: MutableRefObject<boolean>
 }
 
+interface Answer {
+  query: string;
+  assumption: string;
+  answer: string;
+  hasResult: string;
+  err: string;
+}
+
 export const Chat = memo(({ stopConversationRef }: Props) => {
   const t = 'chat';
 
@@ -98,6 +106,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           prompt: updatedConversation.prompt,
           temperature: updatedConversation.temperature
         };
+
+        // TODO: call dsensei endpoint here
         const endpoint = getEndpoint(plugin);
         let body;
         if (!plugin) {

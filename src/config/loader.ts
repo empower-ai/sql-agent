@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 
 class ConfigLoader {
-  private bqkey: string | null = null;
-  private additionalContext: string | null = null;
+  private readonly bqkey: string | null = null;
+  private readonly additionalContext: string | null = null;
 
-  public load(): void {
+  constructor() {
     this.bqkey = null;
     const envBqKey = process.env.BQ_KEY;
     if (envBqKey != null) {

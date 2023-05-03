@@ -1,9 +1,9 @@
 import * as ChatGPT from '@logunify/chatgpt';
 
 class OpenAI {
-  private api!: ChatGPT.ChatGPTAPI;
+  private readonly api: ChatGPT.ChatGPTAPI;
 
-  public init(): void {
+  constructor() {
     this.api = new ChatGPT.ChatGPTAPI({
       apiKey: process.env.OPENAI_API_KEY!,
       completionParams: {

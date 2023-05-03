@@ -6,9 +6,9 @@ import MysqlSource from './datasources/mysql';
 import { PgsqlSource } from './datasources/pgsql';
 
 const logger = getLogger('DataSourceLoader');
-export default function loadDataSource(): DataSource {
+function loadDataSource(): DataSource {
   if (configLoader.getBqKey() == null && process.env.DB_CONNECTION == null) {
-    throw new Error('Both BQ_KEY and DB_CONNECTION are set. Please set only one of them.');
+    throw new Error('Neither of BQ_KEY and DB_CONNECTION are set. Please set only one of them.');
   }
 
   const databases = process.env.DATABASES != null ? process.env.DATABASES.split(',') : [];
@@ -35,3 +35,6 @@ export default function loadDataSource(): DataSource {
   logger.info(`Use data source from ${dataSource.dataSourceType}`);
   return dataSource;
 }
+
+const dataSource = loadDataSource();
+export default dataSource;
