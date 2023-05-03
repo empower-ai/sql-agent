@@ -1,7 +1,7 @@
 import { ChatGPTAPI, type ChatMessage } from 'chatgpt';
 
 class OpenAI {
-  private api: ChatGPTAPI | undefined = undefined;
+  private api!: ChatGPTAPI;
 
   public init(): void {
     this.api = new ChatGPTAPI({
@@ -14,7 +14,7 @@ class OpenAI {
   }
 
   async sendMessage(message: string, parentMessageId: string | undefined = undefined): Promise<ChatMessage> {
-    const response = await this.api!.sendMessage(message, { parentMessageId });
+    const response = await this.api.sendMessage(message, { parentMessageId });
     return response;
   }
 }

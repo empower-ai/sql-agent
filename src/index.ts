@@ -1,5 +1,3 @@
-import dotenv from 'dotenv';
-
 import bolt from '@slack/bolt';
 import configLoader from './config/loader.js';
 import { createServer } from 'http'
@@ -26,8 +24,6 @@ const NODE_MAJOR_VERSION = parseInt(process.versions.node.split('.')[0]);
 if (NODE_MAJOR_VERSION < 18) {
   throw new Error('DSensei requires Node version 18 or higher, please upgrade your node version.');
 }
-
-dotenv.config();
 
 const logger = getLogger('SlackApp');
 logger.info(
