@@ -40,7 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
     const sourcesWithText: any = await Promise.all(
       sources.map(async (source) => {
         try {
-          const timeoutPromise = new Promise((_, reject) =>
+          const timeoutPromise = new Promise((resolve, reject) =>
             setTimeout(() => { reject(new Error('Request timed out')); }, 5000)
           );
 
@@ -70,7 +70,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
               ...source,
               // TODO: switch to tokens
               text: sourceText.slice(0, 2000)
-            } as GoogleSource;
+            } satisfies GoogleSource;
           }
           // }
 

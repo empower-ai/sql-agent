@@ -32,19 +32,17 @@ export const useFetch = () => {
 
     return await fetch(requestUrl, { ...requestBody, headers, signal })
       .then(async (response) => {
-        if (!response.ok) throw response;
+        if (!response.ok) throw new Error(JSON.stringify(response));
 
         const contentType = response.headers.get('content-type');
         const contentDisposition = response.headers.get('content-disposition');
 
-        const headers = response.headers;
-
         const result =
           contentType &&
-          (contentType?.indexOf('application/json') !== -1 ||
-            contentType?.indexOf('text/plain') !== -1)
+          (contentType?.includes('application/json') ||
+            contentType?.includes('text/plain'))
             ? response.json()
-            : contentDisposition?.indexOf('attachment') !== -1
+            : contentDisposition?.includes('attachment')
               ? response.blob()
               : response;
 

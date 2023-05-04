@@ -7,7 +7,8 @@ module.exports = {
   overrides: [
   ],
   ignorePatterns: [
-    'src/components/**/*'
+    'src/components/**/*',
+    './next-env.d.ts'
   ],
   parserOptions: {
     ecmaVersion: 'latest',
@@ -23,6 +24,7 @@ module.exports = {
     '@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
     '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/strict-boolean-expressions': 'off',
-    '@typescript-eslint/prefer-nullish-coalescing': 'off'
+    '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off'
   }
 };

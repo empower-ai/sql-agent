@@ -3,7 +3,7 @@ import { OpenAIError, OpenAIStream } from '@/utils/server';
 
 import { type ChatBody, type Message } from '@/types/chat';
 
-// @ts-expect-error
+// @ts-expect-error cannot find module
 import wasm from '@dqbd/tiktoken/lite/tiktoken_bg.wasm?module';
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
@@ -33,9 +33,9 @@ const handler = async (req: Request): Promise<Response> => {
       temperatureToUse = DEFAULT_TEMPERATURE;
     }
 
-    const prompt_tokens = encoding.encode(promptToSend);
+    const promptTokens = encoding.encode(promptToSend);
 
-    let tokenCount = prompt_tokens.length;
+    let tokenCount = promptTokens.length;
     let messagesToSend: Message[] = [];
 
     for (let i = messages.length - 1; i >= 0; i--) {

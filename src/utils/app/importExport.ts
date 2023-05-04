@@ -88,6 +88,7 @@ export const exportData = () => {
     prompts = JSON.parse(prompts);
   }
 
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const data = {
     version: 4,
     history: history || [],

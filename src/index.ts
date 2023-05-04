@@ -4,7 +4,6 @@ import { createServer } from 'http'
 import { parse } from 'url'
 
 import getLogger from './utils/logger';
-import openAI from './openai/openai';
 import handleAppMention from './slack/event-handlers/app-mention';
 import handleEditQuery from './slack/event-handlers/edit-query';
 import handleCancelQueryEditing from './slack/event-handlers/cancel-query-editing';

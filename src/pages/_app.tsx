@@ -8,7 +8,7 @@ import '@/styles/globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
-function App({ Component, pageProps }: AppProps<{}>) {
+function App({ Component, pageProps }: AppProps<any>) {
   const queryClient = new QueryClient();
 
   return (

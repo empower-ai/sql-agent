@@ -49,10 +49,12 @@ const handler = async (req: Request): Promise<Response> => {
     const json = await response.json();
 
     const models: OpenAIModel[] = json.data
+      // eslint-disable-next-line array-callback-return
       .map((model: any) => {
-        const model_name = (OPENAI_API_TYPE === 'azure') ? model.model : model.id;
+        const modelName = (OPENAI_API_TYPE === 'azure') ? model.model : model.id;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         for (const [key, value] of Object.entries(OpenAIModelID)) {
-          if (value === model_name) {
+          if (value === modelName) {
             return {
               id: model.id,
               name: OpenAIModels[value].name
