@@ -169,13 +169,13 @@ export default class BigQuerySource extends DataSource {
     }
 
     const sanitizedResult = result.split(',')
-      .map(column => column.trim())
-      .flatMap(column =>
+      .map((column: string) => column.trim())
+      .flatMap((column: string) =>
         candidateTablesAndColumns.filter(
           candidateTableAndColumn => new RegExp(`.*\\.${column}$|.*\\|${column}$`).test(candidateTableAndColumn)
         )
       )
-      .filter(tableAndColumn => !tableAndColumn.endsWith('_id') && !tableAndColumn.endsWith('ID'));
+      .filter((tableAndColumn: string) => !tableAndColumn.endsWith('_id') && !tableAndColumn.endsWith('ID'));
     if (sanitizedResult.length === 0) {
       this.logger.info('Skip enrichment, no possible enum column.');
       return;
@@ -183,7 +183,7 @@ export default class BigQuerySource extends DataSource {
 
     this.logger.info(`Converting string columns: ${sanitizedResult} into enums.`);
     await Promise.all(
-      sanitizedResult.map(async tableAndColumn => {
+      sanitizedResult.map(async (tableAndColumn: string) => {
         const [uniqueId, column] = tableAndColumn.split('|');
         const tableSchema = this.getTable(uniqueId)!;
         const rootField = column.split('.')[0];
