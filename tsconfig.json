@@ -20,7 +20,7 @@
     "rootDir": "./src",
     "moduleResolution": "node",
     "strict": true,
-    "noEmit": true,
+    "noEmit": false,
     "types": [
       "node"
     ],
@@ -35,6 +35,6 @@
       "@/*": [
         "./src/*"
       ]
-    }
+    },
   }
 }

@@ -66,11 +66,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
           if (parsed) {
             const sourceText = cleanSourceText(parsed.textContent);
 
-            return {
+            const ret: GoogleSource = {
               ...source,
               // TODO: switch to tokens
               text: sourceText.slice(0, 2000)
-            } satisfies GoogleSource;
+            };
+            return ret;
           }
           // }
 

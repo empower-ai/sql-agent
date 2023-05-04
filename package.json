@@ -4,7 +4,7 @@
     "build": "next build",
     "start-next": "next start",
     "start": "nodemon",
-    "prod": "next build && NODE_ENV=production tsc && node -r dotenv/config dist/index.js",
+    "prod": "next build && tsc && NODE_ENV=production node -r dotenv/config dist/index.js",
     "test": "ts-node ./src/test.ts"
   },
   "engines": {
