@@ -1,6 +1,6 @@
-import dataQuestionAgent from '@/agent/data-question-agent';
+import dataQuestionAgent from '../../../agent/data-question-agent';
 import { type ChatBody } from '@/types/chat';
-import SlackTable from '@/utils/slacktable';
+import SlackTable from '../../../utils/slacktable';
 
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
