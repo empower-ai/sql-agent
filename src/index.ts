@@ -64,7 +64,7 @@ void createSSHTunnelIfNecessary().then(async () => {
     const hostname = 'localhost';
     const port = 3000;
 
-    const webApp = next({ dev, hostname, port });
+    const webApp = next({ dev, hostname, port, dir: './src/web' });
     const handle = webApp.getRequestHandler();
 
     await webApp.prepare();

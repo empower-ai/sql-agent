@@ -42,4 +42,5 @@ dist/**/*
 yarn.lock
 keys/**/*
 
+src/web/.next/**/*
 .next/**/*

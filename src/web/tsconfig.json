@@ -33,7 +33,7 @@
     "isolatedModules": true,
     "paths": {
       "@/*": [
-        "./src/web/*"
+        "./*"
       ]
     },
   }
