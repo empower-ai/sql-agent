@@ -1,11 +1,11 @@
 import { IconCheck, IconKey, IconX } from '@tabler/icons-react';
-import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { type FC, type KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 import { SidebarButton } from '../Sidebar/SidebarButton';
 
 interface Props {
-  apiKey: string;
-  onApiKeyChange: (apiKey: string) => void;
+  apiKey: string
+  onApiKeyChange: (apiKey: string) => void
 }
 
 export const Key: FC<Props> = ({ apiKey, onApiKeyChange }) => {
@@ -31,7 +31,8 @@ export const Key: FC<Props> = ({ apiKey, onApiKeyChange }) => {
     }
   }, [isChanging]);
 
-  return isChanging ? (
+  return isChanging
+    ? (
     <div className="duration:200 flex w-full cursor-pointer items-center rounded-md py-3 px-3 transition-colors hover:bg-gray-500/10">
       <IconKey size={18} />
 
@@ -40,7 +41,7 @@ export const Key: FC<Props> = ({ apiKey, onApiKeyChange }) => {
         className="ml-2 h-[20px] flex-1 overflow-hidden overflow-ellipsis border-b border-neutral-400 bg-transparent pr-1 text-[12.5px] leading-3 text-left text-white outline-none focus:border-neutral-100"
         type="password"
         value={newKey}
-        onChange={(e) => setNewKey(e.target.value)}
+        onChange={(e) => { setNewKey(e.target.value); }}
         onKeyDown={handleEnterDown}
         placeholder='API Key'
       />
@@ -66,11 +67,12 @@ export const Key: FC<Props> = ({ apiKey, onApiKeyChange }) => {
         />
       </div>
     </div>
-  ) : (
+      )
+    : (
     <SidebarButton
       text='OpenAI API Key'
       icon={<IconKey size={18} />}
-      onClick={() => setIsChanging(true)}
+      onClick={() => { setIsChanging(true); }}
     />
-  );
+      );
 };

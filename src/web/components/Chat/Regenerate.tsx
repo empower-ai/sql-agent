@@ -1,9 +1,8 @@
 import { IconRefresh } from '@tabler/icons-react';
-import { FC } from 'react';
-
+import { type FC } from 'react';
 
 interface Props {
-  onRegenerate: () => void;
+  onRegenerate: () => void
 }
 
 export const Regenerate: FC<Props> = ({ onRegenerate }) => {

@@ -4,13 +4,13 @@ import {
   IconEdit,
   IconRobot,
   IconTrash,
-  IconUser,
+  IconUser
 } from '@tabler/icons-react';
-import { FC, memo, useContext, useEffect, useRef, useState } from 'react';
+import { type FC, memo, useContext, useEffect, useRef, useState } from 'react';
 
 import { updateConversation } from '@/utils/app/conversation';
 
-import { Message, SenseiResponse } from '@/types/chat';
+import { type Message, type SenseiResponse } from '@/types/chat';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -22,16 +22,15 @@ import { Assumption } from './Assumption';
 import { Query } from './Query';
 
 export interface Props {
-  message: Message;
-  messageIndex: number;
+  message: Message
+  messageIndex: number
   onEdit?: (editedMessage: Message) => void
 }
 
 export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) => {
-
   const {
     state: { selectedConversation, conversations, currentMessage, messageIsStreaming },
-    dispatch: homeDispatch,
+    dispatch: homeDispatch
   } = useContext(HomeContext);
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -80,12 +79,12 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
     }
     const updatedConversation = {
       ...selectedConversation,
-      messages,
+      messages
     };
 
     const { single, all } = updateConversation(
       updatedConversation,
-      conversations,
+      conversations
     );
     homeDispatch({ field: 'selectedConversation', value: single });
     homeDispatch({ field: 'conversations', value: all });
@@ -113,7 +112,6 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
     setMessageContent(message.content);
   }, [message.content]);
 
-
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'inherit';
@@ -131,21 +129,24 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
       </>
     );
 
-    const answerBlock = response.hasResult ? (
+    const answerBlock = response.hasResult
+      ? (
       <>
         <h4>Answer:</h4>
         <ReactMarkdown>
           {'> ' + response.answer}
         </ReactMarkdown>
       </>
-    ) : null;
+        )
+      : null;
 
-
-    const errorBlock = response.err ? (
+    const errorBlock = response.err
+      ? (
       <ReactMarkdown>
         {'> ' + response.err}
       </ReactMarkdown>
-    ) : null;
+        )
+      : null;
 
     return (
       <>
@@ -169,17 +170,21 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
     >
       <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
         <div className="min-w-[40px] text-right font-bold">
-          {message.role === 'assistant' ? (
+          {message.role === 'assistant'
+            ? (
             <IconRobot size={30} />
-          ) : (
+              )
+            : (
             <IconUser size={30} />
-          )}
+              )}
         </div>
 
         <div className="prose mt-[-2px] w-full dark:prose-invert">
-          {message.role === 'user' ? (
+          {message.role === 'user'
+            ? (
             <div className="flex w-full">
-              {isEditing ? (
+              {isEditing
+                ? (
                 <div className="flex w-full flex-col">
                   <textarea
                     ref={textareaRef}
@@ -187,15 +192,15 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
                     value={messageContent}
                     onChange={handleInputChange}
                     onKeyDown={handlePressEnter}
-                    onCompositionStart={() => setIsTyping(true)}
-                    onCompositionEnd={() => setIsTyping(false)}
+                    onCompositionStart={() => { setIsTyping(true); }}
+                    onCompositionEnd={() => { setIsTyping(false); }}
                     style={{
                       fontFamily: 'inherit',
                       fontSize: 'inherit',
                       lineHeight: 'inherit',
                       padding: '0',
                       margin: '0',
-                      overflow: 'hidden',
+                      overflow: 'hidden'
                     }}
                   />
 
@@ -218,11 +223,12 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
                     </button>
                   </div>
                 </div>
-              ) : (
+                  )
+                : (
                 <div className="prose whitespace-pre-wrap dark:prose-invert flex-1">
                   { message.content }
                 </div>
-              )}
+                  )}
 
               {!isEditing && (
                 <div className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
@@ -241,7 +247,8 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
                 </div>
               )}
             </div>
-          ) : (renderSenseiResponse(JSON.parse(message.content) as SenseiResponse))}
+              )
+            : (renderSenseiResponse(JSON.parse(message.content) as SenseiResponse))}
         </div>
       </div>
     </div>

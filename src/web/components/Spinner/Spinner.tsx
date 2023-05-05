@@ -1,8 +1,8 @@
 import { FC } from 'react';
 
 interface Props {
-  size?: string;
-  className?: string;
+  size?: string
+  className?: string
 }
 
 const Spinner = ({ size = '1em', className = '' }: Props) => {

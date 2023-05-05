@@ -1,13 +1,13 @@
-import { FC, MutableRefObject } from 'react';
+import { type FC, type MutableRefObject } from 'react';
 
-import { Prompt } from '@/types/prompt';
+import { type Prompt } from '@/types/prompt';
 
 interface Props {
-  prompts: Prompt[];
-  activePromptIndex: number;
-  onSelect: () => void;
-  onMouseOver: (index: number) => void;
-  promptListRef: MutableRefObject<HTMLUListElement | null>;
+  prompts: Prompt[]
+  activePromptIndex: number
+  onSelect: () => void
+  onMouseOver: (index: number) => void
+  promptListRef: MutableRefObject<HTMLUListElement | null>
 }
 
 export const PromptList: FC<Props> = ({
@@ -15,7 +15,7 @@ export const PromptList: FC<Props> = ({
   activePromptIndex,
   onSelect,
   onMouseOver,
-  promptListRef,
+  promptListRef
 }) => {
   return (
     <ul
@@ -35,7 +35,7 @@ export const PromptList: FC<Props> = ({
             e.stopPropagation();
             onSelect();
           }}
-          onMouseEnter={() => onMouseOver(index)}
+          onMouseEnter={() => { onMouseOver(index); }}
         >
           {prompt.name}
         </li>

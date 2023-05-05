@@ -5,7 +5,7 @@ import { useCreateReducer } from '@/hooks/useCreateReducer';
 import { savePrompts } from '@/utils/app/prompts';
 
 import { OpenAIModels } from '@/types/openai';
-import { Prompt } from '@/types/prompt';
+import { type Prompt } from '@/types/prompt';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -15,25 +15,24 @@ import { Prompts } from './components/Prompts';
 
 import Sidebar from '../Sidebar';
 import PromptbarContext from './PromptBar.context';
-import { PromptbarInitialState, initialState } from './Promptbar.state';
+import { type PromptbarInitialState, initialState } from './Promptbar.state';
 
 import { v4 as uuidv4 } from 'uuid';
 
 const Promptbar = () => {
-
   const promptBarContextValue = useCreateReducer<PromptbarInitialState>({
-    initialState,
+    initialState
   });
 
   const {
     state: { prompts, defaultModelId, showPromptbar },
     dispatch: homeDispatch,
-    handleCreateFolder,
+    handleCreateFolder
   } = useContext(HomeContext);
 
   const {
     state: { searchTerm, filteredPrompts },
-    dispatch: promptDispatch,
+    dispatch: promptDispatch
   } = promptBarContextValue;
 
   const handleTogglePromptbar = () => {
@@ -49,7 +48,7 @@ const Promptbar = () => {
         description: '',
         content: '',
         model: OpenAIModels[defaultModelId],
-        folderId: null,
+        folderId: null
       };
 
       const updatedPrompts = [...prompts, newPrompt];
@@ -86,7 +85,7 @@ const Promptbar = () => {
 
       const updatedPrompt = {
         ...prompt,
-        folderId: e.target.dataset.folderId,
+        folderId: e.target.dataset.folderId
       };
 
       handleUpdatePrompt(updatedPrompt);
@@ -107,7 +106,7 @@ const Promptbar = () => {
             ' ' +
             prompt.content.toLowerCase();
           return searchable.includes(searchTerm.toLowerCase());
-        }),
+        })
       });
     } else {
       promptDispatch({ field: 'filteredPrompts', value: prompts });
@@ -120,7 +119,7 @@ const Promptbar = () => {
         ...promptBarContextValue,
         handleCreatePrompt,
         handleDeletePrompt,
-        handleUpdatePrompt,
+        handleUpdatePrompt
       }}
     >
       <Sidebar<Prompt>

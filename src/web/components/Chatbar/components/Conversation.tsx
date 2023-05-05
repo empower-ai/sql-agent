@@ -3,18 +3,18 @@ import {
   IconMessage,
   IconPencil,
   IconTrash,
-  IconX,
+  IconX
 } from '@tabler/icons-react';
 import {
-  DragEvent,
-  KeyboardEvent,
-  MouseEventHandler,
+  type DragEvent,
+  type KeyboardEvent,
+  type MouseEventHandler,
   useContext,
   useEffect,
-  useState,
+  useState
 } from 'react';
 
-import { Conversation } from '@/types/chat';
+import { type Conversation } from '@/types/chat';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -22,14 +22,14 @@ import SidebarActionButton from '@/components/Buttons/SidebarActionButton';
 import ChatbarContext from '@/components/Chatbar/Chatbar.context';
 
 interface Props {
-  conversation: Conversation;
+  conversation: Conversation
 }
 
 export const ConversationComponent = ({ conversation }: Props) => {
   const {
     state: { selectedConversation, messageIsStreaming },
     handleSelectConversation,
-    handleUpdateConversation,
+    handleUpdateConversation
   } = useContext(HomeContext);
 
   const { handleDeleteConversation } = useContext(ChatbarContext);
@@ -47,7 +47,7 @@ export const ConversationComponent = ({ conversation }: Props) => {
 
   const handleDragStart = (
     e: DragEvent<HTMLButtonElement>,
-    conversation: Conversation,
+    conversation: Conversation
   ) => {
     if (e.dataTransfer) {
       e.dataTransfer.setData('conversation', JSON.stringify(conversation));
@@ -58,7 +58,7 @@ export const ConversationComponent = ({ conversation }: Props) => {
     if (renameValue.trim().length > 0) {
       handleUpdateConversation(conversation, {
         key: 'name',
-        value: renameValue,
+        value: renameValue
       });
       setRenameValue('');
       setIsRenaming(false);
@@ -102,19 +102,21 @@ export const ConversationComponent = ({ conversation }: Props) => {
 
   return (
     <div className="relative flex items-center">
-      {isRenaming && selectedConversation?.id === conversation.id ? (
+      {isRenaming && selectedConversation?.id === conversation.id
+        ? (
         <div className="flex w-full items-center gap-3 rounded-lg bg-[#343541]/90 p-3">
           <IconMessage size={18} />
           <input
             className="mr-12 flex-1 overflow-hidden overflow-ellipsis border-neutral-400 bg-transparent text-left text-[12.5px] leading-3 text-white outline-none focus:border-neutral-100"
             type="text"
             value={renameValue}
-            onChange={(e) => setRenameValue(e.target.value)}
+            onChange={(e) => { setRenameValue(e.target.value); }}
             onKeyDown={handleEnterDown}
             autoFocus
           />
         </div>
-      ) : (
+          )
+        : (
         <button
           className={`flex w-full cursor-pointer items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 hover:bg-[#343541]/90 ${
             messageIsStreaming ? 'disabled:cursor-not-allowed' : ''
@@ -126,7 +128,7 @@ export const ConversationComponent = ({ conversation }: Props) => {
           onClick={() => handleSelectConversation(conversation)}
           disabled={messageIsStreaming}
           draggable="true"
-          onDragStart={(e) => handleDragStart(e, conversation)}
+          onDragStart={(e) => { handleDragStart(e, conversation); }}
         >
           <IconMessage size={18} />
           <div
@@ -137,7 +139,7 @@ export const ConversationComponent = ({ conversation }: Props) => {
             {conversation.name}
           </div>
         </button>
-      )}
+          )}
 
       {(isDeleting || isRenaming) &&
         selectedConversation?.id === conversation.id && (
@@ -149,7 +151,7 @@ export const ConversationComponent = ({ conversation }: Props) => {
               <IconX size={18} />
             </SidebarActionButton>
           </div>
-        )}
+      )}
 
       {selectedConversation?.id === conversation.id &&
         !isDeleting &&
@@ -162,7 +164,7 @@ export const ConversationComponent = ({ conversation }: Props) => {
               <IconTrash size={18} />
             </SidebarActionButton>
           </div>
-        )}
+      )}
     </div>
   );
 };

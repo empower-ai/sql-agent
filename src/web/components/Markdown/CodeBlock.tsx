@@ -1,20 +1,20 @@
 import { IconCheck, IconClipboard, IconDownload } from '@tabler/icons-react';
-import { FC, memo, useState } from 'react';
+import { type FC, memo, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
 import {
   generateRandomString,
-  programmingLanguages,
+  programmingLanguages
 } from '@/utils/app/codeblock';
 
 interface Props {
-  language: string;
-  value: string;
+  language: string
+  value: string
 }
 
 export const CodeBlock: FC<Props> = memo(({ language, value }) => {
-  const [isCopied, setIsCopied] = useState<Boolean>(false);
+  const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const copyToClipboard = () => {
     if (!navigator.clipboard || !navigator.clipboard.writeText) {
@@ -33,11 +33,11 @@ export const CodeBlock: FC<Props> = memo(({ language, value }) => {
     const fileExtension = programmingLanguages[language] || '.file';
     const suggestedFileName = `file-${generateRandomString(
       3,
-      true,
+      true
     )}${fileExtension}`;
     const fileName = window.prompt(
       'Enter file name',
-      suggestedFileName,
+      suggestedFileName
     );
 
     if (!fileName) {

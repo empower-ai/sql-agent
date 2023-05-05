@@ -1,27 +1,27 @@
 import { IconFolderPlus, IconMistOff, IconPlus } from '@tabler/icons-react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import {
   CloseSidebarButton,
-  OpenSidebarButton,
+  OpenSidebarButton
 } from './components/OpenCloseButton';
 
 import Search from '../Search';
 
 interface Props<T> {
-  isOpen: boolean;
-  addItemButtonTitle: string;
-  side: 'left' | 'right';
-  items: T[];
-  itemComponent: ReactNode;
-  folderComponent: ReactNode;
-  footerComponent?: ReactNode;
-  searchTerm: string;
-  handleSearchTerm: (searchTerm: string) => void;
-  toggleOpen: () => void;
-  handleCreateItem: () => void;
-  handleCreateFolder: () => void;
-  handleDrop: (e: any) => void;
+  isOpen: boolean
+  addItemButtonTitle: string
+  side: 'left' | 'right'
+  items: T[]
+  itemComponent: ReactNode
+  folderComponent: ReactNode
+  footerComponent?: ReactNode
+  searchTerm: string
+  handleSearchTerm: (searchTerm: string) => void
+  toggleOpen: () => void
+  handleCreateItem: () => void
+  handleCreateFolder: () => void
+  handleDrop: (e: any) => void
 }
 
 const Sidebar = <T,>({
@@ -37,7 +37,7 @@ const Sidebar = <T,>({
   toggleOpen,
   handleCreateItem,
   handleCreateFolder,
-  handleDrop,
+  handleDrop
 }: Props<T>) => {
   const allowDrop = (e: any) => {
     e.preventDefault();
@@ -51,7 +51,8 @@ const Sidebar = <T,>({
     e.target.style.background = 'none';
   };
 
-  return isOpen ? (
+  return isOpen
+    ? (
     <div>
       <div
         className={`fixed top-0 ${side}-0 z-40 flex h-full w-[260px] flex-none flex-col space-y-2 bg-[#202123] p-2 text-[14px] transition-all sm:relative sm:top-0`}
@@ -88,7 +89,8 @@ const Sidebar = <T,>({
             </div>
           )}
 
-          {items?.length > 0 ? (
+          {items?.length > 0
+            ? (
             <div
               className="pt-2"
               onDrop={handleDrop}
@@ -98,23 +100,25 @@ const Sidebar = <T,>({
             >
               {itemComponent}
             </div>
-          ) : (
+              )
+            : (
             <div className="mt-8 select-none text-center text-white opacity-50">
               <IconMistOff className="mx-auto mb-3" />
               <span className="text-[14px] leading-normal">
                 'No data.
               </span>
             </div>
-          )}
+              )}
         </div>
         {footerComponent}
       </div>
 
       <CloseSidebarButton onClick={toggleOpen} side={side} />
     </div>
-  ) : (
+      )
+    : (
     <OpenSidebarButton onClick={toggleOpen} side={side} />
-  );
+      );
 };
 
 export default Sidebar;

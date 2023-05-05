@@ -1,12 +1,12 @@
 import { IconFileImport } from '@tabler/icons-react';
-import { FC } from 'react';
+import { type FC } from 'react';
 
-import { SupportedExportFormats } from '@/types/export';
+import { type SupportedExportFormats } from '@/types/export';
 
 import { SidebarButton } from '../Sidebar/SidebarButton';
 
 interface Props {
-  onImport: (data: SupportedExportFormats) => void;
+  onImport: (data: SupportedExportFormats) => void
 }
 
 export const Import: FC<Props> = ({ onImport }) => {
@@ -24,7 +24,7 @@ export const Import: FC<Props> = ({ onImport }) => {
           const file = e.target.files[0];
           const reader = new FileReader();
           reader.onload = (e) => {
-            let json = JSON.parse(e.target?.result as string);
+            const json = JSON.parse(e.target?.result as string);
             onImport(json);
           };
           reader.readAsText(file);
@@ -36,7 +36,7 @@ export const Import: FC<Props> = ({ onImport }) => {
         icon={<IconFileImport size={18} />}
         onClick={() => {
           const importFile = document.querySelector(
-            '#import-file',
+            '#import-file'
           ) as HTMLInputElement;
           if (importFile) {
             importFile.click();

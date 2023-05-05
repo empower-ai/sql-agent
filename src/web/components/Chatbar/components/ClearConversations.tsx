@@ -1,10 +1,10 @@
 import { IconCheck, IconTrash, IconX } from '@tabler/icons-react';
-import { FC, useState } from 'react';
+import { type FC, useState } from 'react';
 
 import { SidebarButton } from '@/components/Sidebar/SidebarButton';
 
 interface Props {
-  onClearConversations: () => void;
+  onClearConversations: () => void
 }
 
 export const ClearConversations: FC<Props> = ({ onClearConversations }) => {
@@ -15,7 +15,8 @@ export const ClearConversations: FC<Props> = ({ onClearConversations }) => {
     setIsConfirming(false);
   };
 
-  return isConfirming ? (
+  return isConfirming
+    ? (
     <div className="flex w-full cursor-pointer items-center rounded-lg py-3 px-3 hover:bg-gray-500/10">
       <IconTrash size={18} />
 
@@ -43,11 +44,12 @@ export const ClearConversations: FC<Props> = ({ onClearConversations }) => {
         />
       </div>
     </div>
-  ) : (
+      )
+    : (
     <SidebarButton
       text={'Clear conversations'}
       icon={<IconTrash size={18} />}
-      onClick={() => setIsConfirming(true)}
+      onClick={() => { setIsConfirming(true); }}
     />
-  );
+      );
 };

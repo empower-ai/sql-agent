@@ -1,7 +1,7 @@
 import { IconKey } from '@tabler/icons-react';
-import { KeyboardEvent, useContext, useEffect, useRef, useState } from 'react';
+import { type KeyboardEvent, useContext, useEffect, useRef, useState } from 'react';
 
-import { PluginID, PluginKey } from '@/types/plugin';
+import { PluginID, type PluginKey } from '@/types/plugin';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -10,9 +10,8 @@ import { SidebarButton } from '@/components/Sidebar/SidebarButton';
 import ChatbarContext from '../Chatbar.context';
 
 export const PluginKeys = () => {
-
   const {
-    state: { pluginKeys },
+    state: { pluginKeys }
   } = useContext(HomeContext);
 
   const { handlePluginKeyChange, handleClearPluginKey } =
@@ -53,7 +52,7 @@ export const PluginKeys = () => {
       <SidebarButton
         text={'Plugin Keys'}
         icon={<IconKey size={18} />}
-        onClick={() => setIsChanging(true)}
+        onClick={() => { setIsChanging(true); }}
       />
 
       {isChanging && (
@@ -96,12 +95,12 @@ export const PluginKeys = () => {
                     }
                     onChange={(e) => {
                       const pluginKey = pluginKeys.find(
-                        (p) => p.pluginId === PluginID.GOOGLE_SEARCH,
+                        (p) => p.pluginId === PluginID.GOOGLE_SEARCH
                       );
 
                       if (pluginKey) {
                         const requiredKey = pluginKey.requiredKeys.find(
-                          (k) => k.key === 'GOOGLE_API_KEY',
+                          (k) => k.key === 'GOOGLE_API_KEY'
                         );
 
                         if (requiredKey) {
@@ -111,12 +110,12 @@ export const PluginKeys = () => {
                               if (k.key === 'GOOGLE_API_KEY') {
                                 return {
                                   ...k,
-                                  value: e.target.value,
+                                  value: e.target.value
                                 };
                               }
 
                               return k;
-                            }),
+                            })
                           };
 
                           handlePluginKeyChange(updatedPluginKey);
@@ -127,13 +126,13 @@ export const PluginKeys = () => {
                           requiredKeys: [
                             {
                               key: 'GOOGLE_API_KEY',
-                              value: e.target.value,
+                              value: e.target.value
                             },
                             {
                               key: 'GOOGLE_CSE_ID',
-                              value: '',
-                            },
-                          ],
+                              value: ''
+                            }
+                          ]
                         };
 
                         handlePluginKeyChange(newPluginKey);
@@ -155,12 +154,12 @@ export const PluginKeys = () => {
                     }
                     onChange={(e) => {
                       const pluginKey = pluginKeys.find(
-                        (p) => p.pluginId === PluginID.GOOGLE_SEARCH,
+                        (p) => p.pluginId === PluginID.GOOGLE_SEARCH
                       );
 
                       if (pluginKey) {
                         const requiredKey = pluginKey.requiredKeys.find(
-                          (k) => k.key === 'GOOGLE_CSE_ID',
+                          (k) => k.key === 'GOOGLE_CSE_ID'
                         );
 
                         if (requiredKey) {
@@ -170,12 +169,12 @@ export const PluginKeys = () => {
                               if (k.key === 'GOOGLE_CSE_ID') {
                                 return {
                                   ...k,
-                                  value: e.target.value,
+                                  value: e.target.value
                                 };
                               }
 
                               return k;
-                            }),
+                            })
                           };
 
                           handlePluginKeyChange(updatedPluginKey);
@@ -186,13 +185,13 @@ export const PluginKeys = () => {
                           requiredKeys: [
                             {
                               key: 'GOOGLE_API_KEY',
-                              value: '',
+                              value: ''
                             },
                             {
                               key: 'GOOGLE_CSE_ID',
-                              value: e.target.value,
-                            },
-                          ],
+                              value: e.target.value
+                            }
+                          ]
                         };
 
                         handlePluginKeyChange(newPluginKey);
@@ -204,7 +203,7 @@ export const PluginKeys = () => {
                     className="mt-6 w-full rounded-lg border border-neutral-500 px-4 py-2 text-neutral-900 shadow hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
                     onClick={() => {
                       const pluginKey = pluginKeys.find(
-                        (p) => p.pluginId === PluginID.GOOGLE_SEARCH,
+                        (p) => p.pluginId === PluginID.GOOGLE_SEARCH
                       );
 
                       if (pluginKey) {
@@ -219,7 +218,7 @@ export const PluginKeys = () => {
                 <button
                   type="button"
                   className="mt-6 w-full rounded-lg border border-neutral-500 px-4 py-2 text-neutral-900 shadow hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
-                  onClick={() => setIsChanging(false)}
+                  onClick={() => { setIsChanging(false); }}
                 >
                   {'Save'}
                 </button>

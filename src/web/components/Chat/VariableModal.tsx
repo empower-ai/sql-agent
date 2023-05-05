@@ -1,29 +1,29 @@
-import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { type FC, type KeyboardEvent, useEffect, useRef, useState } from 'react';
 
-import { Prompt } from '@/types/prompt';
+import { type Prompt } from '@/types/prompt';
 
 interface Props {
-  prompt: Prompt;
-  variables: string[];
-  onSubmit: (updatedVariables: string[]) => void;
-  onClose: () => void;
+  prompt: Prompt
+  variables: string[]
+  onSubmit: (updatedVariables: string[]) => void
+  onClose: () => void
 }
 
 export const VariableModal: FC<Props> = ({
   prompt,
   variables,
   onSubmit,
-  onClose,
+  onClose
 }) => {
   const [updatedVariables, setUpdatedVariables] = useState<
-    { key: string; value: string }[]
+  Array<{ key: string, value: string }>
   >(
     variables
       .map((variable) => ({ key: variable, value: '' }))
       .filter(
         (item, index, array) =>
-          array.findIndex((t) => t.key === item.key) === index,
-      ),
+          array.findIndex((t) => t.key === item.key) === index
+      )
   );
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -106,7 +106,7 @@ export const VariableModal: FC<Props> = ({
               style={{ resize: 'none' }}
               placeholder={`Enter a value for ${variable.key}...`}
               value={variable.value}
-              onChange={(e) => handleChange(index, e.target.value)}
+              onChange={(e) => { handleChange(index, e.target.value); }}
               rows={3}
             />
           </div>

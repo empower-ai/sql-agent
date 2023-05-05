@@ -1,10 +1,10 @@
 import { IconX } from '@tabler/icons-react';
-import { FC } from 'react';
+import { type FC } from 'react';
 
 interface Props {
-  placeholder: string;
-  searchTerm: string;
-  onSearch: (searchTerm: string) => void;
+  placeholder: string
+  searchTerm: string
+  onSearch: (searchTerm: string) => void
 }
 const Search: FC<Props> = ({ placeholder, searchTerm, onSearch }) => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {

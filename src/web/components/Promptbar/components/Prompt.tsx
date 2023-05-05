@@ -2,17 +2,17 @@ import {
   IconBulbFilled,
   IconCheck,
   IconTrash,
-  IconX,
+  IconX
 } from '@tabler/icons-react';
 import {
-  DragEvent,
-  MouseEventHandler,
+  type DragEvent,
+  type MouseEventHandler,
   useContext,
   useEffect,
-  useState,
+  useState
 } from 'react';
 
-import { Prompt } from '@/types/prompt';
+import { type Prompt } from '@/types/prompt';
 
 import SidebarActionButton from '@/components/Buttons/SidebarActionButton';
 
@@ -20,14 +20,14 @@ import PromptbarContext from '../PromptBar.context';
 import { PromptModal } from './PromptModal';
 
 interface Props {
-  prompt: Prompt;
+  prompt: Prompt
 }
 
 export const PromptComponent = ({ prompt }: Props) => {
   const {
     dispatch: promptDispatch,
     handleUpdatePrompt,
-    handleDeletePrompt,
+    handleDeletePrompt
   } = useContext(PromptbarContext);
 
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -84,7 +84,7 @@ export const PromptComponent = ({ prompt }: Props) => {
           e.stopPropagation();
           setShowModal(true);
         }}
-        onDragStart={(e) => handleDragStart(e, prompt)}
+        onDragStart={(e) => { handleDragStart(e, prompt); }}
         onMouseLeave={() => {
           setIsDeleting(false);
           setIsRenaming(false);
@@ -121,7 +121,7 @@ export const PromptComponent = ({ prompt }: Props) => {
       {showModal && (
         <PromptModal
           prompt={prompt}
-          onClose={() => setShowModal(false)}
+          onClose={() => { setShowModal(false); }}
           onUpdatePrompt={handleUpdate}
         />
       )}

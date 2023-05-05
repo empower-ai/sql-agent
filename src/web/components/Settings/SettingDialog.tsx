@@ -1,22 +1,22 @@
-import { FC, useContext, useEffect, useReducer, useRef } from 'react';
+import { type FC, useContext, useEffect, useReducer, useRef } from 'react';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
 import { getSettings, saveSettings } from '@/utils/app/settings';
 
-import { Settings } from '@/types/settings';
+import { type Settings } from '@/types/settings';
 
 import HomeContext from '@/pages/api/home/home.context';
 
 interface Props {
-  open: boolean;
-  onClose: () => void;
+  open: boolean
+  onClose: () => void
 }
 
 export const SettingDialog: FC<Props> = ({ open, onClose }) => {
   const settings: Settings = getSettings();
   const { state, dispatch } = useCreateReducer<Settings>({
-    initialState: settings,
+    initialState: settings
   });
   const { dispatch: homeDispatch } = useContext(HomeContext);
   const modalRef = useRef<HTMLDivElement>(null);

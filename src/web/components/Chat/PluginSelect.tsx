@@ -1,18 +1,17 @@
-import { FC, useEffect, useRef } from 'react';
+import { type FC, useEffect, useRef } from 'react';
 
-
-import { Plugin, PluginList } from '@/types/plugin';
+import { type Plugin, PluginList } from '@/types/plugin';
 
 interface Props {
-  plugin: Plugin | null;
-  onPluginChange: (plugin: Plugin) => void;
-  onKeyDown: (e: React.KeyboardEvent<HTMLSelectElement>) => void;
+  plugin: Plugin | null
+  onPluginChange: (plugin: Plugin) => void
+  onKeyDown: (e: React.KeyboardEvent<HTMLSelectElement>) => void
 }
 
 export const PluginSelect: FC<Props> = ({
   plugin,
   onPluginChange,
-  onKeyDown,
+  onKeyDown
 }) => {
   const selectRef = useRef<HTMLSelectElement>(null);
 
@@ -43,8 +42,8 @@ export const PluginSelect: FC<Props> = ({
       onPluginChange(
         PluginList.find(
           (plugin) =>
-            plugin.name === selectElement?.selectedOptions[0].innerText,
-        ) as Plugin,
+            plugin.name === selectElement?.selectedOptions[0].innerText
+        ) as Plugin
       );
     } else {
       onKeyDown(e);
@@ -68,8 +67,8 @@ export const PluginSelect: FC<Props> = ({
           onChange={(e) => {
             onPluginChange(
               PluginList.find(
-                (plugin) => plugin.id === e.target.value,
-              ) as Plugin,
+                (plugin) => plugin.id === e.target.value
+              ) as Plugin
             );
           }}
           onKeyDown={(e) => {

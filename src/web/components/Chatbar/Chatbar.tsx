@@ -7,10 +7,10 @@ import { saveConversation, saveConversations } from '@/utils/app/conversation';
 import { saveFolders } from '@/utils/app/folders';
 import { exportData, importData } from '@/utils/app/importExport';
 
-import { Conversation } from '@/types/chat';
-import { LatestExportFormat, SupportedExportFormats } from '@/types/export';
+import { type Conversation } from '@/types/chat';
+import { type LatestExportFormat, type SupportedExportFormats } from '@/types/export';
 import { OpenAIModels } from '@/types/openai';
-import { PluginKey } from '@/types/plugin';
+import { type PluginKey } from '@/types/plugin';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -20,13 +20,13 @@ import { Conversations } from './components/Conversations';
 
 import Sidebar from '../Sidebar';
 import ChatbarContext from './Chatbar.context';
-import { ChatbarInitialState, initialState } from './Chatbar.state';
+import { type ChatbarInitialState, initialState } from './Chatbar.state';
 
 import { v4 as uuidv4 } from 'uuid';
 
 export const Chatbar = () => {
   const chatBarContextValue = useCreateReducer<ChatbarInitialState>({
-    initialState,
+    initialState
   });
 
   const {
@@ -34,12 +34,12 @@ export const Chatbar = () => {
     dispatch: homeDispatch,
     handleCreateFolder,
     handleNewConversation,
-    handleUpdateConversation,
+    handleUpdateConversation
   } = useContext(HomeContext);
 
   const {
     state: { searchTerm, filteredConversations },
-    dispatch: chatDispatch,
+    dispatch: chatDispatch
   } = chatBarContextValue;
 
   const handleApiKeyChange = useCallback(
@@ -48,7 +48,7 @@ export const Chatbar = () => {
 
       localStorage.setItem('apiKey', apiKey);
     },
-    [homeDispatch],
+    [homeDispatch]
   );
 
   const handlePluginKeyChange = (pluginKey: PluginKey) => {
@@ -69,14 +69,14 @@ export const Chatbar = () => {
 
       localStorage.setItem(
         'pluginKeys',
-        JSON.stringify([...pluginKeys, pluginKey]),
+        JSON.stringify([...pluginKeys, pluginKey])
       );
     }
   };
 
   const handleClearPluginKey = (pluginKey: PluginKey) => {
     const updatedPluginKeys = pluginKeys.filter(
-      (key) => key.pluginId !== pluginKey.pluginId,
+      (key) => key.pluginId !== pluginKey.pluginId
     );
 
     if (updatedPluginKeys.length === 0) {
@@ -99,7 +99,7 @@ export const Chatbar = () => {
     homeDispatch({ field: 'conversations', value: history });
     homeDispatch({
       field: 'selectedConversation',
-      value: history[history.length - 1],
+      value: history[history.length - 1]
     });
     homeDispatch({ field: 'folders', value: folders });
     homeDispatch({ field: 'prompts', value: prompts });
@@ -118,8 +118,8 @@ export const Chatbar = () => {
           model: OpenAIModels[defaultModelId],
           prompt: DEFAULT_SYSTEM_PROMPT,
           temperature: DEFAULT_TEMPERATURE,
-          folderId: null,
-        },
+          folderId: null
+        }
       });
 
     homeDispatch({ field: 'conversations', value: [] });
@@ -135,7 +135,7 @@ export const Chatbar = () => {
 
   const handleDeleteConversation = (conversation: Conversation) => {
     const updatedConversations = conversations.filter(
-      (c) => c.id !== conversation.id,
+      (c) => c.id !== conversation.id
     );
 
     homeDispatch({ field: 'conversations', value: updatedConversations });
@@ -145,7 +145,7 @@ export const Chatbar = () => {
     if (updatedConversations.length > 0) {
       homeDispatch({
         field: 'selectedConversation',
-        value: updatedConversations[updatedConversations.length - 1],
+        value: updatedConversations[updatedConversations.length - 1]
       });
 
       saveConversation(updatedConversations[updatedConversations.length - 1]);
@@ -160,8 +160,8 @@ export const Chatbar = () => {
             model: OpenAIModels[defaultModelId],
             prompt: DEFAULT_SYSTEM_PROMPT,
             temperature: DEFAULT_TEMPERATURE,
-            folderId: null,
-          },
+            folderId: null
+          }
         });
 
       localStorage.removeItem('selectedConversation');
@@ -192,12 +192,12 @@ export const Chatbar = () => {
             ' ' +
             conversation.messages.map((message) => message.content).join(' ');
           return searchable.toLowerCase().includes(searchTerm.toLowerCase());
-        }),
+        })
       });
     } else {
       chatDispatch({
         field: 'filteredConversations',
-        value: conversations,
+        value: conversations
       });
     }
   }, [searchTerm, conversations]);
@@ -212,7 +212,7 @@ export const Chatbar = () => {
         handleExportData,
         handlePluginKeyChange,
         handleClearPluginKey,
-        handleApiKeyChange,
+        handleApiKeyChange
       }}
     >
       <Sidebar<Conversation>
