@@ -1,7 +1,6 @@
 {
   "include": [
-    "./src/**/*",
-    "../tailwind.config.js"
+    "./**/*"
   ],
   "exclude": [
     "node_modules"
@@ -20,6 +19,7 @@
     "rootDir": "./src",
     "moduleResolution": "node",
     "strict": true,
+    "composite": true,
     "noEmit": true,
     "types": [
       "node"
