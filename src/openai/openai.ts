@@ -8,7 +8,7 @@ class OpenAI {
       apiKey: process.env.OPENAI_API_KEY!,
       completionParams: {
         temperature: 0
-        // model: 'gpt4'
+        // model: 'gpt-4'
       }
     });
   }
