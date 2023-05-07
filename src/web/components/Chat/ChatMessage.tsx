@@ -26,10 +26,11 @@ import { AssistantChatMessage } from './AssistantChatMessage';
 export interface Props {
   message: Message
   messageIndex: number
-  onEdit?: (editedMessage: Message) => void
+  onUpdateUserMessage: (editedMessage: Message) => void
+  onUpdateAssistantMessage: (editedMessage: Message) => void
 }
 
-export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) => {
+export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onUpdateUserMessage, onUpdateAssistantMessage }) => {
   const {
     state: { selectedConversation, conversations, currentMessage, messageIsStreaming },
     dispatch: homeDispatch
@@ -56,8 +57,8 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
 
   const handleEditMessage = () => {
     if (message.content != messageContent) {
-      if (selectedConversation && onEdit) {
-        onEdit({ ...message, content: messageContent });
+      if (selectedConversation) {
+        onUpdateUserMessage({ ...message, content: messageContent });
       }
     }
     setIsEditing(false);
@@ -134,10 +135,10 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
           {message.role === 'assistant'
             ? (
               <IconRobot size={30} />
-              )
+            )
             : (
               <IconUser size={30} />
-              )}
+            )}
         </div>
 
         <div className="prose mt-[-2px] w-full dark:prose-invert">
@@ -184,12 +185,12 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
                         </button>
                       </div>
                     </div>
-                    )
+                  )
                   : (
                     <div className="prose whitespace-pre-wrap dark:prose-invert flex-1">
                       {message.content}
                     </div>
-                    )}
+                  )}
 
                 {!isEditing && (
                   <div className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
@@ -208,8 +209,11 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
                   </div>
                 )}
               </div>
-              )
-            : (<AssistantChatMessage messageContent={messageContent} />)
+            )
+            : (<AssistantChatMessage
+              messageContent={messageContent}
+              onUpdateAssistantMessage={onUpdateAssistantMessage}
+            />)
           }
         </div>
       </div>

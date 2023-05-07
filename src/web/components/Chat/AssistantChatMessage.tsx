@@ -3,17 +3,19 @@ import ReactMarkdown from 'react-markdown';
 import { Assumption } from './Assumption';
 import { Query } from './Query';
 import { type Answer } from '@/../agent/types';
-import { type SenseiResponse } from '@/types/chat';
+import { AssistantMessage, RunQueryResult, type Message, type SenseiResponse } from '@/types/chat';
 
 export interface Props {
   messageContent: string
+  onUpdateAssistantMessage: (editedMessage: Message) => void
 }
 
-export const AssistantChatMessage: FC<Props> = memo(({ messageContent }) => {
-  const response = JSON.parse(messageContent) as SenseiResponse;
+export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateAssistantMessage }) => {
+  const parsedMessage = JSON.parse(messageContent) as AssistantMessage;
+  const response = parsedMessage.senseiResponse;
 
-  const [query, setQuery] = useState(response.query);
-  const [hasEdited, setHasEdited] = useState(false);
+  const [query, setQuery] = useState(parsedMessage.updatedQuery ?? response.query);
+  const [hasEdited, setHasEdited] = useState(parsedMessage.updatedQuery != null);
 
   const onRunEditedQuery = async (editedQuery: string) => {
     const response = await fetch('api/dsensei/run-query', {
@@ -26,12 +28,23 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent }) => {
       })
     });
 
-    const result: Answer = await response.json();
+    const result: RunQueryResult = await response.json();
     if (result.err != null) {
       throw new Error(result.err);
     }
     setQuery(result.query);
     setHasEdited(true);
+
+    onUpdateAssistantMessage({
+      role: 'assistant',
+      content: JSON.stringify(
+        {
+          ...parsedMessage,
+          updatedQuery: result.query,
+          updatedAnswer: result.answer
+        }
+      )
+    });
   };
 
   const questionBlock = (

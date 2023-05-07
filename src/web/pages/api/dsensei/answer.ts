@@ -9,12 +9,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
 
   const answer = await dataQuestionAgent.answer(messages[messages.length - 1].content, conversationId);
   res.json({
-    question: messages[messages.length - 1].content,
-    query: answer.query,
-    assumption: answer.assumptions,
-    answer: answer.rows ? SlackTable.buildFromRows(answer.rows).content : '',
-    hasResult: answer.hasResult,
-    err: answer.err
+    senseiResponse: {
+      question: messages[messages.length - 1].content,
+      query: answer.query,
+      assumption: answer.assumptions,
+      answer: answer.rows ? SlackTable.buildFromRows(answer.rows).content : '',
+      hasResult: answer.hasResult,
+      err: answer.err
+    }
   })
 };
 

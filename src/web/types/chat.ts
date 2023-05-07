@@ -9,6 +9,19 @@ export interface SenseiResponse {
   err: string
 }
 
+export interface RunQueryResult {
+  query: string
+  hasResult: string
+  answer: string
+  err: string
+}
+
+export interface AssistantMessage {
+  senseiResponse: SenseiResponse
+  updatedQuery?: string
+  updatedAnswer?: string
+}
+
 export interface Message {
   role: Role
   content: string

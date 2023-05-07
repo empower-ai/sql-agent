@@ -66,6 +66,36 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const handleUpdateMessage = useCallback(async (message: Message, messageIndex: number) => {
+    if (selectedConversation) {
+      const updatedMessages = [...selectedConversation.messages];
+      updatedMessages[messageIndex] = message;
+      const updatedConversation = {
+        ...selectedConversation,
+        messages: [...updatedMessages]
+      };
+      const updatedConversations: Conversation[] = conversations.map(
+        (conversation) => {
+          if (conversation.id === selectedConversation.id) {
+            return updatedConversation;
+          }
+          return conversation;
+        }
+      );
+      if (updatedConversations.length === 0) {
+        updatedConversations.push(updatedConversation);
+      }
+      homeDispatch({ field: 'conversations', value: updatedConversations });
+      saveConversation(updatedConversation);
+      saveConversations(updatedConversations);
+    }
+  },
+    [
+      conversations,
+      selectedConversation,
+      stopConversationRef
+    ]
+  );
   const handleSend = useCallback(
     async (message: Message, deleteCount = 0, plugin: Plugin | null = null) => {
       if (selectedConversation) {
@@ -371,7 +401,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               with their API.
             </div>
             <div className="mb-2">
-                Please set your OpenAI API key in the bottom left of the sidebar.
+              Please set your OpenAI API key in the bottom left of the sidebar.
             </div>
             <div>
               If you don't have an OpenAI API key, you can get one here:
@@ -401,13 +431,13 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   <div className="text-center text-3xl font-semibold text-gray-800 dark:text-gray-100">
                     {models.length === 0
                       ? (
-                      <div>
-                        <Spinner size="16px" className="mx-auto" />
-                      </div>
-                        )
+                        <div>
+                          <Spinner size="16px" className="mx-auto" />
+                        </div>
+                      )
                       : (
-                          'Chatbot UI'
-                        )}
+                        'Chatbot UI'
+                      )}
                   </div>
 
                   {models.length > 0 && (
@@ -469,13 +499,20 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     key={index}
                     message={message}
                     messageIndex={index}
-                    onEdit={(editedMessage) => {
+                    onUpdateUserMessage={(editedMessage) => {
                       setCurrentMessage(editedMessage);
                       // discard edited message and the ones that come after then resend
                       handleSend(
                         editedMessage,
                         selectedConversation?.messages.length - index
                       );
+                    }}
+                    onUpdateAssistantMessage={async (editedMessage) => {
+                      setCurrentMessage(editedMessage);
+                      await handleUpdateMessage(
+                        editedMessage,
+                        index
+                      )
                     }}
                   />
                 ))}
