@@ -1,8 +1,8 @@
-import dataQuestionAgent from '../../../agent/data-question-agent';
 import { type ChatBody } from '@/types/chat';
-import SlackTable from '../../../utils/slacktable';
 
 import { type NextApiRequest, type NextApiResponse } from 'next';
+import dataQuestionAgent from '@/../agent/data-question-agent';
+import SlackTable from '@/../utils/slacktable';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   const { messages, conversationId } = req.body as ChatBody;

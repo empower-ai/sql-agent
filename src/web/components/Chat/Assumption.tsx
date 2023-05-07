@@ -13,7 +13,6 @@ export const Assumption: FC<Props> = ({ assumption, onEdit }) => {
 
   return (
     <>
-      <h4>Assumptions:</h4>
       <ReactMarkdown>
         {assumption}
       </ReactMarkdown>
