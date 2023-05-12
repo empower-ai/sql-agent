@@ -2,7 +2,7 @@ import { type App, type BlockAction } from '@slack/bolt';
 import { Action } from '../types.js';
 import type DataQuestionAgent from '../../agent/data-question-agent.js';
 import { getAssumptionBlocks, getErrorBlock, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks.js';
-import SlackTable from '../../utils/slacktable.js';
+import ResultBuilder from '../../utils/result-builder.js';
 import getLogger from '../../utils/logger.js';
 
 const logger = getLogger('Event Handler');
@@ -51,7 +51,7 @@ export default async function handleUpdateAssumptions(app: App, agent: DataQuest
         return;
       }
 
-      const result = SlackTable.buildFromRows(answer.rows!);
+      const result = ResultBuilder.buildFromRows(answer.rows!);
       await client.chat.update({
         channel: actionBody.channel?.id!,
         ts: actionBody.message?.ts!,
@@ -67,7 +67,7 @@ export default async function handleUpdateAssumptions(app: App, agent: DataQuest
             ...actionBody.message?.metadata.event_payload,
             previous_query: answer.query,
             previous_assumptions: answer.assumptions,
-            previous_result: result,
+            previous_result: result.toSlackMessageDisplayResult(),
             question
           }
         }

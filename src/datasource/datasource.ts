@@ -1,6 +1,6 @@
 import { type Logger } from 'winston';
 import getLogger from '../utils/logger.js';
-import { type Row } from '../utils/slacktable.js';
+import { type Row } from '../utils/result-builder.js';
 import { type TableInfo, type DataSourceType, type DatabaseSchema, type TableSchema } from './types.js';
 import { type Answer } from '../agent/types.js';
 import configLoader from '../config/loader.js';

@@ -1,7 +1,7 @@
 import { type App } from '@slack/bolt';
 import getLogger from '../utils/logger.js';
 import { type DataSource } from '../datasource/datasource.js';
-import SlackTable from '../utils/slacktable.js';
+import ResultBuilder from '../utils/result-builder.js';
 
 const logger = getLogger('Command Handler');
 
@@ -46,9 +46,9 @@ export default async function handlCommand(app: App, source: DataSource): Promis
             });
             return;
           } else {
-            const result = SlackTable.buildFromRows(schema);
+            const result = ResultBuilder.buildFromRows(schema);
             await say({
-              text: `Table ${db}.${table} schema:\n` + '```' + result.content + '```'
+              text: `Table ${db}.${table} schema:\n` + '```' + result.slackTableContent + '```'
             });
           }
         } catch (e: any) {

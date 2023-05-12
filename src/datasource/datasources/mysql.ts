@@ -1,7 +1,7 @@
 import knex from 'knex';
 import { DataSource } from '../datasource.js';
 import { DataSourceType, type TableInfo, TableSchema } from '../types.js';
-import { type Row } from '../../utils/slacktable.js';
+import { type Row } from '../../utils/result-builder.js';
 import { type Answer } from '../../agent/types.js';
 
 export default class MysqlSource extends DataSource {
