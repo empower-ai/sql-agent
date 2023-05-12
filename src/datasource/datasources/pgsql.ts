@@ -2,7 +2,7 @@ import knex, { type Knex } from 'knex';
 import { DataSource } from '../datasource';
 import { DataSourceType, type TableInfo, TableSchema } from '../types';
 import { type Answer } from '../../agent/types';
-import { type Row } from '../../utils/slacktable';
+import { type Row } from '../../utils/result-builder';
 
 export class PgsqlSource extends DataSource {
   private connection!: Knex;

@@ -1,7 +1,8 @@
 import { BigQuery, type FormattedMetadata, type TableField } from '@google-cloud/bigquery';
+
 import { DataSource } from '../datasource';
 import { DataSourceType, type FieldDefinition, TableSchema, type TableInfo } from '../types';
-import { type Row } from '../../utils/slacktable';
+import { type Row } from '../../utils/result-builder';
 import openAI from '../../openai/openai';
 import { type Answer } from '../../agent/types';
 

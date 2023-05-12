@@ -1,5 +1,5 @@
 import { type App, type BlockAction } from '@slack/bolt';
-import SlackTable from '../../utils/slacktable';
+import ResultBuilder from '../../utils/result-builder';
 import getLogger from '../../utils/logger';
 import {
   getAssumptionBlocks,
@@ -24,7 +24,7 @@ export default async function handleRunEditedQuery(app: App, bqLoader: DataSourc
     const isQueryEdited = Boolean(actionBody.message?.metadata.event_payload.edited);
     try {
       const rawResult = await bqLoader.runQuery(query);
-      const result = SlackTable.buildFromRows(rawResult.rows!);
+      const result = ResultBuilder.buildFromRows(rawResult.rows!);
 
       await client.chat.update({
         channel: actionBody.channel?.id!,
@@ -39,12 +39,22 @@ export default async function handleRunEditedQuery(app: App, bqLoader: DataSourc
           event_payload: {
             ...actionBody.message?.metadata.event_payload,
             previous_query: query,
-            previous_result: result,
+            previous_result: result.toSlackMessageDisplayResult(),
             edited: true,
             is_editing_query: false
           }
         }
       });
+
+      if (result.numRowsTruncated > 0) {
+        await app.client.files.uploadV2({
+          initial_comment: 'Full result of the updated query:',
+          filename: 'result.csv',
+          content: result.fullCsvContent,
+          thread_ts: actionBody.message?.thread_ts,
+          channel_id: actionBody.channel?.id
+        });
+      }
     } catch (error) {
       await client.chat.update({
         channel: actionBody.channel?.id!,

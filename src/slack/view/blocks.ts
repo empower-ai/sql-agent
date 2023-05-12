@@ -1,6 +1,6 @@
 import { type KnownBlock } from '@slack/web-api';
 import { Action } from '../types';
-import { type Result } from '../../utils/slacktable';
+import { type Result } from '../../utils/result-builder';
 
 export function getQuestionBlock(question: string): KnownBlock {
   return {
@@ -36,7 +36,7 @@ export function getResultBlocks(result: Result, isQueryEdited: boolean): KnownBl
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: '```' + result.content + '```'
+        text: `\`\`\`${result.slackTableContent}\`\`\``
       }
     }
   ];
@@ -47,7 +47,7 @@ export function getResultBlocks(result: Result, isQueryEdited: boolean): KnownBl
         type: 'section',
         text: {
           type: 'plain_text',
-          text: `(${result.numRowsTruncated} rows are truncated to fit slack's max message length)`
+          text: `(${result.numRowsTruncated} rows are truncated, see the full result below)`
         }
       }
     )

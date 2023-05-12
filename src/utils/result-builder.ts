@@ -8,10 +8,22 @@ export interface Column {
 
 export type Row = Record<string, string | number>;
 
-export interface Result {
-  content: string
-  numRowsTruncated: number
-};
+export class Result {
+  constructor(
+    public readonly slackTableContent: string,
+    public readonly numRowsTruncated: number,
+    public readonly fullCsvContent: string
+
+  ) { }
+
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  public toSlackMessageDisplayResult() {
+    return {
+      slackTableContent: this.slackTableContent,
+      numRowsTruncated: this.numRowsTruncated
+    };
+  }
+}
 
 const MAX_OUTPUT_LENGTH = 2600;
 
@@ -49,12 +61,18 @@ function getHeaderRow(columns: Column[]): string {
   return columns.map((column) => getHeaderCol(column)).join('  ');
 };
 
+function buildCSVContent(columns: Column[], rows: Row[]): string {
+  const header = columns.map(column => column.title).join(',');
+  const content = rows.map(row =>
+    Object.values(row).map(value => `${value}`).join(',')
+  );
+
+  return [header, ...content].join('\n');
+}
+
 function buildFromRows(rows: Row[]): Result {
   if (rows.length === 0) {
-    return {
-      content: '',
-      numRowsTruncated: 0
-    };
+    return new Result('', 0, '');
   }
 
   const columnNames = Object.keys(rows[0]);
@@ -106,15 +124,12 @@ function build(columns: Column[], rows: Row[]): Result {
     result.push(rowContent);
   }
 
-  return {
-    content: result.join('\n'),
-    numRowsTruncated: rows.length - numIncludedRows
-  }
+  return new Result(result.join('\n'), rows.length - numIncludedRows, buildCSVContent(columns, rows));
 };
 
-const SlackTable = {
+const ResultBuilder = {
   buildFromRows,
   build
 };
 
-export default SlackTable;
+export default ResultBuilder;

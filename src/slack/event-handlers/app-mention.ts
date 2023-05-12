@@ -1,14 +1,18 @@
 import { type App } from '@slack/bolt';
-import SlackTable from '../../utils/slacktable';
 import { type DataQuestionAgent } from '../../agent/data-question-agent';
 import getLogger from '../../utils/logger';
 import { getAssumptionBlocks, getErrorBlock, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks';
+import ResultBuilder from '../../utils/result-builder';
 
 const logger = getLogger('Event Handler');
 
 export default async function handleAppMention(app: App, agent: DataQuestionAgent): Promise<void> {
   const func = async ({ event, say }: { event: any, say: any }): Promise<void> => {
-    logger.debug(`Received app_mention event: ${JSON.stringify(event)}`);
+    if (event.subtype === 'message_changed') {
+      return;
+    }
+
+    logger.debug(`Received ${event.type} event: ${JSON.stringify(event)}`);
     try {
       const answer = await agent.answer(event.text, event.thread_ts ?? event.ts);
 
@@ -40,7 +44,7 @@ export default async function handleAppMention(app: App, agent: DataQuestionAgen
         return;
       }
 
-      const result = SlackTable.buildFromRows(answer.rows!);
+      const result = ResultBuilder.buildFromRows(answer.rows!);
       await say({
         blocks: [
           getQuestionBlock(event.text),
@@ -53,12 +57,22 @@ export default async function handleAppMention(app: App, agent: DataQuestionAgen
           event_payload: {
             previous_query: answer.query,
             previous_assumptions: answer.assumptions,
-            previous_result: result,
+            previous_result: result.toSlackMessageDisplayResult(),
             question: event.text
           }
         },
         thread_ts: event.thread_ts ?? event.ts
       });
+
+      if (result.numRowsTruncated > 0) {
+        await app.client.files.uploadV2({
+          initial_comment: 'Full result with updated assumptions:',
+          filename: 'result.csv',
+          content: result.fullCsvContent,
+          thread_ts: event.thread_ts ?? event.ts,
+          channel_id: event.channel
+        });
+      }
     } catch (error) {
       await say({
         text: 'An error occurred while processing your request, please try again later.',
