@@ -1,20 +1,20 @@
-import { type FC, memo, useState } from 'react';
+import { type FC, memo, useState, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Assumption } from './Assumption';
 import { Query } from './Query';
-import { type Answer } from '@/../agent/types';
-import { AssistantMessage, RunQueryResult, type Message, type SenseiResponse } from '@/types/chat';
+import { AssistantMessage, RunQueryResult, type Message } from '@/types/chat';
 
 export interface Props {
   messageContent: string
-  onUpdateAssistantMessage: (editedMessage: Message) => void
+  onUpdateAssistantMessage: (editedMessage: Message) => Promise<void>
+  onUpdateAssumptions: (message: Message, updatedAssumptions: string) => Promise<void>
 }
 
-export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateAssistantMessage }) => {
+export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateAssistantMessage, onUpdateAssumptions }) => {
   const parsedMessage = JSON.parse(messageContent) as AssistantMessage;
   const response = parsedMessage.senseiResponse;
 
-  const [query, setQuery] = useState(parsedMessage.updatedQuery ?? response.query);
+  const query = parsedMessage.updatedQuery ?? response.query;
   const [hasEdited, setHasEdited] = useState(parsedMessage.updatedQuery != null);
 
   const onRunEditedQuery = async (editedQuery: string) => {
@@ -32,10 +32,9 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
     if (result.err != null) {
       throw new Error(result.err);
     }
-    setQuery(result.query);
     setHasEdited(true);
 
-    onUpdateAssistantMessage({
+    await onUpdateAssistantMessage({
       role: 'assistant',
       content: JSON.stringify(
         {
@@ -63,7 +62,18 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
 
     return <>
       <h4>These are assumptions I made in order to answer the question:</h4>
-      <Assumption assumption={response.assumption} onEdit={() => { }} />
+      <Assumption
+        assumptions={response.assumption}
+        onUpdate={async (updatedAssumptions: string) => {
+          await onUpdateAssumptions(
+            {
+              role: 'assistant',
+              content: response.question
+            },
+            updatedAssumptions
+          );
+        }
+        } />
     </>;
   }
 
@@ -95,6 +105,7 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
     : null;
 
   const getQueryBlock = () => {
+    console.log(query);
     let header = <h4>This is the query used to generate the result:</h4>
     if (hasEdited) {
       header = <h4>Updated query:</h4>;
@@ -102,7 +113,7 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
 
     return <>
       {header}
-      <Query query={query} onRunEditedQuery={onRunEditedQuery} />
+      <Query key={query} query={query} onRunEditedQuery={onRunEditedQuery} />
     </>
   };
 

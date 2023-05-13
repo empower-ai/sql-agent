@@ -1,22 +1,20 @@
-import { type ChatBody } from '@/types/chat';
+import { QuestionBody, type ChatBody } from '@/types/chat';
 
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import dataQuestionAgent from '@/../agent/data-question-agent';
-import SlackTable from '@/../utils/slacktable';
+import ResultBuilder from '@/../utils/result-builder';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
-  const { messages, conversationId } = req.body as ChatBody;
+  const { question, conversationId, providedAssumptions } = req.body as QuestionBody;
 
-  const answer = await dataQuestionAgent.answer(messages[messages.length - 1].content, conversationId);
+  const answer = await dataQuestionAgent.answer(question, conversationId, providedAssumptions);
   res.json({
-    senseiResponse: {
-      question: messages[messages.length - 1].content,
-      query: answer.query,
-      assumption: answer.assumptions,
-      answer: answer.rows ? SlackTable.buildFromRows(answer.rows).content : '',
-      hasResult: answer.hasResult,
-      err: answer.err
-    }
+    question,
+    query: answer.query,
+    assumption: answer.assumptions,
+    answer: answer.rows ? ResultBuilder.buildFromRows(answer.rows).fullCsvContent : '',
+    hasResult: answer.hasResult,
+    err: answer.err
   })
 };
 

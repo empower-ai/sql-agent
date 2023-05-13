@@ -28,13 +28,16 @@ export interface Props {
   messageIndex: number
   onUpdateUserMessage: (editedMessage: Message) => void
   onUpdateAssistantMessage: (editedMessage: Message) => void
+  onUpdateAssumptions: (message: Message, updatedAssumptions: string) => void
 }
 
-export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onUpdateUserMessage, onUpdateAssistantMessage }) => {
+export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onUpdateUserMessage, onUpdateAssistantMessage, onUpdateAssumptions }) => {
   const {
     state: { selectedConversation, conversations, currentMessage, messageIsStreaming },
     dispatch: homeDispatch
   } = useContext(HomeContext);
+
+  console.log(message);
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
@@ -213,6 +216,7 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onUpdateUse
             : (<AssistantChatMessage
               messageContent={messageContent}
               onUpdateAssistantMessage={onUpdateAssistantMessage}
+              onUpdateAssumptions={onUpdateAssumptions}
             />)
           }
         </div>

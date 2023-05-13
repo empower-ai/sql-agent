@@ -3,7 +3,7 @@ import { type Answer } from '@/agent/types';
 
 class DSenseiService {
   async answer(question: string, conversationId: string, providedAssumptions: string | null = null): Promise<Answer> {
-    const answer = await dataQuestionAgent.answer(question, conversationId);
+    const answer = await dataQuestionAgent.answer(question, conversationId, providedAssumptions);
     return answer;
   }
 }

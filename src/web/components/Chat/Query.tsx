@@ -18,14 +18,16 @@ export const Query: FC<Props> = ({ query, onRunEditedQuery }) => {
     return <></>;
   }
 
+  const formattedQuery = format(query);
+
   const [isEditing, setIsEditing] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [error, setError] = useState('');
-  const [editedQuery, setUpdatedQuery] = useState(query);
+  const [editedQuery, setEditedQuery] = useState(formattedQuery);
 
   const onCanceled = () => {
-    setUpdatedQuery(query);
+    setEditedQuery(formattedQuery);
     setIsEditing(false);
     setError('');
     setHasError(false);
@@ -55,7 +57,7 @@ export const Query: FC<Props> = ({ query, onRunEditedQuery }) => {
         <div className="flex justify-center">
           <button className="px-1 text-blue-400 font-bold"
             onClick={async () => {
-              if (editedQuery.trim() === query) {
+              if (editedQuery.trim() === formattedQuery) {
                 return onCanceled();
               }
               setIsRunning(true);
@@ -63,7 +65,6 @@ export const Query: FC<Props> = ({ query, onRunEditedQuery }) => {
                 await onRunEditedQuery(editedQuery);
                 setIsEditing(false);
               } catch (e) {
-                console.log(`${e}`);
                 setError(`${e}`);
                 setHasError(true);
               } finally {
@@ -100,7 +101,7 @@ export const Query: FC<Props> = ({ query, onRunEditedQuery }) => {
       <CodeMirror
         className='text-xs'
         value={editedQuery}
-        onChange={(q) => setUpdatedQuery(q)}
+        onChange={q => setEditedQuery(q)}
         basicSetup={{
           lineNumbers: isEditing,
           foldGutter: isEditing
