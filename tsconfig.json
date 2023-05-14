@@ -4,8 +4,7 @@
     "../tailwind.config.js"
   ],
   "exclude": [
-    "node_modules",
-    "src/web"
+    "node_modules"
   ],
   "compilerOptions": {
     "target": "ES2020",

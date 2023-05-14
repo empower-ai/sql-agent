@@ -4,8 +4,9 @@
     "build": "next build src/web",
     "start-next": "next start src/web",
     "start": "nodemon",
-    "prod": "next build src/web && tsc && NODE_ENV=production node -r dotenv/config dist/index.js",
-    "test": "ts-node ./src/test.ts"
+    "prod": "next build src/web && tsc -b && NODE_ENV=production node -r dotenv/config dist/index.js",
+    "test": "ts-node ./src/test.ts",
+    "clean": "rm -rf src/web/.next dist"
   },
   "engines": {
     "node": ">=18.0.0"
