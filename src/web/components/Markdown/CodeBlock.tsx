@@ -17,11 +17,11 @@ export const CodeBlock: FC<Props> = memo(({ language, value }) => {
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const copyToClipboard = () => {
-    if (!navigator.clipboard || !navigator.clipboard.writeText) {
+    if (!navigator.clipboard?.writeText) {
       return;
     }
 
-    navigator.clipboard.writeText(value).then(() => {
+    void navigator.clipboard.writeText(value).then(() => {
       setIsCopied(true);
 
       setTimeout(() => {

@@ -4,7 +4,7 @@ type Props = DocumentProps & {
   // add custom document props
 };
 
-export default function Document(props: Props) {
+export default function Document(_: Props) {
   return (
     <Html>
       <Head>

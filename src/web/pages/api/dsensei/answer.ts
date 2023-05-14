@@ -1,4 +1,4 @@
-import { QuestionBody, type ChatBody } from '@/types/chat';
+import { type QuestionBody } from '@/types/chat';
 
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import dataQuestionAgent from '@/../agent/data-question-agent';

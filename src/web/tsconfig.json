@@ -1,6 +1,7 @@
 {
   "include": [
-    "./**/*"
+    "./**/*",
+    "../**/*"
   ],
   "exclude": [
     "node_modules"
@@ -16,10 +17,9 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "module": "commonjs",
-    "outDir": "./dist",
+    "outDir": "../../dist",
     "moduleResolution": "node",
     "strict": true,
-    "composite": true,
     "noEmit": false,
     "types": [
       "node"

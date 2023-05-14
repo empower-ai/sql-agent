@@ -1,4 +1,4 @@
-import { type FC, useContext, useEffect, useReducer, useRef } from 'react';
+import { type FC, useContext, useEffect, useRef } from 'react';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
@@ -28,7 +28,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose }) => {
       }
     };
 
-    const handleMouseUp = (e: MouseEvent) => {
+    const handleMouseUp = (_: MouseEvent) => {
       window.removeEventListener('mouseup', handleMouseUp);
       onClose();
     };

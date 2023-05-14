@@ -1,6 +1,3 @@
-import dataQuestionAgent from '../../../../agent/data-question-agent';
-import { type ChatBody } from '@/types/chat';
-
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import dataSource from '@/../datasource';
 import { type Query } from '@/types/query';

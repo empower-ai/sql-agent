@@ -1,6 +1,4 @@
 import {
-  IconCheck,
-  IconCopy,
   IconEdit,
   IconRobot,
   IconTrash,
@@ -10,30 +8,23 @@ import { type FC, memo, useContext, useEffect, useRef, useState } from 'react';
 
 import { updateConversation } from '@/utils/app/conversation';
 
-import { type Message, type SenseiResponse } from '@/types/chat';
+import { type Message } from '@/types/chat';
 
 import HomeContext from '@/pages/api/home/home.context';
 
-import rehypeMathjax from 'rehype-mathjax';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
-import ReactMarkdown from 'react-markdown';
-import { Assumption } from './Assumption';
-import { Query } from './Query';
-import { type Answer } from '@/../agent/types';
 import { AssistantChatMessage } from './AssistantChatMessage';
 
 export interface Props {
   message: Message
   messageIndex: number
   onUpdateUserMessage: (editedMessage: Message) => void
-  onUpdateAssistantMessage: (editedMessage: Message) => void
-  onUpdateAssumptions: (message: Message, updatedAssumptions: string) => void
+  onUpdateAssistantMessage: (editedMessage: Message) => Promise<void>
+  onUpdateAssumptions: (message: Message, updatedAssumptions: string) => Promise<void>
 }
 
-export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onUpdateUserMessage, onUpdateAssistantMessage, onUpdateAssumptions }) => {
+export const ChatMessage: FC<Props> = memo(({ message, onUpdateUserMessage, onUpdateAssistantMessage, onUpdateAssumptions }) => {
   const {
-    state: { selectedConversation, conversations, currentMessage, messageIsStreaming },
+    state: { selectedConversation, conversations },
     dispatch: homeDispatch
   } = useContext(HomeContext);
 
@@ -42,7 +33,6 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onUpdateUse
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [messageContent, setMessageContent] = useState(message.content);
-  const [messagedCopied, setMessageCopied] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -59,7 +49,7 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onUpdateUse
   };
 
   const handleEditMessage = () => {
-    if (message.content != messageContent) {
+    if (message.content !== messageContent) {
       if (selectedConversation) {
         onUpdateUserMessage({ ...message, content: messageContent });
       }
@@ -71,7 +61,7 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onUpdateUse
     if (!selectedConversation) return;
 
     const { messages } = selectedConversation;
-    const findIndex = messages.findIndex((elm) => elm === message);
+    const findIndex: number = messages.findIndex((elm) => elm === message);
 
     if (findIndex < 0) return;
 
@@ -138,10 +128,10 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onUpdateUse
           {message.role === 'assistant'
             ? (
               <IconRobot size={30} />
-            )
+              )
             : (
               <IconUser size={30} />
-            )}
+              )}
         </div>
 
         <div className="prose mt-[-2px] w-full dark:prose-invert">
@@ -188,12 +178,12 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onUpdateUse
                         </button>
                       </div>
                     </div>
-                  )
+                    )
                   : (
                     <div className="prose whitespace-pre-wrap dark:prose-invert flex-1">
                       {message.content}
                     </div>
-                  )}
+                    )}
 
                 {!isEditing && (
                   <div className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
@@ -212,7 +202,7 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onUpdateUse
                   </div>
                 )}
               </div>
-            )
+              )
             : (<AssistantChatMessage
               messageContent={messageContent}
               onUpdateAssistantMessage={onUpdateAssistantMessage}

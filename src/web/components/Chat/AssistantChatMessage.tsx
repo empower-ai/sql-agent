@@ -1,8 +1,8 @@
-import { type FC, memo, useState, useCallback } from 'react';
+import { type FC, memo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Assumption } from './Assumption';
 import { Query } from './Query';
-import { AssistantMessage, RunQueryResult, type Message } from '@/types/chat';
+import { type AssistantMessage, type RunQueryResult, type Message } from '@/types/chat';
 
 export interface Props {
   messageContent: string
@@ -45,15 +45,6 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
       )
     });
   };
-
-  const questionBlock = (
-    <>
-      <h4>Question:</h4>
-      <ReactMarkdown>
-        {'> ' + response.question}
-      </ReactMarkdown>
-    </>
-  );
 
   const getAssumptionBlock = () => {
     if (hasEdited) {
@@ -99,9 +90,9 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
   const errorBlock = response.err
     ? (
       <ReactMarkdown>
-        {'> ' + response.err}
+        {`> ${response.err}`}
       </ReactMarkdown>
-    )
+      )
     : null;
 
   const getQueryBlock = () => {

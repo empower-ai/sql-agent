@@ -10,16 +10,13 @@ import {
 } from 'react';
 import toast from 'react-hot-toast';
 
-import { getEndpoint } from '@/utils/app/api';
 import {
   saveConversation,
-  saveConversations,
-  updateConversation
+  saveConversations
 } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
 
-import { type ChatBody, type Conversation, type Message } from '@/types/chat';
-import { type Plugin } from '@/types/plugin';
+import { type Conversation, type Message } from '@/types/chat';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -31,15 +28,12 @@ import { ModelSelect } from './ModelSelect';
 import { SystemPrompt } from './SystemPrompt';
 import { TemperatureSlider } from './Temperature';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
-import { randomUUID } from 'crypto';
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>
 }
 
 export const Chat = memo(({ stopConversationRef }: Props) => {
-  const t = 'chat';
-
   const {
     state: {
       selectedConversation,
@@ -48,7 +42,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       apiKey,
       pluginKeys,
       serverSideApiKeyIsSet,
-      messageIsStreaming,
       modelError,
       loading,
       prompts
@@ -91,11 +84,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       saveConversations(updatedConversations);
     }
   },
-    [
-      conversations,
-      selectedConversation,
-      stopConversationRef
-    ]
+  [
+    conversations,
+    selectedConversation,
+    stopConversationRef
+  ]
   );
 
   const handleSend = useCallback(
@@ -204,13 +197,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     ]
   );
 
-  const scrollToBottom = useCallback(() => {
-    if (autoScrollEnabled) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      textareaRef.current?.focus();
-    }
-  }, [autoScrollEnabled]);
-
   const handleScroll = () => {
     if (chatContainerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } =
@@ -299,179 +285,185 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
   return (
     <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#343541]">
-      {!(apiKey || serverSideApiKeyIsSet) ? (
-        <div className="mx-auto flex h-full w-[300px] flex-col justify-center space-y-6 sm:w-[600px]">
-          <div className="text-center text-4xl font-bold text-black dark:text-white">
-            Welcome to Chatbot UI
-          </div>
-          <div className="text-center text-lg text-black dark:text-white">
-            <div className="mb-8">{'Chatbot UI is an open source clone of OpenAI\'s ChatGPT UI.'}</div>
-            <div className="mb-2 font-bold">
-              Important: Chatbot UI is 100% unaffiliated with OpenAI.
+      {!(apiKey || serverSideApiKeyIsSet)
+        ? (
+          <div className="mx-auto flex h-full w-[300px] flex-col justify-center space-y-6 sm:w-[600px]">
+            <div className="text-center text-4xl font-bold text-black dark:text-white">
+              Welcome to Chatbot UI
+            </div>
+            <div className="text-center text-lg text-black dark:text-white">
+              <div className="mb-8">{'Chatbot UI is an open source clone of OpenAI\'s ChatGPT UI.'}</div>
+              <div className="mb-2 font-bold">
+                Important: Chatbot UI is 100% unaffiliated with OpenAI.
+              </div>
+            </div>
+            <div className="text-center text-gray-500 dark:text-gray-400">
+              <div className="mb-2">
+                Chatbot UI allows you to plug in your API key to use this UI with
+                their API.
+              </div>
+              <div className="mb-2">
+                It is <span className="italic">only</span> used to communicate
+                with their API.
+              </div>
+              <div className="mb-2">
+                Please set your OpenAI API key in the bottom left of the sidebar.
+              </div>
+              <div>
+                If you don't have an OpenAI API key, you can get one here:
+                <a
+                  href="https://platform.openai.com/account/api-keys"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue-500 hover:underline"
+                >
+                  openai.com
+                </a>
+              </div>
             </div>
           </div>
-          <div className="text-center text-gray-500 dark:text-gray-400">
-            <div className="mb-2">
-              Chatbot UI allows you to plug in your API key to use this UI with
-              their API.
-            </div>
-            <div className="mb-2">
-              It is <span className="italic">only</span> used to communicate
-              with their API.
-            </div>
-            <div className="mb-2">
-              Please set your OpenAI API key in the bottom left of the sidebar.
-            </div>
-            <div>
-              If you don't have an OpenAI API key, you can get one here:
-              <a
-                href="https://platform.openai.com/account/api-keys"
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-500 hover:underline"
+          )
+        : modelError
+          ? (
+            <ErrorMessageDiv error={modelError} />
+            )
+          : (
+            <>
+              <div
+                className="max-h-full overflow-x-hidden"
+                ref={chatContainerRef}
+                onScroll={handleScroll}
               >
-                openai.com
-              </a>
-            </div>
-          </div>
-        </div>
-      ) : modelError ? (
-        <ErrorMessageDiv error={modelError} />
-      ) : (
-        <>
-          <div
-            className="max-h-full overflow-x-hidden"
-            ref={chatContainerRef}
-            onScroll={handleScroll}
-          >
-            {selectedConversation?.messages.length === 0 ? (
-              <>
-                <div className="mx-auto flex flex-col space-y-5 md:space-y-10 px-3 pt-5 md:pt-12 sm:max-w-[600px]">
-                  <div className="text-center text-3xl font-semibold text-gray-800 dark:text-gray-100">
-                    {models.length === 0
-                      ? (
-                        <div>
-                          <Spinner size="16px" className="mx-auto" />
+                {selectedConversation?.messages.length === 0
+                  ? (
+                    <>
+                      <div className="mx-auto flex flex-col space-y-5 md:space-y-10 px-3 pt-5 md:pt-12 sm:max-w-[600px]">
+                        <div className="text-center text-3xl font-semibold text-gray-800 dark:text-gray-100">
+                          {models.length === 0
+                            ? (
+                              <div>
+                                <Spinner size="16px" className="mx-auto" />
+                              </div>
+                              )
+                            : (
+                                'Chatbot UI'
+                              )}
                         </div>
-                      )
-                      : (
-                        'Chatbot UI'
+
+                        {models.length > 0 && (
+                          <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
+                            <ModelSelect />
+
+                            <SystemPrompt
+                              conversation={selectedConversation}
+                              prompts={prompts}
+                              onChangePrompt={(prompt) =>
+                                handleUpdateConversation(selectedConversation, {
+                                  key: 'prompt',
+                                  value: prompt
+                                })
+                              }
+                            />
+
+                            <TemperatureSlider
+                              label='Temperature'
+                              onChangeTemperature={(temperature) =>
+                                handleUpdateConversation(selectedConversation, {
+                                  key: 'temperature',
+                                  value: temperature
+                                })
+                              }
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </>
+                    )
+                  : (
+                    <>
+                      <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#444654] dark:text-neutral-200">
+                        {'Model'}: {selectedConversation?.model.name} | {'Temp'}
+                        : {selectedConversation?.temperature} |
+                        <button
+                          className="ml-2 cursor-pointer hover:opacity-50"
+                          onClick={handleSettings}
+                        >
+                          <IconSettings size={18} />
+                        </button>
+                        <button
+                          className="ml-2 cursor-pointer hover:opacity-50"
+                          onClick={onClearAll}
+                        >
+                          <IconClearAll size={18} />
+                        </button>
+                      </div>
+                      {showSettings && (
+                        <div className="flex flex-col space-y-10 md:mx-auto md:max-w-xl md:gap-6 md:py-3 md:pt-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
+                          <div className="flex h-full flex-col space-y-4 border-b border-neutral-200 p-4 dark:border-neutral-600 md:rounded-lg md:border">
+                            <ModelSelect />
+                          </div>
+                        </div>
                       )}
-                  </div>
 
-                  {models.length > 0 && (
-                    <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
-                      <ModelSelect />
+                      {selectedConversation?.messages.map((message, index) => (
+                        <MemoizedChatMessage
+                          key={index}
+                          message={message}
+                          messageIndex={index}
+                          onUpdateUserMessage={async (editedMessage) => {
+                            setCurrentMessage(editedMessage);
+                            // discard edited message and the ones that come after then resend
+                            await handleSend(
+                              editedMessage,
+                              selectedConversation?.messages.length - index
+                            );
+                          }}
+                          onUpdateAssistantMessage={async (editedMessage) => {
+                            setCurrentMessage(editedMessage);
+                            await handleUpdateMessage(
+                              editedMessage,
+                              index
+                            )
+                          }}
+                          onUpdateAssumptions={
+                            async (message: Message, updatedAssumptions: string) => {
+                              await handleSend(
+                                message,
+                                0,
+                                index,
+                                updatedAssumptions
+                              )
+                            }}
+                        />
+                      ))}
 
-                      <SystemPrompt
-                        conversation={selectedConversation}
-                        prompts={prompts}
-                        onChangePrompt={(prompt) =>
-                          handleUpdateConversation(selectedConversation, {
-                            key: 'prompt',
-                            value: prompt
-                          })
-                        }
+                      {loading && <ChatLoader />}
+
+                      <div
+                        className="h-[162px] bg-white dark:bg-[#343541]"
+                        ref={messagesEndRef}
                       />
+                    </>
+                    )}
+              </div>
 
-                      <TemperatureSlider
-                        label='Temperature'
-                        onChangeTemperature={(temperature) =>
-                          handleUpdateConversation(selectedConversation, {
-                            key: 'temperature',
-                            value: temperature
-                          })
-                        }
-                      />
-                    </div>
-                  )}
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#444654] dark:text-neutral-200">
-                  {'Model'}: {selectedConversation?.model.name} | {'Temp'}
-                  : {selectedConversation?.temperature} |
-                  <button
-                    className="ml-2 cursor-pointer hover:opacity-50"
-                    onClick={handleSettings}
-                  >
-                    <IconSettings size={18} />
-                  </button>
-                  <button
-                    className="ml-2 cursor-pointer hover:opacity-50"
-                    onClick={onClearAll}
-                  >
-                    <IconClearAll size={18} />
-                  </button>
-                </div>
-                {showSettings && (
-                  <div className="flex flex-col space-y-10 md:mx-auto md:max-w-xl md:gap-6 md:py-3 md:pt-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
-                    <div className="flex h-full flex-col space-y-4 border-b border-neutral-200 p-4 dark:border-neutral-600 md:rounded-lg md:border">
-                      <ModelSelect />
-                    </div>
-                  </div>
-                )}
-
-                {selectedConversation?.messages.map((message, index) => (
-                  <MemoizedChatMessage
-                    key={index}
-                    message={message}
-                    messageIndex={index}
-                    onUpdateUserMessage={(editedMessage) => {
-                      setCurrentMessage(editedMessage);
-                      // discard edited message and the ones that come after then resend
-                      handleSend(
-                        editedMessage,
-                        selectedConversation?.messages.length - index
-                      );
-                    }}
-                    onUpdateAssistantMessage={async (editedMessage) => {
-                      setCurrentMessage(editedMessage);
-                      await handleUpdateMessage(
-                        editedMessage,
-                        index
-                      )
-                    }}
-                    onUpdateAssumptions={
-                      async (message: Message, updatedAssumptions: string) => {
-                        await handleSend(
-                          message,
-                          0,
-                          index,
-                          updatedAssumptions
-                        )
-                      }}
-                  />
-                ))}
-
-                {loading && <ChatLoader />}
-
-                <div
-                  className="h-[162px] bg-white dark:bg-[#343541]"
-                  ref={messagesEndRef}
-                />
-              </>
+              <ChatInput
+                stopConversationRef={stopConversationRef}
+                textareaRef={textareaRef}
+                onSend={async (message) => {
+                  setCurrentMessage(message);
+                  await handleSend(message, 0);
+                }}
+                onScrollDownClick={handleScrollDown}
+                onRegenerate={async () => {
+                  if (currentMessage) {
+                    await handleSend(currentMessage, 2);
+                  }
+                }}
+                showScrollDownButton={showScrollDownButton}
+              />
+            </>
             )}
-          </div>
-
-          <ChatInput
-            stopConversationRef={stopConversationRef}
-            textareaRef={textareaRef}
-            onSend={(message, plugin) => {
-              setCurrentMessage(message);
-              handleSend(message, 0);
-            }}
-            onScrollDownClick={handleScrollDown}
-            onRegenerate={() => {
-              if (currentMessage) {
-                handleSend(currentMessage, 2);
-              }
-            }}
-            showScrollDownButton={showScrollDownButton}
-          />
-        </>
-      )}
     </div>
   );
 });

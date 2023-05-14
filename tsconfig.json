@@ -4,7 +4,8 @@
     "../tailwind.config.js"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "src/web"
   ],
   "compilerOptions": {
     "target": "ES2020",
@@ -20,7 +21,7 @@
     "rootDir": "./src",
     "moduleResolution": "node",
     "strict": true,
-    "noEmit": false,
+    "composite": true,
     "types": [
       "node"
     ],
@@ -30,11 +31,12 @@
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "noEmit": false,
   },
   "references": [
     {
-      "path": "./src/web"
+      "path": "src/web"
     }
   ]
 }

@@ -6,7 +6,6 @@ import Head from 'next/head';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
-import useErrorService from '@/services/errorService';
 import useApiService from '@/services/useApiService';
 
 import {
@@ -51,7 +50,6 @@ const Home = ({
   defaultModelId
 }: Props) => {
   const { getModels } = useApiService();
-  const { getModelsError } = useErrorService();
 
   const contextValue = useCreateReducer<HomeInitialState>({
     initialState
@@ -76,7 +74,7 @@ const Home = ({
     async ({ signal }) => {
       if (!apiKey && !serverSideApiKeyIsSet) return null;
 
-      return await getModels(
+      return getModels(
         {
           key: apiKey
         },
@@ -89,10 +87,6 @@ const Home = ({
   useEffect(() => {
     if (data) dispatch({ field: 'models', value: data });
   }, [data, dispatch]);
-
-  useEffect(() => {
-    dispatch({ field: 'modelError', value: getModelsError(error) });
-  }, [dispatch, error, getModelsError]);
 
   // FETCH MODELS ----------------------------------------------
 
@@ -390,7 +384,7 @@ const Home = ({
 };
 export default Home;
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async (_) => {
   const defaultModelId =
     (process.env.DEFAULT_MODEL &&
       Object.values(OpenAIModelID).includes(

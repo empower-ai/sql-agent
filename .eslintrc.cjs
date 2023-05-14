@@ -3,7 +3,7 @@ module.exports = {
     node: true,
     es2021: true
   },
-  extends: 'standard-with-typescript',
+  extends: ['plugin:@next/next/recommended', 'standard-with-typescript'],
   overrides: [
   ],
   ignorePatterns: [
@@ -12,6 +12,7 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: 'latest',
+    parser: '@typescript-eslint/parser',
     sourceType: 'module',
     project: './tsconfig.json'
   },
@@ -25,6 +26,15 @@ module.exports = {
     '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/strict-boolean-expressions': 'off',
     '@typescript-eslint/prefer-nullish-coalescing': 'off',
-    '@typescript-eslint/explicit-function-return-type': 'off'
-  }
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/restrict-plus-operands': 'off',
+    '@typescript-eslint/no-empty-interface': 'off',
+    'no-unused-vars': 'off',
+    'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': [
+      'warn',
+      { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' }
+    ]
+  },
+  plugins: ['unused-imports']
 };

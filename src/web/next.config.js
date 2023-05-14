@@ -4,7 +4,7 @@ const nextConfig = {
   experimental: {
     externalDir: true
   },
-  webpack(config, { isServer, dev }) {
+  webpack(config, _) {
     config.experiments = {
       asyncWebAssembly: true,
       layers: true
