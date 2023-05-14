@@ -1,10 +1,10 @@
 {
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start-next": "next start",
+    "dev": "next dev src/web",
+    "build": "next build src/web",
+    "start-next": "next start src/web",
     "start": "nodemon",
-    "prod": "next build && tsc && NODE_ENV=production node -r dotenv/config dist/index.js",
+    "prod": "next build src/web && tsc && NODE_ENV=production node -r dotenv/config dist/index.js",
     "test": "ts-node ./src/test.ts"
   },
   "engines": {
