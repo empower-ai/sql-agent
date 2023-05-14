@@ -1,15 +1,11 @@
 import React, { useState, type FC } from 'react';
-import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { format } from 'sql-formatter';
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
-import { Answer } from '@/../agent/types';
 
 interface Props {
-  query: string,
+  query: string
   onRunEditedQuery: (query: string) => Promise<void>
 }
 
@@ -58,7 +54,7 @@ export const Query: FC<Props> = ({ query, onRunEditedQuery }) => {
           <button className="px-1 text-blue-400 font-bold"
             onClick={async () => {
               if (editedQuery.trim() === formattedQuery) {
-                return onCanceled();
+                onCanceled(); return;
               }
               setIsRunning(true);
               try {
@@ -76,7 +72,7 @@ export const Query: FC<Props> = ({ query, onRunEditedQuery }) => {
           </button>
           |
           <button className="px-1 text-stone-400 font-bold"
-            onClick={() => onCanceled()}
+            onClick={() => { onCanceled(); }}
           >
             Cancel
           </button>
@@ -86,14 +82,10 @@ export const Query: FC<Props> = ({ query, onRunEditedQuery }) => {
       return <>
         Seeing any issue in the query? Click <button
           className="font-bold text-blue-400"
-          onClick={() => setIsEditing(true)}
+          onClick={() => { setIsEditing(true); }}
         > here</button > to edit.
       </>;
     }
-  }
-
-  const renderError = () => {
-
   }
 
   return (
@@ -101,7 +93,7 @@ export const Query: FC<Props> = ({ query, onRunEditedQuery }) => {
       <CodeMirror
         className='text-xs'
         value={editedQuery}
-        onChange={q => setEditedQuery(q)}
+        onChange={q => { setEditedQuery(q); }}
         basicSetup={{
           lineNumbers: isEditing,
           foldGutter: isEditing

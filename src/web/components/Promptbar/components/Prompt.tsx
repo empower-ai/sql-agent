@@ -33,7 +33,6 @@ export const PromptComponent = ({ prompt }: Props) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
-  const [renameValue, setRenameValue] = useState('');
 
   const handleUpdate = (prompt: Prompt) => {
     handleUpdatePrompt(prompt);
@@ -88,7 +87,6 @@ export const PromptComponent = ({ prompt }: Props) => {
         onMouseLeave={() => {
           setIsDeleting(false);
           setIsRenaming(false);
-          setRenameValue('');
         }}
       >
         <IconBulbFilled size={18} />

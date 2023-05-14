@@ -1,9 +1,9 @@
-import { FC } from 'react';
+import { type FC } from 'react';
 
 interface Props {
-  text: string;
-  icon: JSX.Element;
-  onClick: () => void;
+  text: string
+  icon: JSX.Element
+  onClick: () => void
 }
 
 export const SidebarButton: FC<Props> = ({ text, icon, onClick }) => {

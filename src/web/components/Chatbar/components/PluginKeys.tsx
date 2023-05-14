@@ -35,7 +35,7 @@ export const PluginKeys = () => {
       }
     };
 
-    const handleMouseUp = (e: MouseEvent) => {
+    const handleMouseUp = (_: MouseEvent) => {
       window.removeEventListener('mouseup', handleMouseUp);
       setIsChanging(false);
     };

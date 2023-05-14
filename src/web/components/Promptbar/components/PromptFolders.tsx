@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { FolderInterface } from '@/types/folder';
+import { type FolderInterface } from '@/types/folder';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -11,12 +11,12 @@ import PromptbarContext from '../PromptBar.context';
 
 export const PromptFolders = () => {
   const {
-    state: { folders },
+    state: { folders }
   } = useContext(HomeContext);
 
   const {
     state: { searchTerm, filteredPrompts },
-    handleUpdatePrompt,
+    handleUpdatePrompt
   } = useContext(PromptbarContext);
 
   const handleDrop = (e: any, folder: FolderInterface) => {
@@ -25,7 +25,7 @@ export const PromptFolders = () => {
 
       const updatedPrompt = {
         ...prompt,
-        folderId: folder.id,
+        folderId: folder.id
       };
 
       handleUpdatePrompt(updatedPrompt);
@@ -43,6 +43,7 @@ export const PromptFolders = () => {
             </div>
           );
         }
+        return <></>;
       });
 
   return (

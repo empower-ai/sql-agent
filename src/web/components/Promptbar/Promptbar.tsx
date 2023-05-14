@@ -133,12 +133,11 @@ const Promptbar = () => {
         folderComponent={<PromptFolders />}
         items={filteredPrompts}
         searchTerm={searchTerm}
-        handleSearchTerm={(searchTerm: string) =>
-          promptDispatch({ field: 'searchTerm', value: searchTerm })
+        handleSearchTerm={(searchTerm: string) => { promptDispatch({ field: 'searchTerm', value: searchTerm }); }
         }
         toggleOpen={handleTogglePromptbar}
         handleCreateItem={handleCreatePrompt}
-        handleCreateFolder={() => handleCreateFolder('New folder', 'prompt')}
+        handleCreateFolder={() => { handleCreateFolder('New folder', 'prompt'); }}
         handleDrop={handleDrop}
       />
     </PromptbarContext.Provider>

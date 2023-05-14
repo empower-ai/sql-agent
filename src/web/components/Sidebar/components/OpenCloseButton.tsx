@@ -1,8 +1,8 @@
 import { IconArrowBarLeft, IconArrowBarRight } from '@tabler/icons-react';
 
 interface Props {
-  onClick: any;
-  side: 'left' | 'right';
+  onClick: any
+  side: 'left' | 'right'
 }
 
 export const CloseSidebarButton = ({ onClick, side }: Props) => {

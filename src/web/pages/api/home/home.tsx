@@ -69,12 +69,12 @@ const Home = ({
 
   const stopConversationRef = useRef<boolean>(false);
 
-  const { data, error } = useQuery(
+  const { data } = useQuery(
     ['GetModels', apiKey, serverSideApiKeyIsSet],
     async ({ signal }) => {
       if (!apiKey && !serverSideApiKeyIsSet) return null;
 
-      return getModels(
+      return await getModels(
         {
           key: apiKey
         },

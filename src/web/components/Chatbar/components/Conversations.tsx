@@ -1,9 +1,9 @@
-import { Conversation } from '@/types/chat';
+import { type Conversation } from '@/types/chat';
 
 import { ConversationComponent } from './Conversation';
 
 interface Props {
-  conversations: Conversation[];
+  conversations: Conversation[]
 }
 
 export const Conversations = ({ conversations }: Props) => {

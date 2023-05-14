@@ -1,5 +1,5 @@
 import { IconRobot } from '@tabler/icons-react';
-import { FC } from 'react';
+import { type FC } from 'react';
 
 interface Props { }
 

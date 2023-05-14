@@ -1,10 +1,10 @@
 {
   "scripts": {
     "dev": "next dev src/web",
-    "build": "next build  --no-lint src/web",
+    "build": "next build src/web",
     "start-next": "next start src/web",
     "start": "nodemon",
-    "prod": "next build --no-lint src/web && tsc && NODE_ENV=production node -r dotenv/config dist/index.js",
+    "prod": "next build src/web && tsc && NODE_ENV=production node -r dotenv/config dist/index.js",
     "test": "ts-node ./src/test.ts"
   },
   "engines": {

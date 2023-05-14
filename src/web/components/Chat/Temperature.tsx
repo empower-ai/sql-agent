@@ -1,24 +1,24 @@
-import { FC, useContext, useState } from 'react';
+import { type FC, useContext, useState } from 'react';
 
 import { DEFAULT_TEMPERATURE } from '@/utils/app/const';
 
 import HomeContext from '@/pages/api/home/home.context';
 
 interface Props {
-  label: string;
-  onChangeTemperature: (temperature: number) => void;
+  label: string
+  onChangeTemperature: (temperature: number) => void
 }
 
 export const TemperatureSlider: FC<Props> = ({
   label,
-  onChangeTemperature,
+  onChangeTemperature
 }) => {
   const {
-    state: { conversations },
+    state: { conversations }
   } = useContext(HomeContext);
   const lastConversation = conversations[conversations.length - 1];
   const [temperature, setTemperature] = useState(
-    lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
+    lastConversation?.temperature ?? DEFAULT_TEMPERATURE
   );
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseFloat(event.target.value);

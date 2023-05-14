@@ -357,22 +357,22 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                             <SystemPrompt
                               conversation={selectedConversation}
                               prompts={prompts}
-                              onChangePrompt={(prompt) =>
+                              onChangePrompt={(prompt) => {
                                 handleUpdateConversation(selectedConversation, {
                                   key: 'prompt',
                                   value: prompt
-                                })
-                              }
+                                });
+                              }}
                             />
 
                             <TemperatureSlider
                               label='Temperature'
-                              onChangeTemperature={(temperature) =>
+                              onChangeTemperature={(temperature) => {
                                 handleUpdateConversation(selectedConversation, {
                                   key: 'temperature',
                                   value: temperature
-                                })
-                              }
+                                });
+                              }}
                             />
                           </div>
                         )}

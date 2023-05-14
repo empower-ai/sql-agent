@@ -14,7 +14,10 @@ module.exports = {
     ecmaVersion: 'latest',
     parser: '@typescript-eslint/parser',
     sourceType: 'module',
-    project: './tsconfig.json'
+    project: [
+      './tsconfig.json',
+      './src/web/tsconfig.json'
+    ]
   },
   rules: {
     semi: 'off',
@@ -30,6 +33,7 @@ module.exports = {
     '@typescript-eslint/restrict-plus-operands': 'off',
     '@typescript-eslint/no-empty-interface': 'off',
     'no-unused-vars': 'off',
+    '@typescript-eslint/no-misused-promises': 'off',
     'unused-imports/no-unused-imports': 'error',
     'unused-imports/no-unused-vars': [
       'warn',

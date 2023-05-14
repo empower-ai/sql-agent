@@ -223,12 +223,11 @@ export const Chatbar = () => {
         folderComponent={<ChatFolders searchTerm={searchTerm} />}
         items={filteredConversations}
         searchTerm={searchTerm}
-        handleSearchTerm={(searchTerm: string) =>
-          chatDispatch({ field: 'searchTerm', value: searchTerm })
+        handleSearchTerm={(searchTerm: string) => { chatDispatch({ field: 'searchTerm', value: searchTerm }); }
         }
         toggleOpen={handleToggleChatbar}
         handleCreateItem={handleNewConversation}
-        handleCreateFolder={() => handleCreateFolder('New folder', 'chat')}
+        handleCreateFolder={() => { handleCreateFolder('New folder', 'chat'); }}
         handleDrop={handleDrop}
         footerComponent={<ChatbarSettings />}
       />

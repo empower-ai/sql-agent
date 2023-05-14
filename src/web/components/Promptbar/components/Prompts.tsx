@@ -1,11 +1,11 @@
-import { FC } from 'react';
+import { type FC } from 'react';
 
-import { Prompt } from '@/types/prompt';
+import { type Prompt } from '@/types/prompt';
 
 import { PromptComponent } from './Prompt';
 
 interface Props {
-  prompts: Prompt[];
+  prompts: Prompt[]
 }
 
 export const Prompts: FC<Props> = ({ prompts }) => {

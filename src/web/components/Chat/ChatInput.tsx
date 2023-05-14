@@ -43,11 +43,7 @@ export const ChatInput = ({
   textareaRef,
   showScrollDownButton
 }: Props) => {
-  const {
-    state: { selectedConversation, messageIsStreaming, prompts },
-
-    dispatch: homeDispatch
-  } = useContext(HomeContext);
+  const { state: { selectedConversation, messageIsStreaming, prompts } } = useContext(HomeContext);
 
   const [content, setContent] = useState<string>();
   const [isTyping, setIsTyping] = useState<boolean>(false);
@@ -71,7 +67,7 @@ export const ChatInput = ({
 
     if (maxLength && value.length > maxLength) {
       alert(
-          `Message limit is ${maxLength}} characters. You have entered ${value.length} characters.`
+        `Message limit is ${maxLength}} characters. You have entered ${value.length} characters.`
       );
       return;
     }
@@ -211,7 +207,7 @@ export const ChatInput = ({
 
     setContent(newContent);
 
-    if (textareaRef && textareaRef.current) {
+    if (textareaRef?.current) {
       textareaRef.current.focus();
     }
   };
@@ -223,12 +219,11 @@ export const ChatInput = ({
   }, [activePromptIndex]);
 
   useEffect(() => {
-    if (textareaRef && textareaRef.current) {
+    if (textareaRef?.current) {
       textareaRef.current.style.height = 'inherit';
       textareaRef.current.style.height = `${textareaRef.current?.scrollHeight}px`;
-      textareaRef.current.style.overflow = `${
-        textareaRef?.current?.scrollHeight > 400 ? 'auto' : 'hidden'
-      }`;
+      textareaRef.current.style.overflow = `${textareaRef?.current?.scrollHeight > 400 ? 'auto' : 'hidden'
+        }`;
     }
   }, [content]);
 
@@ -276,7 +271,7 @@ export const ChatInput = ({
           <button
             className="absolute left-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-opacity-50 dark:text-neutral-100 dark:hover:text-neutral-200"
             onClick={() => { setShowPluginSelect(!showPluginSelect); }}
-            onKeyDown={(e) => {}}
+            onKeyDown={(_) => { }}
           >
             {plugin ? <IconBrandGoogle size={20} /> : <IconBolt size={20} />}
           </button>
@@ -296,7 +291,7 @@ export const ChatInput = ({
                   setPlugin(plugin);
                   setShowPluginSelect(false);
 
-                  if (textareaRef && textareaRef.current) {
+                  if (textareaRef?.current) {
                     textareaRef.current.focus();
                   }
                 }}
@@ -311,11 +306,10 @@ export const ChatInput = ({
               resize: 'none',
               bottom: `${textareaRef?.current?.scrollHeight}px`,
               maxHeight: '400px',
-              overflow: `${
-                textareaRef.current && textareaRef.current.scrollHeight > 400
-                  ? 'auto'
-                  : 'hidden'
-              }`
+              overflow: `${textareaRef.current && textareaRef.current.scrollHeight > 400
+                ? 'auto'
+                : 'hidden'
+                }`
             }}
             placeholder={
               'Type a message or type "/" to select a prompt...' || ''
@@ -334,10 +328,10 @@ export const ChatInput = ({
           >
             {messageIsStreaming
               ? (
-              <div className="h-4 w-4 animate-spin rounded-full border-t-2 border-neutral-800 opacity-60 dark:border-neutral-100"></div>
+                <div className="h-4 w-4 animate-spin rounded-full border-t-2 border-neutral-800 opacity-60 dark:border-neutral-100"></div>
                 )
               : (
-              <IconSend size={18} />
+                <IconSend size={18} />
                 )}
           </button>
 

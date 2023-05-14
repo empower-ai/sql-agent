@@ -18,44 +18,46 @@ export const ChatbarSettings = () => {
   const {
     state: {
       apiKey,
-      lightMode,
       serverSideApiKeyIsSet,
       serverSidePluginKeysSet,
-      conversations,
-    },
-    dispatch: homeDispatch,
+      conversations
+    }
   } = useContext(HomeContext);
 
   const {
     handleClearConversations,
     handleImportConversations,
     handleExportData,
-    handleApiKeyChange,
+    handleApiKeyChange
   } = useContext(ChatbarContext);
 
   return (
     <div className="flex flex-col items-center space-y-1 border-t border-white/20 pt-1 text-sm">
-      {conversations.length > 0 ? (
-        <ClearConversations onClearConversations={handleClearConversations} />
-      ) : null}
+      {conversations.length > 0
+        ? (
+          <ClearConversations onClearConversations={handleClearConversations} />
+          )
+        : null}
 
       <Import onImport={handleImportConversations} />
 
       <SidebarButton
         text={'Export data'}
         icon={<IconFileExport size={18} />}
-        onClick={() => handleExportData()}
+        onClick={() => { handleExportData(); }}
       />
 
       <SidebarButton
         text={'Settings'}
         icon={<IconSettings size={18} />}
-        onClick={() => setIsSettingDialog(true)}
+        onClick={() => { setIsSettingDialog(true); }}
       />
 
-      {!serverSideApiKeyIsSet ? (
-        <Key apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />
-      ) : null}
+      {!serverSideApiKeyIsSet
+        ? (
+          <Key apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />
+          )
+        : null}
 
       {!serverSidePluginKeysSet ? <PluginKeys /> : null}
 

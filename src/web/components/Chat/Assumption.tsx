@@ -5,7 +5,6 @@ import ReactMarkdown from 'react-markdown';
 import { markdown } from '@codemirror/lang-markdown';
 import { EditorView } from '@codemirror/view';
 
-
 interface Props {
   assumptions: string
   onUpdate: (assumptions: string) => Promise<void>
@@ -29,15 +28,14 @@ export const Assumption: FC<Props> = ({ assumptions, onUpdate }) => {
           </ReactMarkdown>
           Notice any problems with the assumptions? Click <button
             className="font-bold text-blue-400"
-            onClick={() => setIsEditing(true)}
+            onClick={() => { setIsEditing(true); }}
           > here</button > to update.
         </>
-        :
-        <>
+        : <>
           <CodeMirror
             className='text-xs'
             value={assumptions}
-            onChange={a => setEditedAssumptions(a)}
+            onChange={a => { setEditedAssumptions(a); }}
             basicSetup={{
               lineNumbers: isEditing,
               foldGutter: false

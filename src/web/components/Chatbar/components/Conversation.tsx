@@ -125,7 +125,7 @@ export const ConversationComponent = ({ conversation }: Props) => {
               ? 'bg-[#343541]/90'
               : ''
           }`}
-          onClick={() => handleSelectConversation(conversation)}
+          onClick={() => { handleSelectConversation(conversation); }}
           disabled={messageIsStreaming}
           draggable="true"
           onDragStart={(e) => { handleDragStart(e, conversation); }}
