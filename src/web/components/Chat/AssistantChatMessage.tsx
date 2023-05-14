@@ -3,6 +3,9 @@ import ReactMarkdown from 'react-markdown';
 import { Assumption } from './Assumption';
 import { Query } from './Query';
 import { type AssistantMessage, type RunQueryResult, type Message } from '@/types/chat';
+import { CSVLink } from 'react-csv';
+import { DataGrid } from '@mui/x-data-grid';
+import Box from '@mui/material/Box';
 
 export interface Props {
   messageContent: string
@@ -69,7 +72,7 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
   }
 
   const getAnswerBlock = () => {
-    if (!response.hasResult) {
+    if (!response.hasResult || !response.answer) {
       return null;
     }
 
@@ -77,12 +80,46 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
     if (hasEdited) {
       header = <h4>Result from the updated query:</h4>
     }
+
+    const rows = response.answer.split('\n');
+    const headers = rows[0].split(',');
+    const data = rows.slice(1).map((row, index) => {
+      const values = row.split(',');
+      const obj: any = {};
+      obj.id = index;
+      headers.forEach((header, index) => {
+        obj[header] = values[index];
+      });
+      return obj;
+    });
+
     return (<>
       {header}
-      <ReactMarkdown>
-        {/* {response.answer} */}
-        WIP
-      </ReactMarkdown>
+      <Box sx={{ maxHeight: 400, width: '100%' }}>
+        <DataGrid
+          rows={data}
+          columns={headers.map((header, index) => {
+            return {
+              field: header,
+              headerName: header,
+              width: 150,
+              editable: true
+            };
+          })}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 5
+              }
+            }
+          }}
+          pageSizeOptions={[5, 10]}
+          checkboxSelection={false}
+        />
+      </Box>
+      <CSVLink data={response.answer} filename="result.csv">
+        <p>Export Result to CSV</p>
+      </CSVLink>
     </>
     );
   }
