@@ -95,7 +95,7 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
 
     return (<>
       {header}
-      <Box sx={{ maxHeight: 400, width: '100%' }}>
+      <Box sx={{ maxHeight: 800, width: '100%' }}>
         <DataGrid
           rows={data}
           columns={headers.map((header, index) => {
