@@ -326,11 +326,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               </div>
             </div>
           </div>
-        )
+          )
         : modelError
           ? (
             <ErrorMessageDiv error={modelError} />
-          )
+            )
           : (
             <>
               <div
@@ -348,10 +348,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                               <div>
                                 <Spinner size="16px" className="mx-auto" />
                               </div>
-                            )
+                              )
                             : (
-                              'Chatbot UI'
-                            )}
+                                'Chatbot UI'
+                              )}
                         </div>
 
                         {models.length > 0 && (
@@ -382,7 +382,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         )}
                       </div>
                     </>
-                  )
+                    )
                   : (
                     <>
                       <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#444654] dark:text-neutral-200">
@@ -448,7 +448,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         ref={messagesEndRef}
                       />
                     </>
-                  )}
+                    )}
               </div>
 
               <ChatInput
@@ -467,7 +467,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 showScrollDownButton={showScrollDownButton}
               />
             </>
-          )}
+            )}
     </div>
   );
 });
