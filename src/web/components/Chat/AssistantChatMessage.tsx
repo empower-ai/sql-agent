@@ -41,7 +41,12 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
       role: 'assistant',
       content: JSON.stringify(
         {
-          ...parsedMessage,
+          senseiResponse: {
+            ...parsedMessage.senseiResponse,
+            answer: result.answer,
+            hasResult: result.hasResult,
+            err: result.err
+          },
           updatedQuery: result.query,
           updatedAnswer: result.answer
         }
@@ -133,7 +138,6 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
     : null;
 
   const getQueryBlock = () => {
-    console.log(query);
     let header = <h4>This is the query used to generate the result:</h4>
     if (hasEdited) {
       header = <h4>Updated query:</h4>;

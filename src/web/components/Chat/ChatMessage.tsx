@@ -28,8 +28,6 @@ export const ChatMessage: FC<Props> = memo(({ message, onUpdateUserMessage, onUp
     dispatch: homeDispatch
   } = useContext(HomeContext);
 
-  console.log(message);
-
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [messageContent, setMessageContent] = useState(message.content);
