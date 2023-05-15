@@ -100,33 +100,35 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
 
     return (<>
       {header}
-      <Box sx={{ maxHeight: 800, width: '100%' }}>
-        <DataGrid
-          rows={data}
-          columns={headers.map((header, index) => {
-            return {
-              field: header,
-              headerName: header,
-              flex: 150,
-              minWidth: 150,
-              resizable: true
-            };
-          })}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 5
+      <div>
+        <Box sx={{ maxHeight: 800, width: '100%' }}>
+          <DataGrid
+            rows={data}
+            columns={headers.map((header, index) => {
+              return {
+                field: header,
+                headerName: header,
+                flex: 150,
+                minWidth: 150,
+                resizable: true
+              };
+            })}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 5
+                }
               }
-            }
-          }}
-          hideFooter={data.length <= 5}
-          pageSizeOptions={[5, 10]}
-          checkboxSelection={false}
-        />
-      </Box>
-      <CSVLink data={response.answer} filename="result.csv">
-        <p>Export Result to CSV</p>
-      </CSVLink>
+            }}
+            hideFooter={data.length <= 5}
+            pageSizeOptions={[5, 10]}
+            checkboxSelection={false}
+          />
+        </Box>
+        <CSVLink data={response.answer} filename="result.csv">
+          <p>Export Result to CSV</p>
+        </CSVLink>
+      </div>
     </>
     );
   }
