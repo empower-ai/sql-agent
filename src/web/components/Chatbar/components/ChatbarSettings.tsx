@@ -1,4 +1,4 @@
-import { IconFileExport, IconSettings } from '@tabler/icons-react';
+import { IconFileExport, IconSchema, IconSettings } from '@tabler/icons-react';
 import { useContext, useState } from 'react';
 
 import HomeContext from '@/pages/api/home/home.context';
@@ -10,16 +10,16 @@ import { Key } from '../../Settings/Key';
 import { SidebarButton } from '../../Sidebar/SidebarButton';
 import ChatbarContext from '../Chatbar.context';
 import { ClearConversations } from './ClearConversations';
-import { PluginKeys } from './PluginKeys';
+import { SchemasDialog } from '@/components/Schemas/SchemasDialog';
 
 export const ChatbarSettings = () => {
   const [isSettingDialogOpen, setIsSettingDialog] = useState<boolean>(false);
+  const [isSchemasDialogOpen, setIsSchemasDialogOpen] = useState<boolean>(false);
 
   const {
     state: {
       apiKey,
       serverSideApiKeyIsSet,
-      serverSidePluginKeysSet,
       conversations
     }
   } = useContext(HomeContext);
@@ -48,6 +48,12 @@ export const ChatbarSettings = () => {
       />
 
       <SidebarButton
+        text={'Check schemas'}
+        icon={<IconSchema size={18} />}
+        onClick={() => { setIsSchemasDialogOpen(true); }}
+      />
+
+      <SidebarButton
         text={'Settings'}
         icon={<IconSettings size={18} />}
         onClick={() => { setIsSettingDialog(true); }}
@@ -65,6 +71,13 @@ export const ChatbarSettings = () => {
         open={isSettingDialogOpen}
         onClose={() => {
           setIsSettingDialog(false);
+        }}
+      />
+
+      <SchemasDialog
+        open={isSchemasDialogOpen}
+        onClose={() => {
+          setIsSchemasDialogOpen(false);
         }}
       />
     </div>

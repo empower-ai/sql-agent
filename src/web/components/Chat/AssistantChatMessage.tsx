@@ -1,5 +1,4 @@
 import { type FC, memo, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
 import { Assumption } from './Assumption';
 import { Query } from './Query';
 import { type AssistantMessage, type RunQueryResult, type Message } from '@/types/chat';

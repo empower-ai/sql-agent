@@ -57,6 +57,7 @@
     "@emotion/styled": "^11.11.0",
     "@google-cloud/bigquery": "^6.2.0",
     "@logunify/chatgpt": "5.2.9",
+    "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.0",
     "@mui/x-data-grid": "^6.4.0",
     "@slack/bolt": "^3.13.0",
