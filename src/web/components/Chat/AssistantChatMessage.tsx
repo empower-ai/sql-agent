@@ -107,8 +107,9 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
             return {
               field: header,
               headerName: header,
-              width: 150,
-              editable: true
+              flex: 150,
+              minWidth: 150,
+              resizable: true
             };
           })}
           initialState={{
@@ -118,6 +119,7 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
               }
             }
           }}
+          hideFooter={data.length <= 5}
           pageSizeOptions={[5, 10]}
           checkboxSelection={false}
         />
