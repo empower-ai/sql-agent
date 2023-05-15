@@ -50,7 +50,6 @@ export const ModelSelect = () => {
           className="flex items-center"
         >
           <IconExternalLink size={18} className={'inline mr-1'} />
-          {'View Account Usage'}
         </a>
       </div>
     </div>
