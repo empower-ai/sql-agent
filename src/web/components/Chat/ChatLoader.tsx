@@ -1,4 +1,4 @@
-import { IconRobot } from '@tabler/icons-react';
+import { IconDots, IconRobot } from '@tabler/icons-react';
 import { type FC } from 'react';
 
 interface Props { }
@@ -13,7 +13,7 @@ export const ChatLoader: FC<Props> = () => {
         <div className="min-w-[40px] items-end">
           <IconRobot size={30} />
         </div>
-        <span className="animate-pulse cursor-default mt-1">▍</span>
+        <IconDots className="animate-pulse animate-bounce" size={30} />
       </div>
     </div>
   );
