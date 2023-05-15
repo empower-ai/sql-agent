@@ -133,14 +133,6 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
     );
   }
 
-  const errorBlock = response.err
-    ? (
-      <ReactMarkdown>
-        {`> ${response.err}`}
-      </ReactMarkdown>
-      )
-    : null;
-
   const getQueryBlock = () => {
     let header = <h4>This is the query used to generate the result:</h4>
     if (hasEdited) {
@@ -155,10 +147,16 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
 
   return (
     <>
-      {getAnswerBlock()}
-      {getAssumptionBlock()}
-      {getQueryBlock()}
-      {errorBlock}
+      {response.hasResult
+        ? <>
+          {getAnswerBlock()}
+          {getAssumptionBlock()}
+          {getQueryBlock()}
+        </>
+        : <span>
+          {'I\'m sorry, I\'m not sure how to answer that, can you add more details?'}
+        </span>
+      }
     </>
   );
 });
