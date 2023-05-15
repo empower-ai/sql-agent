@@ -13,15 +13,16 @@ import { ClearConversations } from './ClearConversations';
 import { SchemasDialog } from '@/components/Schemas/SchemasDialog';
 
 export const ChatbarSettings = () => {
-  const [isSettingDialogOpen, setIsSettingDialog] = useState<boolean>(false);
-  const [isSchemasDialogOpen, setIsSchemasDialogOpen] = useState<boolean>(false);
+  const [showSettingDialog, setShowSettingDialog] = useState<boolean>(false);
 
   const {
     state: {
       apiKey,
       serverSideApiKeyIsSet,
-      conversations
-    }
+      conversations,
+      showSchemasDialog
+    },
+    dispatch
   } = useContext(HomeContext);
 
   const {
@@ -48,15 +49,20 @@ export const ChatbarSettings = () => {
       />
 
       <SidebarButton
-        text={'Check schemas'}
+        text={'Show schemas'}
         icon={<IconSchema size={18} />}
-        onClick={() => { setIsSchemasDialogOpen(true); }}
+        onClick={() => {
+          dispatch({
+            field: 'showSchemasDialog',
+            value: true
+          })
+        }}
       />
 
       <SidebarButton
         text={'Settings'}
         icon={<IconSettings size={18} />}
-        onClick={() => { setIsSettingDialog(true); }}
+        onClick={() => { setShowSettingDialog(true); }}
       />
 
       {!serverSideApiKeyIsSet
@@ -68,16 +74,19 @@ export const ChatbarSettings = () => {
       {/* {!serverSidePluginKeysSet ? <PluginKeys /> : null} */}
 
       <SettingDialog
-        open={isSettingDialogOpen}
+        open={showSettingDialog}
         onClose={() => {
-          setIsSettingDialog(false);
+          setShowSettingDialog(false);
         }}
       />
 
       <SchemasDialog
-        open={isSchemasDialogOpen}
+        open={showSchemasDialog}
         onClose={() => {
-          setIsSchemasDialogOpen(false);
+          dispatch({
+            field: 'showSchemasDialog',
+            value: false
+          });
         }}
       />
     </div>
