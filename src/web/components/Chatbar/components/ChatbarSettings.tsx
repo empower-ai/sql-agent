@@ -1,4 +1,4 @@
-import { IconFileExport, IconSchema, IconSettings } from '@tabler/icons-react';
+import { IconFileExport, IconMail, IconSchema, IconSettings } from '@tabler/icons-react';
 import { useContext, useState } from 'react';
 
 import HomeContext from '@/pages/api/home/home.context';
@@ -87,6 +87,14 @@ export const ChatbarSettings = () => {
             field: 'showSchemasDialog',
             value: false
           });
+        }}
+      />
+
+      <SidebarButton
+        text={'Contact Us'}
+        icon={<IconMail size={18} />}
+        onClick={() => {
+          window.location = 'mailto:yulong@dsensei.dev'
         }}
       />
     </div>
