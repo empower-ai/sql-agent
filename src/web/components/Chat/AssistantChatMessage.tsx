@@ -133,8 +133,10 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
     );
   }
 
-  const getQueryBlock = () => {
-    let header = <h4>This is the query used to generate the result:</h4>
+  const getQueryBlock = (hasError: boolean) => {
+    let header = hasError
+      ? <h4>This is the query I tried:</h4>
+      : <h4>This is the query used to generate the result:</h4>;
     if (hasEdited) {
       header = <h4>Updated query:</h4>;
     }
@@ -145,13 +147,24 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
     </>
   };
 
+  if (response.err) {
+    return (<>
+      <h4>Could not generate a valid query to answer the question</h4>
+      <h5>This is the error for the query:</h5>
+      <span className='text-red-500'>
+        {response.err}
+      </span>
+      {getQueryBlock(true)}
+    </>);
+  }
+
   return (
     <>
       {response.hasResult
         ? <>
           {getAnswerBlock()}
           {getAssumptionBlock()}
-          {getQueryBlock()}
+          {getQueryBlock(false)}
         </>
         : <span>
           {'I\'m sorry, I\'m not sure how to answer that, can you add more details?'}
