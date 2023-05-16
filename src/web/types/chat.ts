@@ -4,6 +4,7 @@ export interface SenseiResponse {
   question: string
   query: string
   assumption: string
+  resultData: string
   answer: string
   hasResult: string
   err: string
@@ -12,7 +13,7 @@ export interface SenseiResponse {
 export interface RunQueryResult {
   query: string
   hasResult: string
-  answer: string
+  resultData: string
   err: string
 }
 

@@ -42,12 +42,12 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
         {
           senseiResponse: {
             ...parsedMessage.senseiResponse,
-            answer: result.answer,
+            resultData: result.resultData,
             hasResult: result.hasResult,
             err: result.err
           },
           updatedQuery: result.query,
-          updatedAnswer: result.answer
+          updatedAnswer: result.resultData
         }
       )
     });
@@ -75,17 +75,17 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
     </>;
   }
 
-  const getAnswerBlock = () => {
-    if (!response.hasResult || !response.answer) {
+  const getDataResultBlock = () => {
+    if (!response.hasResult || !response.resultData) {
       return null;
     }
 
-    let header = <h4>Please see the result below:</h4>;
+    let header = <h4>Below is the result set I used to generate the answer:</h4>;
     if (hasEdited) {
       header = <h4>Result from the updated query:</h4>
     }
 
-    const rows = response.answer.split('\n');
+    const rows = response.resultData.split('\n');
     const headers = rows[0].split(',');
     const data = rows.slice(1).map((row, index) => {
       const values = row.split(',');
@@ -124,7 +124,7 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
             checkboxSelection={false}
           />
         </Box>
-        <CSVLink data={response.answer} filename="result.csv">
+        <CSVLink data={response.resultData} filename="result.csv">
           <p>Export Result to CSV</p>
         </CSVLink>
       </div>
@@ -161,7 +161,10 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
     <>
       {response.hasResult
         ? <>
-          {getAnswerBlock()}
+          <div>
+            {response.answer}
+          </div>
+          {getDataResultBlock()}
           {getAssumptionBlock()}
           {getQueryBlock(false)}
         </>

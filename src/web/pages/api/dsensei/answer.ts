@@ -12,7 +12,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
     question,
     query: answer.query,
     assumption: answer.assumptions,
-    answer: answer.rows ? ResultBuilder.buildFromRows(answer.rows).fullCsvContent : '',
+    answer: answer.answer,
+    resultData: answer.rows ? ResultBuilder.buildFromRows(answer.rows).fullCsvContent : '',
     hasResult: answer.hasResult,
     err: answer.err
   })
