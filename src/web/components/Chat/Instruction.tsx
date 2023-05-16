@@ -20,6 +20,18 @@ export const Instruction = (props: Props) => {
   return (
       <Card sx={{ maxWidth: 600 }}>
         <CardContent>
+          { /** ---- Instruction ---- */}
+          <Typography gutterBottom variant="h5" component="div">
+            Instruction
+          </Typography>
+
+          <Typography variant="body2" color="text.secondary" style={{ marginBottom: 36 }}>
+            <p>
+              This demo shows how you can use DSensei to ask questions about a dataset. A few example questions are listed below, but you can ask any <b>data question</b> you want.
+            </p>
+          </Typography>
+
+          { /* ---- Dataset Info ---- */}
           <Typography gutterBottom variant="h5" component="div">
             Dataset Info
           </Typography>
@@ -33,6 +45,7 @@ export const Instruction = (props: Props) => {
             </p>
           </Typography>
 
+          { /* ---- Example Questions ---- */}
           <Typography gutterBottom variant="h5" component="div">
             Example Questions:
           </Typography>
