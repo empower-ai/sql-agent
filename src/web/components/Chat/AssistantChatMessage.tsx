@@ -5,6 +5,7 @@ import { type AssistantMessage, type RunQueryResult, type Message } from '@/type
 import { CSVLink } from 'react-csv';
 import { DataGrid } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
+import ReactMarkdown from 'react-markdown';
 
 export interface Props {
   messageContent: string
@@ -161,9 +162,9 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
     <>
       {response.hasResult
         ? <>
-          <div>
+          <ReactMarkdown>
             {response.answer}
-          </div>
+          </ReactMarkdown>
           {getDataResultBlock()}
           {getAssumptionBlock()}
           {getQueryBlock(false)}
