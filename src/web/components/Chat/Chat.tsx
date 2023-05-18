@@ -349,7 +349,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                               </div>
                               )
                             : (
-                                'Chatbot UI'
+                                'DSensei'
                               )}
                         </div>
 
