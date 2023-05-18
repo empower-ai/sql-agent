@@ -94,7 +94,7 @@ export const ChatbarSettings = () => {
         text={'Contact Us'}
         icon={<IconMail size={18} />}
         onClick={() => {
-          window.location = 'mailto:yulong@dsensei.dev'
+          window.location.href = 'mailto:yulong@dsensei.dev'
         }}
       />
     </div>
