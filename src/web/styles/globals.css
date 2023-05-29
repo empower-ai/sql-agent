@@ -41,3 +41,11 @@ html {
 pre:has(div.codeblock) {
   padding: 0;
 }
+
+.cm-content {
+  white-space: normal !important;
+  word-break: normal !important;
+  word-wrap: break-word !important;
+  display: inline-block !important;
+  width: 100% !important;
+}
