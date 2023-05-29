@@ -10,7 +10,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
     const result = await dataSource.runQuery(query);
     res.json({
       query,
-      answer: result.rows ? ResultBuilder.buildFromRows(result.rows).fullCsvContent : '',
+      resultData: result.rows ? ResultBuilder.buildFromRows(result.rows).fullCsvContent : '',
       hasResult: result.hasResult
     });
   } catch (e) {
