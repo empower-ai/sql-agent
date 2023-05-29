@@ -9,7 +9,7 @@ export const CloseSidebarButton = ({ onClick, side }: Props) => {
   return (
     <>
       <button
-        className={`fixed top-5 ${
+        className={`fixed top-2 ${
           side === 'right' ? 'right-[270px]' : 'left-[270px]'
         } z-50 h-7 w-7 hover:text-gray-400 dark:text-white dark:hover:text-gray-300 sm:top-0.5 sm:${
           side === 'right' ? 'right-[270px]' : 'left-[270px]'
