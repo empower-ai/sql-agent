@@ -43,7 +43,7 @@ pre:has(div.codeblock) {
 }
 
 .cm-content {
-  white-space: normal !important;
+  white-space: pre-wrap !important;
   word-break: normal !important;
   word-wrap: break-word !important;
   display: inline-block !important;
