@@ -162,9 +162,11 @@ export const AssistantChatMessage: FC<Props> = memo(({ messageContent, onUpdateA
     <>
       {response.hasResult
         ? <>
-          <ReactMarkdown>
-            {response.answer}
-          </ReactMarkdown>
+          {response.answer
+            ? <ReactMarkdown>
+              {response.answer}
+            </ReactMarkdown>
+            : null}
           {getDataResultBlock()}
           {getAssumptionBlock()}
           {getQueryBlock(false)}

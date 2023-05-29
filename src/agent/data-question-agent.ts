@@ -14,7 +14,8 @@ export class DataQuestionAgent {
 
   public constructor(
     private readonly dataSource: DataSource,
-    private readonly dataSourceContextIndex: DataSourceContextIndex
+    private readonly dataSourceContextIndex: DataSourceContextIndex,
+    private readonly includeExplanation: boolean
   ) { }
 
   public async explain(lastMessageId: string, queryResult: string): Promise<string> {
@@ -60,7 +61,11 @@ export class DataQuestionAgent {
       try {
         logger.info(`Fetched query to execute for question: ${question}. Query: \n${query}`);
         const result = await this.dataSource.runQuery(query);
-        const answer = await this.explain(response.id, ResultBuilder.buildFromRows(result.rows ?? []).fullCsvContent);
+
+        let answer;
+        if (this.includeExplanation) {
+          answer = await this.explain(response.id, ResultBuilder.buildFromRows(result.rows ?? []).fullCsvContent);
+        }
         return {
           ...result,
           answer,
@@ -69,7 +74,10 @@ export class DataQuestionAgent {
       } catch (err) {
         const rerunResult = await this.dataSource.tryFixAndRun(query);
         if (rerunResult.hasResult) {
-          const rerunAnswer = await this.explain(response.id, ResultBuilder.buildFromRows(rerunResult.rows ?? []).fullCsvContent);
+          let rerunAnswer;
+          if (this.includeExplanation) {
+            rerunAnswer = await this.explain(response.id, ResultBuilder.buildFromRows(rerunResult.rows ?? []).fullCsvContent);
+          }
           return {
             ...rerunResult,
             answer: rerunAnswer
@@ -125,6 +133,6 @@ export class DataQuestionAgent {
   }
 }
 
-const dataQuestionAgent = new DataQuestionAgent(dataSource, dataSourceContextIndex);
+const dataQuestionAgent = new DataQuestionAgent(dataSource, dataSourceContextIndex, Boolean(process.env.INCLUDE_EXPLANATION));
 
 export default dataQuestionAgent;
