@@ -4,7 +4,7 @@
 [![Discord](https://img.shields.io/badge/discord-@DSensei-blue.svg?logo=discord)](https://discord.gg/fRzNUEugRU)
 
 
-Revolutionize the way you access data using DSensei, the open source Slack bot that makes querying your databases effortless with natural language. DSensei can easily retrieve data from databases like BigQuery, MySQL, and PostgreSQL with the power of ChatGPT, eliminating the need for complex SQL queries.
+Revolutionize the way you access data using DSensei, the open source chatbot that makes querying your databases effortless with natural language. DSensei can easily retrieve data from databases like BigQuery, MySQL, and PostgreSQL with the power of ChatGPT, eliminating the need for complex SQL queries. DSensei has a built-in web chatbot, and Slack integration to enable data question answering in Slack.
 
 Try a live demo in our [Slack Channel](https://join.slack.com/t/dsensei-demo/shared_invite/zt-1tt55ia3p-jMlofj8YHGnCMjuu30vJeg)
 
@@ -33,7 +33,12 @@ Before installing DSensei, ensure that you have the following:
 - OpenAI API key for GPT-3 authentication
 - Database credentials for MySQL, PostgreSQL, or BigQuery
 
-### Set Up the Slack App
+
+### Setup OpenAI API
+
+- Follow the instructions on [OpenAI website](https://beta.openai.com/docs/authentication/overview) to get your API key.
+
+### [Optional] Set Up the Slack App
 
 1. Navigate to the [Slack API website](https://api.slack.com/) and sign in to your Slack workspace.
 2. Click on the "Create an app" button to create a new app, and select "From an app manifest".
@@ -80,19 +85,11 @@ settings:
 5. Click "Create", then click "Install the App to Your Workspace".
 6. Verify the app has been installed by checking the "Apps" section in the sidebar of your Slack workspace.
 
-### Setup OpenAI API
-
-- Follow the instructions on [OpenAI website](https://beta.openai.com/docs/authentication/overview) to get your API key.
 
 ### Setup the App
 
 - Run `npm install`
 - Rename `.env.example` to `.env`
-- Setup Slack credentials:
-  - Goto https://api.slack.com/apps and select the app you just created.
-  - Slack bot token (`SLACK_BOT_TOKEN`) can be found in the "OAuth & Permissions" tab, it should start with `xoxb-` ([screenshot](https://github.com/logunify/dsensei/blob/main/docs/images/slack-bot-token-screenshot.png)).
-  - Slack signing secret (`SLACK_SIGNING_SECRET`) can be found under the "Basic Information" tab, as "Signing Secret" ([screenshot](https://github.com/logunify/dsensei/blob/main/docs/images/signing-secret-screenshot.png)).
-  - You need to generate a Slack app token (`SLACK_APP_TOKEN`) in the "Basic Information" tab, by clicking the "Generate Token and Scopes" button, and choose the `connections:write` scope. The Slack App Token should start with `xapp-` ([screenshot](https://github.com/logunify/dsensei/blob/main/docs/images/app-token-screenshot.png)).
 - Setup the OpenAI API key:
   - You can find your OpenAI API key on this [page](https://platform.openai.com/account/api-keys).
 - Setup the DB Access. **Currently only BigQuery, MySQL and pgSQL are supported, and the system only allows for one single type of DB connection.**
@@ -107,6 +104,11 @@ settings:
       - `bigquery.tables.getData`
       - `bigquery.tables.list`
   - For MySQL and PgSQL, a standard db connection string should be used (see the example in the `.env.example`).
+- [Optional] Setup Slack credentials:
+  - Goto https://api.slack.com/apps and select the app you just created.
+  - Slack bot token (`SLACK_BOT_TOKEN`) can be found in the "OAuth & Permissions" tab, it should start with `xoxb-` ([screenshot](https://github.com/logunify/dsensei/blob/main/docs/images/slack-bot-token-screenshot.png)).
+  - Slack signing secret (`SLACK_SIGNING_SECRET`) can be found under the "Basic Information" tab, as "Signing Secret" ([screenshot](https://github.com/logunify/dsensei/blob/main/docs/images/signing-secret-screenshot.png)).
+  - You need to generate a Slack app token (`SLACK_APP_TOKEN`) in the "Basic Information" tab, by clicking the "Generate Token and Scopes" button, and choose the `connections:write` scope. The Slack App Token should start with `xapp-` ([screenshot](https://github.com/logunify/dsensei/blob/main/docs/images/app-token-screenshot.png)).
 - [Optional] Whitelist databases and tables.
   - You might want to limit the databases / tables this tool can access, you can do so by list the databases in a comma separated string in the `DATABASES` field, and / or comma separated `dbname.tablename` list in the `TABLES` field.
 - [Optional] Provide additional context by setting `CONTEXT_FILE_PATH`to the path to a file containing content of additional context for Dsensei. Content in the file should be plain text sentences. Make a new line for each sentence. Eg:
@@ -127,15 +129,19 @@ Run `npm run prod`
 
 ### Accessing Database Metadata
 
-You can list all databases / tables and check table schema by using the `/info` slach command.
+In the Slack app, you can list all databases / tables and check table schema by using the `/info` slach command.
 
 - `/info dbs` command lists all databases accessible via DSensei.
 - `/info tables dbname` command lists all tables in the database `dbname`.
 - `/info schema dbname.tablename` command shows the schema of table `dbname.tablename`.
 
+In the web chat, you can simply click the "Show Schemas" button.
+
 ### Querying Database
 
 To interact with DSensei in your Slack workspace, type @dsensei in any channel where you want to run a query and enter your query request, for example: "@dsensei, show me the number of daily active users in the past 7 days".
+
+To interact with DSensei using the web app, simply type the question in the input box, like you chat with ChatGPT.
 
 DSensei will translate your request to an SQL statement, run the SQL, and reply with the result in a thread.
 If you think the query is incorrect, you can directly edit the query in Slack, and make it re-run the query.
