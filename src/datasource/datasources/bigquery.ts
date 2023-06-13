@@ -1,9 +1,10 @@
 import { BigQuery, type FormattedMetadata, type TableField } from '@google-cloud/bigquery';
-import { DataSource } from '../datasource.js';
-import { DataSourceType, type FieldDefinition, TableSchema, type TableInfo } from '../types.js';
-import { type Row } from '../../utils/result-builder.js';
-import openAI from '../../openai/openai.js';
-import { type Answer } from '../../agent/types.js';
+
+import { DataSource } from '../datasource';
+import { DataSourceType, type FieldDefinition, TableSchema, type TableInfo } from '../types';
+import { type Row } from '../../utils/result-builder';
+import openAI from '../../openai/openai';
+import { type Answer } from '../../agent/types';
 
 const dateParts: string[] = [
   'DAY',
@@ -89,6 +90,15 @@ export default class BigQuerySource extends DataSource {
     const [{ schema, description }] =
       (await this.bigquery.dataset(database).table(table.name).getMetadata()) as FormattedMetadata[];
 
+    const tableNameToPullRawSchema = table.isSuffixPartitionTable ? `${table.name.substring(0, table.name.length - 1)}${table.suffixes![0]}` : table.name;
+    const query = `SELECT table_name, ddl as result FROM \`${database}\`.INFORMATION_SCHEMA.TABLES WHERE table_name = '${tableNameToPullRawSchema}';`;
+    const result = await this.runQuery(query);
+
+    let rawSchemaDefinition = '';
+    if (result.hasResult && result.rows![0].result != null) {
+      rawSchemaDefinition = `${result.rows![0].result}`.replace(tableNameToPullRawSchema, table.name);
+    }
+
     if (schema?.fields == null) {
       throw new Error(`${database}, ${table.name} has no fields.`);
     }
@@ -102,6 +112,7 @@ export default class BigQuerySource extends DataSource {
       description ?? '',
       fieldDefinitions,
       DataSourceType.BigQuery,
+      rawSchemaDefinition,
       table.isSuffixPartitionTable,
       table.suffixes
     );
@@ -125,6 +136,9 @@ export default class BigQuerySource extends DataSource {
   }
 
   protected async enrichTableSchema(): Promise<void> {
+    if (process.env.DISABLE_SCHEMA_ENRICHMENT) {
+      return;
+    }
     const candidateTablesAndColumns = this.getTables().flatMap(table =>
       table.fields.flatMap(field => {
         return this.getStringFields(table, field);
@@ -156,13 +170,13 @@ export default class BigQuerySource extends DataSource {
     }
 
     const sanitizedResult = result.split(',')
-      .map(column => column.trim())
-      .flatMap(column =>
+      .map((column: string) => column.trim())
+      .flatMap((column: string) =>
         candidateTablesAndColumns.filter(
           candidateTableAndColumn => new RegExp(`.*\\.${column}$|.*\\|${column}$`).test(candidateTableAndColumn)
         )
       )
-      .filter(tableAndColumn => !tableAndColumn.endsWith('_id') && !tableAndColumn.endsWith('ID'));
+      .filter((tableAndColumn: string) => !tableAndColumn.endsWith('_id') && !tableAndColumn.endsWith('ID'));
     if (sanitizedResult.length === 0) {
       this.logger.info('Skip enrichment, no possible enum column.');
       return;
@@ -170,7 +184,7 @@ export default class BigQuerySource extends DataSource {
 
     this.logger.info(`Converting string columns: ${sanitizedResult} into enums.`);
     await Promise.all(
-      sanitizedResult.map(async tableAndColumn => {
+      sanitizedResult.map(async (tableAndColumn: string) => {
         const [uniqueId, column] = tableAndColumn.split('|');
         const tableSchema = this.getTable(uniqueId)!;
         const rootField = column.split('.')[0];
@@ -184,14 +198,10 @@ export default class BigQuerySource extends DataSource {
         const additionalWhereClause = tableSchema.isSuffixPartitionTable
           ? `AND _TABLE_SUFFIX IN (${tableSchema.getTopSuffixes().map(suffix => `'${suffix}'`).join(',')})`
           : '';
-        const query = `SELECT DISTINCT(${column}) as result FROM \`${uniqueId}\` ${additionalFromClause} WHERE ${column} IS NOT NULL ${additionalWhereClause} LIMIT 51;`;
+        const query = `SELECT ${column} as result, COUNT(1) as result FROM \`${uniqueId}\` ${additionalFromClause} WHERE ${column} IS NOT NULL ${additionalWhereClause} GROUP BY ${column} ORDER BY COUNT(1) DESC LIMIT 10 ;`;
         try {
           await this.runQuery(query)
             .then(({ rows }) => {
-              if (rows!.length > 50) {
-                // should not have more than 50 values for an enum
-                return;
-              }
               const table = this.getTables().find(table => table.getUniqueID() === uniqueId);
               const columnField = table?.findFieldByName(column);
               if (columnField === undefined) {
@@ -243,6 +253,10 @@ export default class BigQuerySource extends DataSource {
         description: field.description ?? ''
       };
     });
+  }
+
+  protected useFormattedSchema(): boolean {
+    return false;
   }
 
   public async tryFixAndRun(query: string): Promise<Answer> {

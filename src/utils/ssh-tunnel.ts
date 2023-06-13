@@ -1,7 +1,7 @@
 import { createTunnel } from 'tunnel-ssh';
 import type * as ssh2 from 'ssh2';
 import { userInfo } from 'os';
-import getLogger from './logger.js';
+import getLogger from './logger';
 
 const logger = getLogger('SSHTUnnel');
 

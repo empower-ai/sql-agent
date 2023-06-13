@@ -1,9 +1,9 @@
 import { type App, type BlockAction } from '@slack/bolt';
-import { Action } from '../types.js';
-import type DataQuestionAgent from '../../agent/data-question-agent.js';
-import { getAssumptionBlocks, getErrorBlock, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks.js';
-import ResultBuilder from '../../utils/result-builder.js';
-import getLogger from '../../utils/logger.js';
+import { Action } from '../types';
+import { type DataQuestionAgent } from '../../agent/data-question-agent';
+import { getAssumptionBlocks, getErrorBlock, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks';
+import ResultBuilder from '../../utils/result-builder';
+import getLogger from '../../utils/logger';
 
 const logger = getLogger('Event Handler');
 

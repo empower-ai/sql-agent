@@ -1,5 +1,5 @@
-import { type DataSource } from '../datasource/datasource.js';
-import type DataSourceContextIndex from './types.js';
+import { type DataSource } from '../datasource/datasource';
+import type DataSourceContextIndex from './types';
 
 export default class DummyIndex implements DataSourceContextIndex {
   private readonly store: string[] = [];

@@ -6,6 +6,7 @@ export interface Answer {
   err?: string
   rows?: Row[]
   assumptions?: string
+  answer?: string
 }
 
 export interface Viz {

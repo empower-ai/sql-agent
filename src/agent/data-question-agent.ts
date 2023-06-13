@@ -1,18 +1,29 @@
-import { type DataSource } from '../datasource/datasource.js';
-import type DataSourceContextIndex from '../indexes/types.js';
-import openAI from '../openai/openai.js';
-import getLogger from '../utils/logger.js';
-import { type Answer } from './types.js';
+import dataSource from '../datasource';
+import { type DataSource } from '../datasource/datasource';
+import type DataSourceContextIndex from '../indexes/types';
+import openAI from '../openai/openai';
+import getLogger from '../utils/logger';
+import { type Answer } from './types';
+import dataSourceContextIndex from '../indexes';
+import ResultBuilder from '../utils/result-builder';
 
 const logger = getLogger('DataQuestionAgent');
 
-export default class DataQuestionAgent {
+export class DataQuestionAgent {
   private readonly lastMessageIds = new Map<string, string>();
 
   public constructor(
     private readonly dataSource: DataSource,
-    private readonly dataSourceContextIndex: DataSourceContextIndex
+    private readonly dataSourceContextIndex: DataSourceContextIndex,
+    private readonly includeExplanation: boolean
   ) { }
+
+  public async explain(lastMessageId: string, queryResult: string): Promise<string> {
+    const explainPrompt = `Here is the result of the query\n${queryResult}\nGive me the answer in plain with some insights.\nFocus on the result.\nNo explanation on the query.`;
+    const result = await openAI.sendMessage(explainPrompt, lastMessageId);
+
+    return result.text;
+  }
 
   public async answer(question: string, conversationId: string, providedAssumptions: string | null = null): Promise<Answer> {
     await this.dataSource.getInitializationPromise();
@@ -50,14 +61,27 @@ export default class DataQuestionAgent {
       try {
         logger.info(`Fetched query to execute for question: ${question}. Query: \n${query}`);
         const result = await this.dataSource.runQuery(query);
+
+        let answer;
+        if (this.includeExplanation) {
+          answer = await this.explain(response.id, ResultBuilder.buildFromRows(result.rows ?? []).fullCsvContent);
+        }
         return {
           ...result,
+          answer,
           assumptions
         };
       } catch (err) {
         const rerunResult = await this.dataSource.tryFixAndRun(query);
         if (rerunResult.hasResult) {
-          return rerunResult;
+          let rerunAnswer;
+          if (this.includeExplanation) {
+            rerunAnswer = await this.explain(response.id, ResultBuilder.buildFromRows(rerunResult.rows ?? []).fullCsvContent);
+          }
+          return {
+            ...rerunResult,
+            answer: rerunAnswer
+          };
         }
 
         logger.debug(`Error running query: ${err}`);
@@ -108,3 +132,7 @@ export default class DataQuestionAgent {
     }
   }
 }
+
+const dataQuestionAgent = new DataQuestionAgent(dataSource, dataSourceContextIndex, Boolean(process.env.INCLUDE_EXPLANATION));
+
+export default dataQuestionAgent;

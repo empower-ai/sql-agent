@@ -1,9 +1,9 @@
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
-import { type DataSource } from '../datasource/datasource.js';
-import getLogger from '../utils/logger.js';
+import { type DataSource } from '../datasource/datasource';
+import getLogger from '../utils/logger';
 import { type Document } from 'langchain/document';
-import type DataSourceContextIndex from './types.js';
+import type DataSourceContextIndex from './types';
 
 const logger = getLogger('DataSourceContextIndex');
 

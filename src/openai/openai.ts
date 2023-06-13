@@ -1,10 +1,10 @@
-import { ChatGPTAPI, type ChatMessage } from 'chatgpt';
+import * as ChatGPT from '@logunify/chatgpt';
 
 class OpenAI {
-  private api: ChatGPTAPI | undefined = undefined;
+  private readonly api: ChatGPT.ChatGPTAPI;
 
-  public init(): void {
-    this.api = new ChatGPTAPI({
+  constructor() {
+    this.api = new ChatGPT.ChatGPTAPI({
       apiKey: process.env.OPENAI_API_KEY!,
       completionParams: {
         temperature: 0
@@ -12,8 +12,8 @@ class OpenAI {
     });
   }
 
-  async sendMessage(message: string, parentMessageId: string | undefined = undefined): Promise<ChatMessage> {
-    const response = await this.api!.sendMessage(message, { parentMessageId });
+  async sendMessage(message: string, parentMessageId: string | undefined = undefined): Promise<ChatGPT.ChatMessage> {
+    const response = await this.api.sendMessage(message, { parentMessageId });
     return response;
   }
 }

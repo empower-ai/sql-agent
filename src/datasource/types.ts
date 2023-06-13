@@ -3,7 +3,7 @@ export interface FieldDefinition {
   description: string
   type: string
   required: boolean
-  nestedFields?: FieldDefinition[],
+  nestedFields?: FieldDefinition[]
 }
 
 export interface TableInfo {
@@ -28,6 +28,11 @@ export enum DataSourceType {
   PostgresSQL = 'PostgresSQL'
 }
 
+interface ColumnNameWithType {
+  type: string
+  name: string
+}
+
 export class TableSchema {
   constructor(
     public readonly name: string,
@@ -35,6 +40,7 @@ export class TableSchema {
     public readonly description: string | null,
     public readonly fields: FieldDefinition[],
     public readonly dataSource: DataSourceType,
+    public readonly rawSchemaDefinition: string,
     public readonly isSuffixPartitionTable: boolean = false,
     public readonly suffixes: string[] = []
   ) { }
@@ -48,7 +54,19 @@ export class TableSchema {
       return this.fields.map(field => field.name);
     }
 
-    return this.fields.flatMap(field => TableSchema.getNestedColumnNames(field));
+    return this.fields.flatMap(field => TableSchema.getNestedColumnNameWithTypes(field))
+      .map(columNameWithType => columNameWithType.name);
+  }
+
+  public getColumnNamesWithTypes(includeNested = false): ColumnNameWithType[] {
+    if (!includeNested) {
+      return this.fields.map(field => ({
+        name: field.name,
+        type: field.type
+      }));
+    }
+
+    return this.fields.flatMap(field => TableSchema.getNestedColumnNameWithTypes(field));
   }
 
   public findFieldByName(name: string): FieldDefinition | undefined {
@@ -94,16 +112,22 @@ export class TableSchema {
     return result;
   }
 
-  private static getNestedColumnNames(field: FieldDefinition, parentFields: string[] = []): string[] {
+  private static getNestedColumnNameWithTypes(field: FieldDefinition, parentFields: string[] = []): ColumnNameWithType[] {
     if (!field.nestedFields) {
       if (parentFields.length > 0) {
-        return [`${parentFields.join('.')}.${field.name}}`];
+        return [{
+          type: field.type,
+          name: `${parentFields.join('.')}.${field.name}`
+        }];
       }
-      return [`${parentFields.join('.')}.${field.name}}`];
+      return [{
+        type: field.type,
+        name: field.name
+      }];
     }
 
     return field.nestedFields.flatMap(
-      nestedField => this.getNestedColumnNames(nestedField, parentFields.concat([field.name]))
+      nestedField => this.getNestedColumnNameWithTypes(nestedField, parentFields.concat([field.name]))
     );
   }
 }

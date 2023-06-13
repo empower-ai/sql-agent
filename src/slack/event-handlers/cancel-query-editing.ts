@@ -1,6 +1,6 @@
 import { type App, type BlockAction } from '@slack/bolt';
-import { Action } from '../types.js';
-import { getAssumptionBlocks, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks.js';
+import { Action } from '../types';
+import { getAssumptionBlocks, getQueryBlocks, getQuestionBlock, getResultBlocks } from '../view/blocks';
 
 export default async function handleCancelQueryEditing(app: App): Promise<void> {
   app.action(Action.CancelQueryEditing, async ({ ack, client, body }) => {

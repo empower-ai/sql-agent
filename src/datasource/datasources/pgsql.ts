@@ -1,11 +1,11 @@
-import knex from 'knex';
-import { DataSource } from '../datasource.js';
-import { DataSourceType, type TableInfo, TableSchema } from '../types.js';
-import { type Answer } from '../../agent/types.js';
-import { type Row } from '../../utils/result-builder.js';
+import knex, { type Knex } from 'knex';
+import { DataSource } from '../datasource';
+import { DataSourceType, type TableInfo, TableSchema } from '../types';
+import { type Answer } from '../../agent/types';
+import { type Row } from '../../utils/result-builder';
 
 export class PgsqlSource extends DataSource {
-  private connection!: knex.Knex;
+  private connection!: Knex;
 
   public readonly dataSourceType = DataSourceType.PostgresSQL;
 
@@ -15,7 +15,7 @@ export class PgsqlSource extends DataSource {
 
   protected init(connectionString: string): void {
     this.logger.info(`Connecting to ${connectionString}...`);
-    this.connection = knex.knex({
+    this.connection = knex({
       client: 'postgresql',
       connection: connectionString
     });
@@ -59,7 +59,8 @@ export class PgsqlSource extends DataSource {
       database,
       '',
       fields,
-      DataSourceType.PostgresSQL
+      DataSourceType.PostgresSQL,
+      ''
     );
   }
 

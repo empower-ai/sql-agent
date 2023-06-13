@@ -1,21 +1,42 @@
 {
   "include": [
-    "./src/**/*"
+    "./src/**/*",
+    "../tailwind.config.js"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "src/web"
   ],
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ES2022",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "module": "commonjs",
     "outDir": "./dist",
     "rootDir": "./src",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "node",
     "strict": true,
+    "composite": true,
     "types": [
       "node"
     ],
     "esModuleInterop": true,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "jsx": "preserve",
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false,
+  },
+  "references": [
+    {
+      "path": "src/web"
+    }
+  ]
 }

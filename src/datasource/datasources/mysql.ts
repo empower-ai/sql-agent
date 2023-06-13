@@ -1,11 +1,11 @@
-import knex from 'knex';
-import { DataSource } from '../datasource.js';
-import { DataSourceType, type TableInfo, TableSchema } from '../types.js';
-import { type Row } from '../../utils/result-builder.js';
-import { type Answer } from '../../agent/types.js';
+import knex, { type Knex } from 'knex';
+import { DataSource } from '../datasource';
+import { DataSourceType, type TableInfo, TableSchema } from '../types';
+import { type Row } from '../../utils/result-builder';
+import { type Answer } from '../../agent/types';
 
 export default class MysqlSource extends DataSource {
-  private connection!: knex.Knex;
+  private connection!: Knex;
 
   public readonly dataSourceType = DataSourceType.Mysql;
 
@@ -14,7 +14,7 @@ export default class MysqlSource extends DataSource {
   }
 
   protected init(connectionString: string): void {
-    this.connection = knex.knex({
+    this.connection = knex({
       client: 'mysql',
       connection: connectionString
     });
@@ -64,7 +64,8 @@ export default class MysqlSource extends DataSource {
       database,
       '',
       fields,
-      DataSourceType.Mysql
+      DataSourceType.Mysql,
+      ''
     );
   }
 
