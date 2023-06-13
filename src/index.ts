@@ -22,7 +22,7 @@ if (NODE_MAJOR_VERSION < 18) {
   throw new Error('DSensei requires Node version 18 or higher, please upgrade your node version.');
 }
 
-const logger = getLogger('SlackApp');
+const logger = getLogger('Main');
 logger.info(
   '\n' +
   '    ____    _____                                _  \n' +
@@ -77,8 +77,14 @@ void createSSHTunnelIfNecessary().then(async () => {
     logger.info(`⚡️ Next.js app started on http://${hostname}:${port}`);
   }
 
-  await startSlackApp();
+  if (!!process.env.SLACK_BOT_TOKEN && !!process.env.SLACK_SIGNING_SECRET && !!process.env.SLACK_APP_TOKEN) {
+    logger.info('Starting Slack app')
+    await startSlackApp();
+  } else {
+    logger.info('Skipping Slack app initialization because SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET and SLACK_APP_TOKEN are not set');
+  }
   if (process.env.ENABLE_WEB_APP === 'true') {
+    logger.info('Starting web app')
     await startWebApp();
   }
 });
