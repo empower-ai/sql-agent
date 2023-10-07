@@ -38,7 +38,7 @@
     "gpt-3-encoder": "^1.1.4",
     "jsdom": "^21.1.1",
     "nodemon": "^2.0.22",
-    "postcss": "^8.4.21",
+    "postcss": "^8.4.31",
     "prettier": "^2.8.7",
     "prettier-plugin-tailwindcss": "^0.2.5",
     "tailwindcss": "^3.2.7",
